@@ -45,8 +45,8 @@ input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:
 
 <div class="full gps-box">
   <div>
-    <strong>📍 GPS Locatie &amp; Klantdetectie</strong>
-    <small id="gpsStatus" style="display:block;margin-top:2px;">Haal je GPS-coördinaten op om de locatie en klant automatisch te bepalen.</small>
+    <strong>📍 GPS Locatie &amp; Projectdetectie</strong>
+    <small id="gpsStatus" style="display:block;margin-top:2px;">Haal je GPS-coördinaten op om het project, de klant en het adres automatisch te herkennen.</small>
   </div>
   <button type="button" id="getGpsBtn" class="primary">🎯 GPS Ophalen &amp; Bepalen</button>
 </div>
@@ -54,7 +54,11 @@ input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:
 <div><label>Datum</label><input id="datum" type="date"></div>
 <div><label>Tijd</label><input id="tijd" type="time"></div>
 <div><label>Kilometerstand *</label><input id="km" type="number" min="0" step="1" inputmode="numeric"></div>
-<div><label>Projectnummer</label><select id="project"><option value="">Kies een bestaand project...</option></select><input id="newProject" type="text" placeholder="Of nieuw projectnummer invoeren" style="margin-top:8px"></div>
+<div>
+  <label>Projectnummer</label>
+  <input id="project" type="text" list="projectenList" placeholder="Zoek of typ projectnummer...">
+  <datalist id="projectenList"></datalist>
+</div>
 <div><label>Klant</label><input id="klant" type="text" list="klantenList"><datalist id="klantenList"></datalist></div>
 <div><label>Type reis</label><select id="reisType"><option value="Zakelijk" selected>💼 Zakelijk</option><option value="Privé">🏠 Privé</option></select></div>
 <div><label>Straat</label><input id="straat" type="text"></div>
@@ -132,6 +136,7 @@ function read(raw){try{const x=JSON.parse(raw||'');if(Array.isArray(x))return x;
 function load(){let a=read(localStorage.getItem(KEY));if(!a.length){for(const k of LEGACY){a=read(localStorage.getItem(k));if(a.length)break}}logs=a.map(normalize)}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function ordered(){return[...logs].sort((a,b)=>`${b.datum}T${b.tijd}`.localeCompare(`${a.datum}T${a.tijd}`)||b.createdAt-a.createdAt)}
+
 function render(){
  const a=ordered();$('countStat').textContent=logs.length;$('lastStat').textContent=a.length?Number(a[0].km).toLocaleString('nl-NL')+' km':'—';
  if(logs.length>1){
@@ -139,26 +144,37 @@ function render(){
    const d=c[c.length-1].km-c[0].km;
    $('diffStat').textContent=d>=0?d.toLocaleString('nl-NL')+' km':'—';
  }else $('diffStat').textContent='—';
+
  const ks=[...new Set(logs.map(x=>x.klant.trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'nl'));
- const pm=new Map();[...logs].sort((a,b)=>b.createdAt-a.createdAt).forEach(x=>{if(x.project&&!pm.has(x.project))pm.set(x.project,x)});
  $('klantenList').innerHTML=ks.map(x=>`<option value="${esc(x)}"></option>`).join('');
- $('project').innerHTML='<option value="">Kies een bestaand project...</option>'+[...pm.entries()].map(([p,x])=>`<option value="${esc(p)}">${esc(p)}${x.klant?' — '+esc(x.klant):''}</option>`).join('');
+
+ const pm=new Map();
+ [...logs].sort((a,b)=>b.createdAt-a.createdAt).forEach(x=>{
+   const p=x.project?x.project.trim():'';
+   if(p&&!pm.has(p))pm.set(p,x);
+ });
+ $('projectenList').innerHTML=[...pm.entries()].map(([p,x])=>`<option value="${esc(p)}">${x.klant?esc(x.klant):''}</option>`).join('');
+
  $('historyBody').innerHTML=a.length?a.map(x=>`<tr><td>${esc(x.datum)}</td><td>${esc(x.tijd)}</td><td>${esc(x.type)}</td><td>${esc(x.reisType||'Zakelijk')}</td><td>${Number(x.km).toLocaleString('nl-NL')}</td><td>${esc(x.klant)}</td><td>${esc(x.project)}</td><td>${esc(x.straat)}</td><td>${esc(x.plaats)}</td><td>${esc(x.opmerking)}</td><td><button type="button" class="editBtn" data-id="${esc(x.id)}">✏️ Wijzigen</button><button type="button" class="danger deleteBtn" data-id="${esc(x.id)}">🗑️</button></td></tr>`).join(''):'<tr><td colspan="11" style="padding:30px;text-align:center;color:#9aa8b7">Nog geen ritten opgeslagen.</td></tr>';
 }
+
 function save(){localStorage.setItem(KEY,JSON.stringify(logs));render()}
 function tab(name){document.querySelectorAll('.tabbtn').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));document.querySelectorAll('.tab').forEach(s=>s.classList.toggle('active',s.id===name))}
-function reset(){editingId=null;currentLat=null;currentLon=null;$('formTitle').textContent='Nieuwe registratie';$('editNotice').classList.remove('show');$('saveBtn').textContent='💾 Registratie opslaan';$('gpsStatus').textContent='Haal je GPS-coördinaten op om de locatie en klant automatisch te bepalen.';['km','klant','straat','plaats','opmerking','newProject'].forEach(k=>$(k).value='');$('project').value='';$('reisType').value='Zakelijk';setNow()}
+function reset(){editingId=null;currentLat=null;currentLon=null;$('formTitle').textContent='Nieuwe registratie';$('editNotice').classList.remove('show');$('saveBtn').textContent='💾 Registratie opslaan';$('gpsStatus').textContent='Haal je GPS-coördinaten op om het project, de klant en het adres automatisch te herkennen.';['km','klant','project','straat','plaats','opmerking'].forEach(k=>$(k).value='');$('reisType').value='Zakelijk';setNow()}
+
 function edit(itemId){
  const x=logs.find(x=>x.id===itemId);if(!x)return;editingId=x.id;currentLat=x.lat??null;currentLon=x.lon??null;
- $('datum').value=x.datum??'';$('tijd').value=x.tijd??'';$('km').value=x.km??'';$('klant').value=x.klant??'';$('project').value=x.project??'';$('newProject').value='';$('straat').value=x.straat??'';$('plaats').value=x.plaats??'';$('opmerking').value=x.opmerking??'';$('reisType').value=x.reisType||'Zakelijk';
+ $('datum').value=x.datum??'';$('tijd').value=x.tijd??'';$('km').value=x.km??'';$('klant').value=x.klant??'';$('project').value=x.project??'';$('straat').value=x.straat??'';$('plaats').value=x.plaats??'';$('opmerking').value=x.opmerking??'';$('reisType').value=x.reisType||'Zakelijk';
  if(currentLat!==null&&currentLon!==null){$('gpsStatus').textContent=`📍 Opgeslagen coördinaten: ${currentLat.toFixed(5)}, ${currentLon.toFixed(5)}`}else{$('gpsStatus').textContent='Geen GPS-coördinaten opgeslagen voor deze rit.'}
  $('formTitle').textContent='✏️ Registratie wijzigen';$('editNotice').classList.add('show');$('saveBtn').textContent='💾 Wijziging opslaan';tab('nieuw');window.scrollTo({top:0,behavior:'smooth'})
 }
+
 function collect(){
  const raw=$('km').value.trim();if(!raw){alert('Vul minimaal de kilometerstand in.');$('km').focus();return null}
  const km=Number(raw);if(!Number.isFinite(km)||km<0){alert('Vul een geldige kilometerstand in.');return null}
- return{datum:$('datum').value||nowValues().date,tijd:$('tijd').value||nowValues().time,km,klant:$('klant').value.trim(),project:($('newProject').value.trim()||$('project').value.trim()),straat:$('straat').value.trim(),plaats:$('plaats').value.trim(),opmerking:$('opmerking').value.trim(),reisType:$('reisType').value||'Zakelijk',lat:currentLat,lon:currentLon}
+ return{datum:$('datum').value||nowValues().date,tijd:$('tijd').value||nowValues().time,km,klant:$('klant').value.trim(),project:$('project').value.trim(),straat:$('straat').value.trim(),plaats:$('plaats').value.trim(),opmerking:$('opmerking').value.trim(),reisType:$('reisType').value||'Zakelijk',lat:currentLat,lon:currentLon}
 }
+
 function download(content,name,type){const u=URL.createObjectURL(new Blob([content],{type})),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
 function rows(){const a=[...logs].sort((a,b)=>`${a.datum}T${a.tijd}`.localeCompare(`${b.datum}T${b.tijd}`));return[['Datum','Tijd','Logtype','Reistype','Kilometerstand','Klant','Projectnummer','Straat','Plaats','Opmerking'],...a.map(x=>[x.datum,x.tijd,x.type,x.reisType||'Zakelijk',x.km,x.klant,x.project,x.straat,x.plaats,x.opmerking])]}
 function parseJSON(text){const x=JSON.parse(text),a=Array.isArray(x)?x:(x&&Array.isArray(x.logs)?x.logs:null);if(!a)throw Error('Geen ritten gevonden in JSON-backup.');return a.map(normalize)}
@@ -199,7 +215,7 @@ function getDistanceMeters(lat1, lon1, lat2, lon2) {
 function getCoordinates() {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      return reject(new Error('Geolocatie wordt niet ondersteund door je browser of apparaat.'));
+      return reject(new Error('Geolocatie wordt niet ondersteund door je browser.'));
     }
     navigator.geolocation.getCurrentPosition(
       pos => resolve(pos),
@@ -244,6 +260,22 @@ async function reverseGeocode(lat, lon) {
   return null;
 }
 
+function latestProject(project) {
+  if (!project) return null;
+  const pLower = project.trim().toLowerCase();
+  return [...logs].filter(x => x.project.trim().toLowerCase() === pLower).sort((a,b) => b.createdAt - a.createdAt)[0] || null;
+}
+
+$('project').addEventListener('input', () => {
+  const val = $('project').value.trim();
+  const match = latestProject(val);
+  if (match) {
+    if (match.klant) $('klant').value = match.klant;
+    if (match.straat) $('straat').value = match.straat;
+    if (match.plaats) $('plaats').value = match.plaats;
+  }
+});
+
 $('getGpsBtn').addEventListener('click', async () => {
   const btn = $('getGpsBtn');
   btn.disabled = true;
@@ -268,39 +300,29 @@ $('getGpsBtn').addEventListener('click', async () => {
     });
 
     if (matchedLog) {
-      if (matchedLog.project) {
-        const select = $('project');
-        const exists = Array.from(select.options).some(o => o.value === matchedLog.project);
-        if (exists) {
-          select.value = matchedLog.project;
-          $('newProject').value = '';
-        } else {
-          select.value = '';
-          $('newProject').value = matchedLog.project;
-        }
-      }
+      if (matchedLog.project) $('project').value = matchedLog.project;
       if (matchedLog.klant) $('klant').value = matchedLog.klant;
       if (matchedLog.straat) $('straat').value = matchedLog.straat;
       if (matchedLog.plaats) $('plaats').value = matchedLog.plaats;
 
-      const matchName = matchedLog.klant || matchedLog.project || 'Bekende locatie';
-      $('gpsStatus').textContent = `✅ Herkend van eerdere rit: ${matchName} (${Math.round(minDistance)}m afstand, ${currentLat.toFixed(5)}, ${currentLon.toFixed(5)})`;
+      const info = matchedLog.project ? `Project ${matchedLog.project}` : (matchedLog.klant || 'Bekende locatie');
+      $('gpsStatus').textContent = `✅ Herkend in de buurt: ${info} (${Math.round(minDistance)}m afstand). Pas de velden gerust aan.`;
     } else {
       $('gpsStatus').textContent = `📍 Coördinaten bepaald (${currentLat.toFixed(5)}, ${currentLon.toFixed(5)}). Adres zoeken...`;
       const addr = await reverseGeocode(currentLat, currentLon);
       if (addr) {
         if (addr.straat) $('straat').value = addr.straat;
         if (addr.plaats) $('plaats').value = addr.plaats;
-        $('gpsStatus').textContent = `📍 Locatie bepaald: ${addr.straat || ''} ${addr.plaats || ''} (${currentLat.toFixed(5)}, ${currentLon.toFixed(5)})`.trim();
+        $('gpsStatus').textContent = `📍 Locatie bepaald: ${addr.straat || ''} ${addr.plaats || ''} (${currentLat.toFixed(5)}, ${currentLon.toFixed(5)}). Geen bekend project in de buurt.`;
       } else {
-        $('gpsStatus').textContent = `📍 Coördinaten vastgelegd: ${currentLat.toFixed(5)}, ${currentLon.toFixed(5)} (Adres niet automatisch gevonden)`;
+        $('gpsStatus').textContent = `📍 Coördinaten vastgelegd: ${currentLat.toFixed(5)}, ${currentLon.toFixed(5)}`;
       }
     }
   } catch (err) {
     let msg = 'Kon GPS-coördinaten niet ophalen.';
-    if (err && err.code === 1) msg = 'Geolocatie geweigerd. Geef toestemming in de browser-instellingen.';
-    else if (err && err.code === 2) msg = 'Locatie niet beschikbaar. Controleer je GPS- of locatie-instellingen.';
-    else if (err && err.code === 3) msg = 'GPS-verzoek verlopen (timeout). Probeer opnieuw.';
+    if (err && err.code === 1) msg = 'Geolocatie geweigerd in browser.';
+    else if (err && err.code === 2) msg = 'Locatie niet beschikbaar.';
+    else if (err && err.code === 3) msg = 'GPS-verzoek verlopen (timeout).';
     else if (err && err.message) msg = err.message;
     $('gpsStatus').textContent = '❌ ' + msg;
     alert(msg);
@@ -309,25 +331,21 @@ $('getGpsBtn').addEventListener('click', async () => {
   }
 });
 
-function latestProject(project){return [...logs].filter(x=>x.project===project).sort((a,b)=>b.createdAt-a.createdAt)[0]||null}
-$('project').addEventListener('change',()=>{const m=latestProject($('project').value);$('newProject').value='';if(m){$('klant').value=m.klant||'';$('straat').value=m.straat||'';$('plaats').value=m.plaats||'';}});
-$('arrivalBtn').addEventListener('click',()=>{const d=collect();if(!d)return;logs.push({...d,type:'Aankomst',id:id(),createdAt:Date.now()});save();alert('Aankomst opgeslagen.');reset()});
-$('departureBtn').addEventListener('click',()=>{
-  const n=nowValues();
-  const a=[...logs].filter(x=>x.type==='Aankomst').sort((x,y)=>`${y.datum}T${y.tijd}`.localeCompare(`${x.datum}T${x.tijd}`)||y.createdAt-x.createdAt);
-  if(!a.length){alert('Er is nog geen aankomst opgeslagen. Sla eerst een aankomst op.');return}
+$('arrivalBtn').addEventListener('click', () => {
+  const d = collect(); if (!d) return;
+  logs.push({ ...d, type: 'Aankomst', id: id(), createdAt: Date.now() });
+  save(); alert('Aankomst opgeslagen.'); reset();
+});
+
+$('departureBtn').addEventListener('click', () => {
+  const n = nowValues();
+  const a = [...logs].filter(x => x.type === 'Aankomst').sort((x,y) => `${y.datum}T${y.tijd}`.localeCompare(`${x.datum}T${x.tijd}`) || y.createdAt - x.createdAt);
+  if (!a.length) { alert('Er is nog geen aankomst opgeslagen. Sla eerst een aankomst op.'); return; }
   const lastArrival = a[0];
 
   const rawKm = $('km').value.trim();
   const km = rawKm ? Number(rawKm) : lastArrival.km;
-  if(!Number.isFinite(km) || km < 0){alert('Vul een geldige kilometerstand in.');return}
-
-  const klant = $('klant').value.trim() || lastArrival.klant;
-  const project = ($('newProject').value.trim() || $('project').value.trim()) || lastArrival.project;
-  const straat = $('straat').value.trim() || lastArrival.straat;
-  const plaats = $('plaats').value.trim() || lastArrival.plaats;
-  const opmerking = $('opmerking').value.trim() || lastArrival.opmerking;
-  const reisType = $('reisType').value || lastArrival.reisType || 'Zakelijk';
+  if (!Number.isFinite(km) || km < 0) { alert('Vul een geldige kilometerstand in.'); return; }
 
   logs.push({
     id: id(),
@@ -335,35 +353,80 @@ $('departureBtn').addEventListener('click',()=>{
     datum: $('datum').value || n.date,
     tijd: $('tijd').value || n.time,
     km,
-    klant,
-    project,
-    straat,
-    plaats,
-    opmerking,
-    reisType,
+    klant: $('klant').value.trim() || lastArrival.klant,
+    project: $('project').value.trim() || lastArrival.project,
+    straat: $('straat').value.trim() || lastArrival.straat,
+    plaats: $('plaats').value.trim() || lastArrival.plaats,
+    opmerking: $('opmerking').value.trim() || lastArrival.opmerking,
+    reisType: $('reisType').value || lastArrival.reisType || 'Zakelijk',
     lat: currentLat !== null ? currentLat : lastArrival.lat,
     lon: currentLon !== null ? currentLon : lastArrival.lon,
     createdAt: Date.now()
   });
-  save();
-  alert('Vertrek opgeslagen.');
-  reset();
+  save(); alert('Vertrek opgeslagen.'); reset();
 });
-$('saveBtn').addEventListener('click',()=>{const d=collect();if(!d)return;if(editingId){const i=logs.findIndex(x=>x.id===editingId);if(i>=0)logs[i]={...logs[i],...d};alert('Wijzigingen opgeslagen.')}else{logs.push({...d,type:'Handmatig',id:id(),createdAt:Date.now()});alert('Registratie opgeslagen.')}save();reset()});
-$('clearBtn').addEventListener('click',reset);
-$('historyBody').addEventListener('click',e=>{const eb=e.target.closest('.editBtn'),db=e.target.closest('.deleteBtn');if(eb)edit(eb.dataset.id);if(db&&confirm('Deze rit verwijderen?')){logs=logs.filter(x=>x.id!==db.dataset.id);save()}});
-$('deleteAllBtn').addEventListener('click',()=>{if(logs.length&&confirm('Alle ritten verwijderen? Maak eerst een JSON-backup.')){logs=[];save();reset()}});
-document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.tab)));
 
-$('jsonExportBtn').addEventListener('click',()=>download(JSON.stringify({app:'Kilometerregistratie',version:5,exportedAt:new Date().toISOString(),logs},null,2),'kilometerregistratie-backup.json','application/json'));
-$('txtExportBtn').addEventListener('click',()=>download('\ufeff'+rows().map(r=>r.join('\t')).join('\n'),'kilometerregistratie.txt','text/plain;charset=utf-8'));
-$('csvExportBtn').addEventListener('click',()=>download('\ufeff'+rows().map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n'),'kilometerregistratie.csv','text/csv;charset=utf-8'));
+$('saveBtn').addEventListener('click', () => {
+  const d = collect(); if (!d) return;
+  if (editingId) {
+    const i = logs.findIndex(x => x.id === editingId);
+    if (i >= 0) logs[i] = { ...logs[i], ...d };
+    alert('Wijzigingen opgeslagen.');
+  } else {
+    logs.push({ ...d, type: 'Handmatig', id: id(), createdAt: Date.now() });
+    alert('Registratie opgeslagen.');
+  }
+  save(); reset();
+});
 
-$('readImportBtn').addEventListener('click',async()=>{const f=$('importFile').files[0];pendingImport=null;$('appendImportBtn').disabled=true;$('replaceImportBtn').disabled=true;if(!f){alert('Kies eerst een bestand.');return}try{const text=await f.text();pendingImport=f.name.toLowerCase().endsWith('.json')?parseJSON(text):parseTXT(text);if(!pendingImport.length)throw Error('Geen bruikbare ritten gevonden.');$('appendImportBtn').disabled=false;$('replaceImportBtn').disabled=false;$('importStatus').textContent=`✅ ${pendingImport.length} ritten gevonden.`;$('importStatus').className='status success'}catch(e){$('importStatus').textContent='❌ '+e.message;$('importStatus').className='status'}});
-$('appendImportBtn').addEventListener('click',()=>{if(!pendingImport)return;const set=new Set(logs.map(signature));let n=0;pendingImport.forEach(x=>{x=normalize({...x,id:id(),createdAt:Date.now()+n});const k=signature(x);if(!set.has(k)){logs.push(x);set.add(k);n++}});save();alert(`${n} ritten toegevoegd.`);pendingImport=null;$('appendImportBtn').disabled=true;$('replaceImportBtn').disabled=true;$('importStatus').textContent=''});
-$('replaceImportBtn').addEventListener('click',()=>{if(!pendingImport)return;if(confirm('De huidige geschiedenis wordt volledig vervangen. Doorgaan?')){logs=pendingImport.map((x,i)=>normalize({...x,id:id(),createdAt:Date.now()+i}));save();alert(`${logs.length} ritten hersteld.`);pendingImport=null;$('appendImportBtn').disabled=true;$('replaceImportBtn').disabled=true;$('importStatus').textContent=''}});
+$('clearBtn').addEventListener('click', reset);
+$('historyBody').addEventListener('click', e => {
+  const eb = e.target.closest('.editBtn'), db = e.target.closest('.deleteBtn');
+  if (eb) edit(eb.dataset.id);
+  if (db && confirm('Deze rit verwijderen?')) { logs = logs.filter(x => x.id !== db.dataset.id); save(); }
+});
 
-load();setNow();render();
+$('deleteAllBtn').addEventListener('click', () => {
+  if (logs.length && confirm('Alle ritten verwijderen? Maak eerst een JSON-backup.')) { logs = []; save(); reset(); }
+});
+
+document.querySelectorAll('.tabbtn').forEach(b => b.addEventListener('click', () => tab(b.dataset.tab)));
+
+$('jsonExportBtn').addEventListener('click', () => download(JSON.stringify({ app: 'Kilometerregistratie', version: 5, exportedAt: new Date().toISOString(), logs }, null, 2), 'kilometerregistratie-backup.json', 'application/json'));
+$('txtExportBtn').addEventListener('click', () => download('\ufeff' + rows().map(r => r.join('\t')).join('\n'), 'kilometerregistratie.txt', 'text/plain;charset=utf-8'));
+$('csvExportBtn').addEventListener('click', () => download('\ufeff' + rows().map(r => r.map(v => '"' + String(v ?? '').replace(/"/g, '""') + '"').join(';')).join('\r\n'), 'kilometerregistratie.csv', 'text/csv;charset=utf-8'));
+
+$('readImportBtn').addEventListener('click', async () => {
+  const f = $('importFile').files[0]; pendingImport = null; $('appendImportBtn').disabled = true; $('replaceImportBtn').disabled = true;
+  if (!f) { alert('Kies eerst een bestand.'); return; }
+  try {
+    const text = await f.text();
+    pendingImport = f.name.toLowerCase().endsWith('.json') ? parseJSON(text) : parseTXT(text);
+    if (!pendingImport.length) throw Error('Geen bruikbare ritten gevonden.');
+    $('appendImportBtn').disabled = false; $('replaceImportBtn').disabled = false;
+    $('importStatus').textContent = `✅ ${pendingImport.length} ritten gevonden.`; $('importStatus').className = 'status success';
+  } catch (e) { $('importStatus').textContent = '❌ ' + e.message; $('importStatus').className = 'status'; }
+});
+
+$('appendImportBtn').addEventListener('click', () => {
+  if (!pendingImport) return;
+  const set = new Set(logs.map(signature)); let n = 0;
+  pendingImport.forEach(x => {
+    x = normalize({ ...x, id: id(), createdAt: Date.now() + n });
+    const k = signature(x); if (!set.has(k)) { logs.push(x); set.add(k); n++; }
+  });
+  save(); alert(`${n} ritten toegevoegd.`); pendingImport = null; $('appendImportBtn').disabled = true; $('replaceImportBtn').disabled = true; $('importStatus').textContent = '';
+});
+
+$('replaceImportBtn').addEventListener('click', () => {
+  if (!pendingImport) return;
+  if (confirm('De huidige geschiedenis wordt volledig vervangen. Doorgaan?')) {
+    logs = pendingImport.map((x, i) => normalize({ ...x, id: id(), createdAt: Date.now() + i }));
+    save(); alert(`${logs.length} ritten hersteld.`); pendingImport = null; $('appendImportBtn').disabled = true; $('replaceImportBtn').disabled = true; $('importStatus').textContent = '';
+  }
+});
+
+load(); setNow(); render();
 })();
 </script>
 </body>
