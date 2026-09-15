@@ -56,10 +56,14 @@ input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:
 <div><label>Kilometerstand *</label><input id="km" type="number" min="0" step="1" inputmode="numeric"></div>
 <div>
   <label>Projectnummer</label>
-  <input id="project" type="text" list="projectenList" placeholder="Zoek of typ projectnummer...">
+  <input id="project" type="text" list="projectenList" placeholder="Zoek of typ nieuw projectnummer...">
   <datalist id="projectenList"></datalist>
 </div>
-<div><label>Klant</label><input id="klant" type="text" list="klantenList"><datalist id="klantenList"></datalist></div>
+<div>
+  <label>Klant</label>
+  <input id="klant" type="text" list="klantenList" placeholder="Zoek of typ nieuwe klant...">
+  <datalist id="klantenList"></datalist>
+</div>
 <div><label>Type reis</label><select id="reisType"><option value="Zakelijk" selected>💼 Zakelijk</option><option value="Privé">🏠 Privé</option></select></div>
 <div><label>Straat</label><input id="straat" type="text"></div>
 <div><label>Plaats</label><input id="plaats" type="text"></div>
@@ -68,7 +72,7 @@ input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:
 <div class="actions">
   <button type="button" class="primary" id="arrivalBtn">📍 Aankomst opslaan</button>
   <button type="button" id="departureBtn">🚗 Vertrek opslaan</button>
-  <button type="button" class="secondary" id="saveBtn">💾 Handmatig opslaan</button>
+  <button type="button" class="primary" id="editSaveBtn" style="display:none;">💾 Wijziging opslaan</button>
   <button type="button" class="secondary" id="clearBtn">Velden wissen</button>
 </div>
 </div>
@@ -145,9 +149,11 @@ function render(){
    $('diffStat').textContent=d>=0?d.toLocaleString('nl-NL')+' km':'—';
  }else $('diffStat').textContent='—';
 
+ // Unieke klanten voor de zoeklijst
  const ks=[...new Set(logs.map(x=>x.klant.trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'nl'));
  $('klantenList').innerHTML=ks.map(x=>`<option value="${esc(x)}"></option>`).join('');
 
+ // Unieke projectnummers voor de zoeklijst met eventuele klantnaam erbij
  const pm=new Map();
  [...logs].sort((a,b)=>b.createdAt-a.createdAt).forEach(x=>{
    const p=x.project?x.project.trim():'';
@@ -165,14 +171,12 @@ function updateFormUI(){
   if(editingId){
     $('arrivalBtn').style.display='none';
     $('departureBtn').style.display='none';
-    $('saveBtn').textContent='💾 Wijziging opslaan';
-    $('saveBtn').className='primary';
+    $('editSaveBtn').style.display='';
     $('clearBtn').textContent='Annuleren';
   } else {
     $('arrivalBtn').style.display='';
     $('departureBtn').style.display='';
-    $('saveBtn').textContent='💾 Handmatig opslaan';
-    $('saveBtn').className='secondary';
+    $('editSaveBtn').style.display='none';
     $('clearBtn').textContent='Velden wissen';
   }
 }
@@ -267,7 +271,7 @@ async function fetchRoadDistance(lat1, lon1, lat2, lon2) {
     if (res.ok) {
       const data = await res.json();
       if (data.routes && data.routes.length > 0) {
-        return data.routes[0].distance / 1000; // afstand in km
+        return data.routes[0].distance / 1000;
       }
     }
   } catch (e) {
@@ -305,17 +309,37 @@ async function reverseGeocode(lat, lon) {
   return null;
 }
 
+// Meest recente rit ophalen op basis van projectnummer
 function latestProject(project) {
   if (!project) return null;
   const pLower = project.trim().toLowerCase();
   return [...logs].filter(x => x.project.trim().toLowerCase() === pLower).sort((a,b) => b.createdAt - a.createdAt)[0] || null;
 }
 
+// Meest recente rit ophalen op basis van klantnaam
+function latestKlant(klant) {
+  if (!klant) return null;
+  const kLower = klant.trim().toLowerCase();
+  return [...logs].filter(x => x.klant.trim().toLowerCase() === kLower).sort((a,b) => b.createdAt - a.createdAt)[0] || null;
+}
+
+// Automatische aanvulling bij projectinvoer (zoeken & selecteren)
 $('project').addEventListener('input', () => {
   const val = $('project').value.trim();
   const match = latestProject(val);
   if (match) {
     if (match.klant) $('klant').value = match.klant;
+    if (match.straat) $('straat').value = match.straat;
+    if (match.plaats) $('plaats').value = match.plaats;
+  }
+});
+
+// Automatische aanvulling bij klantinvoer (zoeken & selecteren)
+$('klant').addEventListener('input', () => {
+  const val = $('klant').value.trim();
+  const match = latestKlant(val);
+  if (match) {
+    if (match.project) $('project').value = match.project;
     if (match.straat) $('straat').value = match.straat;
     if (match.plaats) $('plaats').value = match.plaats;
   }
@@ -332,7 +356,6 @@ $('getGpsBtn').addEventListener('click', async () => {
     currentLon = pos.coords.longitude;
 
     let kmMsg = '';
-    // Bereken afstand over wegen t.o.v. laatste opgeslagen rit met coördinaten
     const logsWithGps = ordered().filter(x => x.lat !== null && x.lon !== null && (!editingId || x.id !== editingId));
     if (logsWithGps.length > 0) {
       const lastGpsLog = logsWithGps[0];
@@ -346,7 +369,6 @@ $('getGpsBtn').addEventListener('click', async () => {
       }
     }
 
-    // Herkenning van projecten/locatie in de buurt
     let matchedLog = null;
     let minDistance = 300;
 
@@ -427,16 +449,12 @@ $('departureBtn').addEventListener('click', () => {
   save(); alert('Vertrek opgeslagen.'); reset();
 });
 
-$('saveBtn').addEventListener('click', () => {
+$('editSaveBtn').addEventListener('click', () => {
+  if (!editingId) return;
   const d = collect(); if (!d) return;
-  if (editingId) {
-    const i = logs.findIndex(x => x.id === editingId);
-    if (i >= 0) logs[i] = { ...logs[i], ...d };
-    alert('Wijzigingen opgeslagen.');
-  } else {
-    logs.push({ ...d, type: 'Handmatig', id: id(), createdAt: Date.now() });
-    alert('Registratie opgeslagen.');
-  }
+  const i = logs.findIndex(x => x.id === editingId);
+  if (i >= 0) logs[i] = { ...logs[i], ...d };
+  alert('Wijzigingen opgeslagen.');
   save(); reset();
 });
 
