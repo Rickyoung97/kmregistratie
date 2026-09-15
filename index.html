@@ -21,7 +21,7 @@ input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:
 .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
 .notice{display:none;padding:12px 14px;border-radius:10px;margin-bottom:14px;background:#332a16;border:1px solid #7d6530;color:#f4d994}.notice.show{display:block}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.stat{background:var(--input);border:1px solid var(--line);border-radius:12px;padding:14px}.stat b{display:block;margin-top:4px;font-size:21px}
-.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:12px}table{width:100%;min-width:1150px;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:14px}th{color:var(--muted);white-space:nowrap}td button{margin:2px}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:12px}table{width:100%;min-width:1250px;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:14px}th{color:var(--muted);white-space:nowrap}td button{margin:2px}
 .help{background:var(--input);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}.success{color:var(--green)!important}.status{min-height:20px;margin-top:12px}
 .gps-box{background:var(--input);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
 .flex-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
@@ -61,6 +61,11 @@ input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:
   <label>Kenteken</label>
   <select id="kenteken"></select>
 </div>
+<div>
+  <label>Bestuurder</label>
+  <input id="bestuurder" type="text" list="bestuurdersList" placeholder="Selecteer of typ bestuurder...">
+  <datalist id="bestuurdersList"></datalist>
+</div>
 <div><label>Kilometerstand *</label><input id="km" type="number" min="0" step="1" inputmode="numeric"></div>
 <div>
   <label>Projectnummer</label>
@@ -95,13 +100,16 @@ input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:
 <div class="card">
 <div class="flex-header">
   <div><h2 style="margin-bottom:4px;">Vorige ritten</h2><p style="margin:0;">Klik op <b>Wijzigen</b> om een fout te corrigeren.</p></div>
-  <div>
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
     <select id="kentekenFilter" class="secondary" style="width:auto; padding:8px 12px; border-radius:8px;">
       <option value="">🚘 Alle kentekens</option>
     </select>
+    <select id="bestuurderFilter" class="secondary" style="width:auto; padding:8px 12px; border-radius:8px;">
+      <option value="">👤 Alle bestuurders</option>
+    </select>
   </div>
 </div>
-<div class="tablewrap"><table><thead><tr><th>Datum</th><th>Tijd</th><th>Kenteken</th><th>Logtype</th><th>Reistype</th><th>Km-stand</th><th>Klant</th><th>Projectnr.</th><th>Straat</th><th>Plaats</th><th>Opmerking</th><th>Actie</th></tr></thead><tbody id="historyBody"></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>Datum</th><th>Tijd</th><th>Kenteken</th><th>Bestuurder</th><th>Logtype</th><th>Reistype</th><th>Km-stand</th><th>Klant</th><th>Projectnr.</th><th>Straat</th><th>Plaats</th><th>Opmerking</th><th>Actie</th></tr></thead><tbody id="historyBody"></tbody></table></div>
 <div class="actions"><button type="button" class="danger" id="deleteAllBtn">🗑️ Alle ritten verwijderen</button></div>
 </div>
 </section>
@@ -115,6 +123,16 @@ input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:
     <button type="button" class="primary" id="addKentekenBtn">➕ Kenteken toevoegen</button>
   </div>
   <div id="kentekenTags" class="tag-list"></div>
+</div>
+
+<div class="card">
+  <h2>👤 Bestuurders beheren</h2>
+  <p>Voeg hier vaste bestuurders toe om ze snel te kunnen selecteren bij het registreren.</p>
+  <div style="display:flex; gap:10px; margin-top:12px;">
+    <input id="newBestuurderInput" type="text" placeholder="Bijv. Jan Jansen" style="max-width:260px;">
+    <button type="button" class="primary" id="addBestuurderBtn">➕ Bestuurder toevoegen</button>
+  </div>
+  <div id="bestuurderTags" class="tag-list"></div>
 </div>
 
 <div class="card"><h2>Exporteren</h2><p>Maak regelmatig een backup zodat je gegevens niet verloren gaan.</p>
@@ -134,9 +152,10 @@ input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:
 'use strict';
 const KEY='kilometerregistratie_v5';
 const K_KEY='kilometerregistratie_kentekens_v1';
+const B_KEY='kilometerregistratie_bestuurders_v1';
 const LEGACY=['km_registratie_v4','km_registratie_v3','km_registratie_v2'];
 const $=id=>document.getElementById(id);
-let editingId=null,pendingImport=null,logs=[],kentekens=[],currentLat=null,currentLon=null;
+let editingId=null,pendingImport=null,logs=[],kentekens=[],bestuurders=[],currentLat=null,currentLon=null;
 
 function pad(n){return String(n).padStart(2,'0')}
 function nowValues(){const d=new Date();return{date:d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),time:pad(d.getHours())+':'+pad(d.getMinutes())}}
@@ -146,7 +165,6 @@ function id(){return'r_'+Date.now().toString(36)+'_'+Math.random().toString(36).
 function loadKentekens(){
   try{const k=JSON.parse(localStorage.getItem(K_KEY));if(Array.isArray(k))kentekens=k.map(x=>String(x).toUpperCase().trim()).filter(Boolean);}catch(e){}
   if(!kentekens.length){
-    // Haal eventueel bestaande kentekens uit oude ritten op als fallback
     let a=read(localStorage.getItem(KEY));
     kentekens=[...new Set(a.map(x=>x.kenteken).filter(Boolean))].sort();
     if(!kentekens.length) kentekens=['AB-123-C'];
@@ -154,6 +172,16 @@ function loadKentekens(){
   }
 }
 function saveKentekens(){localStorage.setItem(K_KEY,JSON.stringify(kentekens))}
+
+function loadBestuurders(){
+  try{const b=JSON.parse(localStorage.getItem(B_KEY));if(Array.isArray(b))bestuurders=b.map(x=>String(x).trim()).filter(Boolean);}catch(e){}
+  if(!bestuurders.length){
+    let a=read(localStorage.getItem(KEY));
+    bestuurders=[...new Set(a.map(x=>x.bestuurder).filter(Boolean))].sort();
+    saveBestuurders();
+  }
+}
+function saveBestuurders(){localStorage.setItem(B_KEY,JSON.stringify(bestuurders))}
 
 function normalize(x,i=0){
  const n=nowValues(), km=Number(String(x.km??x.kilometerstand??0).replace(',','.'));
@@ -166,6 +194,7 @@ function normalize(x,i=0){
    datum:String(x.datum||n.date).slice(0,10),
    tijd:/^([01]\d|2[0-3]):[0-5]\d$/.test(String(x.tijd||''))?String(x.tijd).slice(0,5):'00:00',
    kenteken:String(x.kenteken||'').toUpperCase().trim(),
+   bestuurder:String(x.bestuurder||'').trim(),
    km:Number.isFinite(km)?km:0,
    klant:String(x.klant||''),
    project:String(x.project||x.projectnummer||''),
@@ -180,17 +209,24 @@ function normalize(x,i=0){
 function read(raw){try{const x=JSON.parse(raw||'');if(Array.isArray(x))return x;if(x&&Array.isArray(x.logs))return x.logs}catch(e){}return[]}
 function load(){
   loadKentekens();
+  loadBestuurders();
   let a=read(localStorage.getItem(KEY));
   if(!a.length){for(const k of LEGACY){a=read(localStorage.getItem(k));if(a.length)break}}
   logs=a.map(normalize);
 }
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function ordered(){return[...logs].sort((a,b)=>`${b.datum}T${b.tijd}`.localeCompare(`${a.datum}T${a.tijd}`)||b.createdAt-a.createdAt)}
 
 function render(){
- const activeFilter = $('kentekenFilter').value;
- const filteredLogs = activeFilter ? logs.filter(x => x.kenteken === activeFilter) : logs;
- const a = [...filteredLogs].sort((a,b)=>`${b.datum}T${b.tijd}`.localeCompare(`${b.datum}T${b.tijd}`)||b.createdAt-a.createdAt);
+ const activeKFilter = $('kentekenFilter').value;
+ const activeBFilter = $('bestuurderFilter').value;
+ 
+ const filteredLogs = logs.filter(x => {
+   const matchK = !activeKFilter || x.kenteken === activeKFilter;
+   const matchB = !activeBFilter || x.bestuurder === activeBFilter;
+   return matchK && matchB;
+ });
+
+ const a = [...filteredLogs].sort((a,b)=>`${b.datum}T${b.tijd}`.localeCompare(`${a.datum}T${a.tijd}`)||b.createdAt-a.createdAt);
  
  $('countStat').textContent = filteredLogs.length;
  $('lastStat').textContent = a.length ? Number(a[0].km).toLocaleString('nl-NL') + ' km' : '—';
@@ -203,17 +239,27 @@ function render(){
 
  // Kenteken Dropdowns vullen
  const kSelect = $('kenteken');
- const currentVal = kSelect.value;
+ const currentKVal = kSelect.value;
  kSelect.innerHTML = kentekens.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
- if(kentekens.includes(currentVal)) kSelect.value = currentVal;
+ if(kentekens.includes(currentKVal)) kSelect.value = currentKVal;
 
- const filterSelect = $('kentekenFilter');
- const currentKFilter = filterSelect.value;
- filterSelect.innerHTML = '<option value="">🚘 Alle kentekens</option>' + kentekens.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
- if(kentekens.includes(currentKFilter)) filterSelect.value = currentKFilter;
+ const filterKSelect = $('kentekenFilter');
+ const currentKFilter = filterKSelect.value;
+ filterKSelect.innerHTML = '<option value="">🚘 Alle kentekens</option>' + kentekens.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+ if(kentekens.includes(currentKFilter)) filterKSelect.value = currentKFilter;
 
- // Beheer tags renderen in instellingen
+ // Bestuurder Datalist & Filter Dropdown vullen
+ const allDrivers = [...new Set([...bestuurders, ...logs.map(x=>x.bestuurder).filter(Boolean)])].sort((a,b)=>a.localeCompare(b,'nl'));
+ $('bestuurdersList').innerHTML = allDrivers.map(x=>`<option value="${esc(x)}"></option>`).join('');
+
+ const filterBSelect = $('bestuurderFilter');
+ const currentBFilter = filterBSelect.value;
+ filterBSelect.innerHTML = '<option value="">👤 Alle bestuurders</option>' + allDrivers.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+ if(allDrivers.includes(currentBFilter)) filterBSelect.value = currentBFilter;
+
+ // Tags renderen in instellingen
  $('kentekenTags').innerHTML = kentekens.map(x=>`<div class="tag-badge"><span>${esc(x)}</span><button type="button" data-kenteken="${esc(x)}" class="delKentekenBtn" title="Verwijderen">✕</button></div>`).join('');
+ $('bestuurderTags').innerHTML = bestuurders.map(x=>`<div class="tag-badge"><span>${esc(x)}</span><button type="button" data-bestuurder="${esc(x)}" class="delBestuurderBtn" title="Verwijderen">✕</button></div>`).join('');
 
  const ks=[...new Set(logs.map(x=>x.klant.trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'nl'));
  $('klantenList').innerHTML=ks.map(x=>`<option value="${esc(x)}"></option>`).join('');
@@ -225,7 +271,7 @@ function render(){
  });
  $('projectenList').innerHTML=[...pm.entries()].map(([p,x])=>`<option value="${esc(p)}">${x.klant?esc(x.klant):''}</option>`).join('');
 
- $('historyBody').innerHTML=a.length?a.map(x=>`<tr><td>${esc(x.datum)}</td><td>${esc(x.tijd)}</td><td>${esc(x.kenteken)}</td><td>${esc(x.type)}</td><td>${esc(x.reisType||'Zakelijk')}</td><td>${Number(x.km).toLocaleString('nl-NL')}</td><td>${esc(x.klant)}</td><td>${esc(x.project)}</td><td>${esc(x.straat)}</td><td>${esc(x.plaats)}</td><td>${esc(x.opmerking)}</td><td><button type="button" class="editBtn" data-id="${esc(x.id)}">✏️ Wijzigen</button><button type="button" class="danger deleteBtn" data-id="${esc(x.id)}">🗑️</button></td></tr>`).join(''):'<tr><td colspan="12" style="padding:30px;text-align:center;color:#9aa8b7">Nog geen ritten opgeslagen voor deze selectie.</td></tr>';
+ $('historyBody').innerHTML=a.length?a.map(x=>`<tr><td>${esc(x.datum)}</td><td>${esc(x.tijd)}</td><td>${esc(x.kenteken)}</td><td>${esc(x.bestuurder)}</td><td>${esc(x.type)}</td><td>${esc(x.reisType||'Zakelijk')}</td><td>${Number(x.km).toLocaleString('nl-NL')}</td><td>${esc(x.klant)}</td><td>${esc(x.project)}</td><td>${esc(x.straat)}</td><td>${esc(x.plaats)}</td><td>${esc(x.opmerking)}</td><td><button type="button" class="editBtn" data-id="${esc(x.id)}">✏️ Wijzigen</button><button type="button" class="danger deleteBtn" data-id="${esc(x.id)}">🗑️</button></td></tr>`).join(''):'<tr><td colspan="13" style="padding:30px;text-align:center;color:#9aa8b7">Nog geen ritten opgeslagen voor deze selectie.</td></tr>';
 }
 
 function save(){localStorage.setItem(KEY,JSON.stringify(logs));render()}
@@ -258,7 +304,7 @@ function reset(){
 
 function edit(itemId){
  const x=logs.find(x=>x.id===itemId);if(!x)return;editingId=x.id;currentLat=x.lat??null;currentLon=x.lon??null;
- $('datum').value=x.datum??'';$('tijd').value=x.tijd??'';$('kenteken').value=x.kenteken??'';$('km').value=x.km??'';$('klant').value=x.klant??'';$('project').value=x.project??'';$('straat').value=x.straat??'';$('plaats').value=x.plaats??'';$('opmerking').value=x.opmerking??'';$('reisType').value=x.reisType||'Zakelijk';
+ $('datum').value=x.datum??'';$('tijd').value=x.tijd??'';$('kenteken').value=x.kenteken??'';$('bestuurder').value=x.bestuurder??'';$('km').value=x.km??'';$('klant').value=x.klant??'';$('project').value=x.project??'';$('straat').value=x.straat??'';$('plaats').value=x.plaats??'';$('opmerking').value=x.opmerking??'';$('reisType').value=x.reisType||'Zakelijk';
  if(currentLat!==null&&currentLon!==null){$('gpsStatus').textContent=`📍 Opgeslagen coördinaten: ${currentLat.toFixed(5)}, ${currentLon.toFixed(5)}`}else{$('gpsStatus').textContent='Geen GPS-coördinaten opgeslagen voor deze rit.'}
  $('formTitle').textContent='✏️ Registratie wijzigen';
  $('editNotice').classList.add('show');
@@ -269,11 +315,11 @@ function edit(itemId){
 function collect(){
  const raw=$('km').value.trim();if(!raw){alert('Vul minimaal de kilometerstand in.');$('km').focus();return null}
  const km=Number(raw);if(!Number.isFinite(km)||km<0){alert('Vul een geldige kilometerstand in.');return null}
- return{datum:$('datum').value||nowValues().date,tijd:$('tijd').value||nowValues().time,kenteken:$('kenteken').value,km,klant:$('klant').value.trim(),project:$('project').value.trim(),straat:$('straat').value.trim(),plaats:$('plaats').value.trim(),opmerking:$('opmerking').value.trim(),reisType:$('reisType').value||'Zakelijk',lat:currentLat,lon:currentLon}
+ return{datum:$('datum').value||nowValues().date,tijd:$('tijd').value||nowValues().time,kenteken:$('kenteken').value,bestuurder:$('bestuurder').value.trim(),km,klant:$('klant').value.trim(),project:$('project').value.trim(),straat:$('straat').value.trim(),plaats:$('plaats').value.trim(),opmerking:$('opmerking').value.trim(),reisType:$('reisType').value||'Zakelijk',lat:currentLat,lon:currentLon}
 }
 
 function download(content,name,type){const u=URL.createObjectURL(new Blob([content],{type})),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
-function rows(){const a=[...logs].sort((a,b)=>`${a.datum}T${a.tijd}`.localeCompare(`${b.datum}T${b.tijd}`));return[['Datum','Tijd','Kenteken','Logtype','Reistype','Kilometerstand','Klant','Projectnummer','Straat','Plaats','Opmerking'],...a.map(x=>[x.datum,x.tijd,x.kenteken,x.type,x.reisType||'Zakelijk',x.km,x.klant,x.project,x.straat,x.plaats,x.opmerking])]}
+function rows(){const a=[...logs].sort((a,b)=>`${a.datum}T${a.tijd}`.localeCompare(`${b.datum}T${b.tijd}`));return[['Datum','Tijd','Kenteken','Bestuurder','Logtype','Reistype','Kilometerstand','Klant','Projectnummer','Straat','Plaats','Opmerking'],...a.map(x=>[x.datum,x.tijd,x.kenteken,x.bestuurder,x.type,x.reisType||'Zakelijk',x.km,x.klant,x.project,x.straat,x.plaats,x.opmerking])]}
 function parseJSON(text){const x=JSON.parse(text),a=Array.isArray(x)?x:(x&&Array.isArray(x.logs)?x.logs:null);if(!a)throw Error('Geen ritten gevonden in JSON-backup.');return a.map(normalize)}
 function parseTXT(text){
  const lines=text.replace(/^\ufeff/,'').replace(/\r/g,'').split('\n').filter(x=>x.trim());
@@ -281,7 +327,7 @@ function parseTXT(text){
  const h=lines[0].split('\t').map(x=>x.toLowerCase().trim());
  const idx=(names)=>names.reduce((res,n)=>res===-1?h.indexOf(n):res,-1);
  
- const iDat=idx(['datum']), iTij=idx(['tijd']), iKen=idx(['kenteken']);
+ const iDat=idx(['datum']), iTij=idx(['tijd']), iKen=idx(['kenteken']), iBes=idx(['bestuurder']);
  const iTyp=idx(['logtype','type']), iRei=idx(['reistype']);
  const iKm =idx(['kilometerstand','km-stand','km']);
  const iKla=idx(['klant']), iPro=idx(['projectnummer','projectnr.','project']);
@@ -291,7 +337,7 @@ function parseTXT(text){
  for(let i=1;i<lines.length;i++){
   const p=lines[i].split('\t');
   out.push(normalize({
-   datum: iDat>=0?p[iDat]:'', tijd: iTij>=0?p[iTij]:'', kenteken: iKen>=0?p[iKen]:'',
+   datum: iDat>=0?p[iDat]:'', tijd: iTij>=0?p[iTij]:'', kenteken: iKen>=0?p[iKen]:'', bestuurder: iBes>=0?p[iBes]:'',
    type: iTyp>=0?p[iTyp]:'Handmatig', reisType: iRei>=0?p[iRei]:'Zakelijk',
    km: iKm>=0?p[iKm]:0, klant: iKla>=0?p[iKla]:'', project: iPro>=0?p[iPro]:'',
    straat: iStr>=0?p[iStr]:'', plaats: iPla>=0?p[iPla]:'',
@@ -300,7 +346,7 @@ function parseTXT(text){
  }
  return out;
 }
-function signature(x){return[x.datum,x.tijd,x.kenteken,x.type,x.reisType||'Zakelijk',x.km,x.klant,x.project,x.straat,x.plaats,x.opmerking].join('|')}
+function signature(x){return[x.datum,x.tijd,x.kenteken,x.bestuurder,x.type,x.reisType||'Zakelijk',x.km,x.klant,x.project,x.straat,x.plaats,x.opmerking].join('|')}
 
 function getDistanceMeters(lat1, lon1, lat2, lon2) {
   if (lat1 === null || lat1 === undefined || lon1 === null || lon1 === undefined ||
@@ -407,198 +453,205 @@ $('klant').addEventListener('input', () => {
   }
 });
 
-// Kentekens toevoegen/verwijderen vanuit Instellingen
+// Event Listeners voor Opslaan, GPS, Beheer
+document.querySelectorAll('.tabbtn').forEach(b => b.addEventListener('click', () => tab(b.dataset.tab)));
+
 $('addKentekenBtn').addEventListener('click', () => {
   const val = $('newKentekenInput').value.toUpperCase().trim();
-  if(!val){ alert('Vul een kenteken in.'); return; }
-  if(kentekens.includes(val)){ alert('Dit kenteken staat al in de lijst.'); return; }
-  kentekens.push(val);
-  kentekens.sort();
-  saveKentekens();
-  $('newKentekenInput').value='';
-  render();
-});
-
-$('kentekenTags').addEventListener('click', e => {
-  const btn = e.target.closest('.delKentekenBtn');
-  if(btn){
-    const k = btn.dataset.kenteken;
-    if(kentekens.length <= 1){ alert('Je moet minimaal 1 kenteken behouden.'); return; }
-    if(confirm(`Kenteken ${k} verwijderen?`)){
-      kentekens = kentekens.filter(x => x !== k);
-      saveKentekens();
-      render();
-    }
+  if (val && !kentekens.includes(val)) {
+    kentekens.push(val);
+    saveKentekens();
+    $('newKentekenInput').value = '';
+    render();
   }
 });
+
+$('kentekenTags').addEventListener('click', (e) => {
+  if (e.target.classList.contains('delKentekenBtn')) {
+    const k = e.target.dataset.kenteken;
+    kentekens = kentekens.filter(x => x !== k);
+    saveKentekens();
+    render();
+  }
+});
+
+$('addBestuurderBtn').addEventListener('click', () => {
+  const val = $('newBestuurderInput').value.trim();
+  if (val && !bestuurders.includes(val)) {
+    bestuurders.push(val);
+    saveBestuurders();
+    $('newBestuurderInput').value = '';
+    render();
+  }
+});
+
+$('bestuurderTags').addEventListener('click', (e) => {
+  if (e.target.classList.contains('delBestuurderBtn')) {
+    const b = e.target.dataset.bestuurder;
+    bestuurders = bestuurders.filter(x => x !== b);
+    saveBestuurders();
+    render();
+  }
+});
+
+$('kentekenFilter').addEventListener('change', render);
+$('bestuurderFilter').addEventListener('change', render);
 
 $('getGpsBtn').addEventListener('click', async () => {
   const btn = $('getGpsBtn');
   btn.disabled = true;
-  $('gpsStatus').textContent = '🔄 Coördinaten ophalen...';
-
+  $('gpsStatus').textContent = '📍 GPS-coördinaten worden opgehaald...';
   try {
     const pos = await getCoordinates();
     currentLat = pos.coords.latitude;
     currentLon = pos.coords.longitude;
-
-    let kmMsg = '';
-    const logsWithGps = ordered().filter(x => x.lat !== null && x.lon !== null && (!editingId || x.id !== editingId));
-    if (logsWithGps.length > 0) {
-      const lastGpsLog = logsWithGps[0];
-      $('gpsStatus').textContent = '🚗 Route over wegen berekenen vanaf vorige GPS-stand...';
-      const roadKm = await fetchRoadDistance(lastGpsLog.lat, lastGpsLog.lon, currentLat, currentLon);
-
-      if (roadKm !== null) {
-        const berekendeKm = Math.round(lastGpsLog.km + roadKm);
-        $('km').value = berekendeKm;
-        kmMsg = ` | ➕ ${roadKm.toFixed(1)} km over weg (nieuwe stand: ${berekendeKm})`;
-      }
+    $('gpsStatus').textContent = `📍 Coördinaten gevonden: ${currentLat.toFixed(5)}, ${currentLon.toFixed(5)}. Adres wordt gezocht...`;
+    
+    const address = await reverseGeocode(currentLat, currentLon);
+    if (address) {
+      if (address.straat) $('straat').value = address.straat;
+      if (address.plaats) $('plaats').value = address.plaats;
+      $('gpsStatus').textContent = `📍 Locatie herkend: ${address.straat}, ${address.plaats}`;
+    } else {
+      $('gpsStatus').textContent = `📍 Coördinaten opgeslagen (${currentLat.toFixed(5)}, ${currentLon.toFixed(5)}), maar geen adres gevonden.`;
     }
 
-    let matchedLog = null;
-    let minDistance = 300;
-
-    logs.forEach(log => {
-      if (log.lat !== null && log.lon !== null) {
-        const dist = getDistanceMeters(currentLat, currentLon, log.lat, log.lon);
-        if (dist < minDistance) {
-          minDistance = dist;
-          matchedLog = log;
-        }
-      }
-    });
-
-    if (matchedLog) {
-      if (matchedLog.project) $('project').value = matchedLog.project;
-      if (matchedLog.klant) $('klant').value = matchedLog.klant;
-      if (matchedLog.straat) $('straat').value = matchedLog.straat;
-      if (matchedLog.plaats) $('plaats').value = matchedLog.plaats;
-
-      const info = matchedLog.project ? `Project ${matchedLog.project}` : (matchedLog.klant || 'Bekende locatie');
-      $('gpsStatus').textContent = `✅ Herkend in buurt: ${info}${kmMsg}.`;
-    } else {
-      $('gpsStatus').textContent = `📍 Adres zoeken...${kmMsg}`;
-      const addr = await reverseGeocode(currentLat, currentLon);
-      if (addr) {
-        if (addr.straat) $('straat').value = addr.straat;
-        if (addr.plaats) $('plaats').value = addr.plaats;
-        $('gpsStatus').textContent = `📍 Locatie: ${addr.straat || ''} ${addr.plaats || ''}${kmMsg}.`;
-      } else {
-        $('gpsStatus').textContent = `📍 Coördinaten bepaald (${currentLat.toFixed(5)}, ${currentLon.toFixed(5)})${kmMsg}.`;
+    // Probeer kilometerstand te berekenen t.o.v. laatste rit met GPS op dit kenteken
+    const currentKenteken = $('kenteken').value;
+    const sameCarLogs = logs.filter(x => x.kenteken === currentKenteken && x.lat !== null && x.lon !== null);
+    if (sameCarLogs.length > 0) {
+      const last = [...sameCarLogs].sort((a,b) => `${b.datum}T${b.tijd}`.localeCompare(`${a.datum}T${a.tijd}`))[0];
+      const dist = await fetchRoadDistance(last.lat, last.lon, currentLat, currentLon);
+      if (dist !== null && dist > 0) {
+        const estKm = Math.round(last.km + dist);
+        if (!$('km').value) $('km').value = estKm;
+        $('gpsStatus').textContent += ` | Berekende km-stand: ~${estKm} (+${dist.toFixed(1)} km)`;
       }
     }
   } catch (err) {
-    let msg = 'Kon GPS-coördinaten niet ophalen.';
-    if (err && err.code === 1) msg = 'Geolocatie geweigerd in browser.';
-    else if (err && err.code === 2) msg = 'Locatie niet beschikbaar.';
-    else if (err && err.code === 3) msg = 'GPS-verzoek verlopen (timeout).';
-    else if (err && err.message) msg = err.message;
-    $('gpsStatus').textContent = '❌ ' + msg;
-    alert(msg);
+    $('gpsStatus').textContent = '❌ Kon GPS-locatie niet ophalen. Controleer je toestemmingen.';
   } finally {
     btn.disabled = false;
   }
 });
 
-$('arrivalBtn').addEventListener('click', () => {
-  const d = collect(); if (!d) return;
-  logs.push({ ...d, type: 'Aankomst', id: id(), createdAt: Date.now() });
-  save(); alert('Aankomst opgeslagen.'); reset();
-});
+function saveEntry(type) {
+  const data = collect();
+  if (!data) return;
+  if (editingId) {
+    const idx = logs.findIndex(x => x.id === editingId);
+    if (idx !== -1) logs[idx] = normalize({ ...logs[idx], ...data });
+  } else {
+    logs.push(normalize({ ...data, type }));
+  }
+  save();
+  reset();
+}
 
-$('departureBtn').addEventListener('click', () => {
-  const n = nowValues();
-  const a = [...logs].filter(x => x.type === 'Aankomst').sort((x,y) => `${y.datum}T${y.tijd}`.localeCompare(`${x.datum}T${x.tijd}`) || y.createdAt - x.createdAt);
-  if (!a.length) { alert('Er is nog geen aankomst opgeslagen. Sla eerst een aankomst op.'); return; }
-  const lastArrival = a[0];
-
-  const rawKm = $('km').value.trim();
-  const km = rawKm ? Number(rawKm) : lastArrival.km;
-  if (!Number.isFinite(km) || km < 0) { alert('Vul een geldige kilometerstand in.'); return; }
-
-  logs.push({
-    id: id(),
-    type: 'Vertrek',
-    datum: $('datum').value || n.date,
-    tijd: $('tijd').value || n.time,
-    kenteken: $('kenteken').value || lastArrival.kenteken,
-    km,
-    klant: $('klant').value.trim() || lastArrival.klant,
-    project: $('project').value.trim() || lastArrival.project,
-    straat: $('straat').value.trim() || lastArrival.straat,
-    plaats: $('plaats').value.trim() || lastArrival.plaats,
-    opmerking: $('opmerking').value.trim() || lastArrival.opmerking,
-    reisType: $('reisType').value || lastArrival.reisType || 'Zakelijk',
-    lat: currentLat !== null ? currentLat : lastArrival.lat,
-    lon: currentLon !== null ? currentLon : lastArrival.lon,
-    createdAt: Date.now()
-  });
-  save(); alert('Vertrek opgeslagen.'); reset();
-});
-
-$('editSaveBtn').addEventListener('click', () => {
-  if (!editingId) return;
-  const d = collect(); if (!d) return;
-  const i = logs.findIndex(x => x.id === editingId);
-  if (i >= 0) logs[i] = { ...logs[i], ...d };
-  alert('Wijzigingen opgeslagen.');
-  save(); reset();
-});
-
+$('arrivalBtn').addEventListener('click', () => saveEntry('Aankomst'));
+$('departureBtn').addEventListener('click', () => saveEntry('Vertrek'));
+$('editSaveBtn').addEventListener('click', () => saveEntry('Gewijzigd'));
 $('clearBtn').addEventListener('click', reset);
-$('historyBody').addEventListener('click', e => {
-  const eb = e.target.closest('.editBtn'), db = e.target.closest('.deleteBtn');
-  if (eb) edit(eb.dataset.id);
-  if (db && confirm('Deze rit verwijderen?')) { logs = logs.filter(x => x.id !== db.dataset.id); save(); }
+
+$('historyBody').addEventListener('click', (e) => {
+  const target = e.target;
+  const id = target.dataset.id;
+  if (!id) return;
+  if (target.classList.contains('editBtn')) edit(id);
+  if (target.classList.contains('deleteBtn')) {
+    if (confirm('Weet je zeker dat je deze rit wilt verwijderen?')) {
+      logs = logs.filter(x => x.id !== id);
+      save();
+    }
+  }
 });
 
 $('deleteAllBtn').addEventListener('click', () => {
-  if (logs.length && confirm('Alle ritten verwijderen? Maak eerst een JSON-backup.')) { logs = []; save(); reset(); }
+  if (confirm('Weet je zeker dat je ALLE ritten wilt verwijderen? Dit kan niet ongedaan worden gemaakt.')) {
+    logs = [];
+    save();
+  }
 });
 
-document.querySelectorAll('.tabbtn').forEach(b => b.addEventListener('click', () => tab(b.dataset.tab)));
-$('kentekenFilter').addEventListener('change', render);
+// Exports
+$('jsonExportBtn').addEventListener('click', () => {
+  const data = { logs, kentekens, bestuurders };
+  download(JSON.stringify(data, null, 2), `kilometerregistratie_backup_${nowValues().date}.json`, 'application/json');
+});
 
-$('jsonExportBtn').addEventListener('click', () => download(JSON.stringify({ app: 'Kilometerregistratie', version: 5, exportedAt: new Date().toISOString(), logs, kentekens }, null, 2), 'kilometerregistratie-backup.json', 'application/json'));
-$('txtExportBtn').addEventListener('click', () => download('\ufeff' + rows().map(r => r.join('\t')).join('\n'), 'kilometerregistratie.txt', 'text/plain;charset=utf-8'));
-$('csvExportBtn').addEventListener('click', () => download('\ufeff' + rows().map(r => r.map(v => '"' + String(v ?? '').replace(/"/g, '""') + '"').join(';')).join('\r\n'), 'kilometerregistratie.csv', 'text/csv;charset=utf-8'));
+$('txtExportBtn').addEventListener('click', () => {
+  const txt = rows().map(r => r.join('\t')).join('\n');
+  download(txt, `kilometerregistratie_${nowValues().date}.txt`, 'text/plain;charset=utf-8');
+});
 
-$('readImportBtn').addEventListener('click', async () => {
-  const f = $('importFile').files[0]; pendingImport = null; $('appendImportBtn').disabled = true; $('replaceImportBtn').disabled = true;
-  if (!f) { alert('Kies eerst een bestand.'); return; }
-  try {
-    const text = await f.text();
-    pendingImport = f.name.toLowerCase().endsWith('.json') ? parseJSON(text) : parseTXT(text);
-    if (!pendingImport.length) throw Error('Geen bruikbare ritten gevonden.');
-    $('appendImportBtn').disabled = false; $('replaceImportBtn').disabled = false;
-    $('importStatus').textContent = `✅ ${pendingImport.length} ritten gevonden.`; $('importStatus').className = 'status success';
-  } catch (e) { $('importStatus').textContent = '❌ ' + e.message; $('importStatus').className = 'status'; }
+$('csvExportBtn').addEventListener('click', () => {
+  const csv = rows().map(r => r.map(x => `"${String(x).replace(/"/g, '""')}"`).join(';')).join('\n');
+  download('\ufeff' + csv, `kilometerregistratie_${nowValues().date}.csv`, 'text/csv;charset=utf-8');
+});
+
+// Import functionaliteit
+$('readImportBtn').addEventListener('click', () => {
+  const file = $('importFile').files[0];
+  if (!file) return alert('Kies eerst een bestand.');
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const text = e.target.result;
+      if (file.name.endsWith('.json')) pendingImport = parseJSON(text);
+      else pendingImport = parseTXT(text.replace(/;/g, '\t'));
+      
+      $('importStatus').className = 'status success';
+      $('importStatus').textContent = `✅ Bestand gecontroleerd: ${pendingImport.length} ritten gevonden.`;
+      $('appendImportBtn').disabled = false;
+      $('replaceImportBtn').disabled = false;
+    } catch (err) {
+      $('importStatus').className = 'status danger';
+      $('importStatus').textContent = '❌ Fout bij lezen van bestand: ' + err.message;
+      pendingImport = null;
+      $('appendImportBtn').disabled = true;
+      $('replaceImportBtn').disabled = true;
+    }
+  };
+  reader.readAsText(file);
 });
 
 $('appendImportBtn').addEventListener('click', () => {
   if (!pendingImport) return;
-  const set = new Set(logs.map(signature)); let n = 0;
+  const existing = new Set(logs.map(signature));
+  let added = 0;
   pendingImport.forEach(x => {
-    x = normalize({ ...x, id: id(), createdAt: Date.now() + n });
-    const k = signature(x); if (!set.has(k)) { logs.push(x); set.add(k); n++; }
-    if(x.kenteken && !kentekens.includes(x.kenteken)){ kentekens.push(x.kenteken); }
+    if (!existing.has(signature(x))) {
+      logs.push(x);
+      added++;
+    }
   });
-  kentekens.sort(); saveKentekens();
-  save(); alert(`${n} ritten toegevoegd.`); pendingImport = null; $('appendImportBtn').disabled = true; $('replaceImportBtn').disabled = true; $('importStatus').textContent = '';
+  save();
+  alert(`${added} nieuwe ritten toegevoegd.`);
+  resetImportUI();
 });
 
 $('replaceImportBtn').addEventListener('click', () => {
   if (!pendingImport) return;
-  if (confirm('De huidige geschiedenis wordt volledig vervangen. Doorgaan?')) {
-    logs = pendingImport.map((x, i) => normalize({ ...x, id: id(), createdAt: Date.now() + i }));
-    const kSet = new Set(logs.map(x=>x.kenteken).filter(Boolean));
-    if(kSet.size > 0){ kentekens = [...kSet].sort(); saveKentekens(); }
-    save(); alert(`${logs.length} ritten hersteld.`); pendingImport = null; $('appendImportBtn').disabled = true; $('replaceImportBtn').disabled = true; $('importStatus').textContent = '';
+  if (confirm('Weet je zeker dat je de huidige geschiedenis wilt VERVANGEN?')) {
+    logs = pendingImport;
+    save();
+    alert('Geschiedenis succesvol vervangen.');
+    resetImportUI();
   }
 });
 
-load(); setNow(); render();
+function resetImportUI() {
+  pendingImport = null;
+  $('importFile').value = '';
+  $('importStatus').textContent = '';
+  $('appendImportBtn').disabled = true;
+  $('replaceImportBtn').disabled = true;
+}
+
+// Initialisatie
+load();
+setNow();
+render();
 })();
 </script>
 </body>
