@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta id="themeColor" name="theme-color" content="#08101a">
-<title>Kilometerregistratie</title>
+<title>Kilometerregistratie & Uren</title>
 <style>
 :root{
   --bg:#08101a;--card:#101b29;--card2:#0c1622;--input:#0a131e;--line:#26394d;
@@ -31,10 +31,10 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 
 textarea{resize:vertical;min-height:72px}
 header,nav,main{max-width:760px;margin:auto}
 header{padding:14px 14px 9px;display:flex;align-items:center;gap:11px}.logo{width:50px;height:50px;border-radius:13px;object-fit:cover;border:1px solid var(--line)}h1{font-size:22px;margin:0}.sub{font-size:12px;color:var(--muted);margin-top:3px}
-nav{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;position:sticky;top:0;z-index:30;background:var(--navbg);padding:7px 8px;border-bottom:1px solid var(--line)}nav button{padding:8px 4px;min-height:46px;font-size:11px}nav button.active{background:var(--gold);border-color:var(--gold);color:#1a1409}
+nav{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;position:sticky;top:0;z-index:30;background:var(--navbg);padding:7px 4px;border-bottom:1px solid var(--line)}nav button{padding:8px 2px;min-height:46px;font-size:11px}nav button.active{background:var(--gold);border-color:var(--gold);color:#1a1409}
 main{padding:0 12px 42px}.tab{display:none}.tab.active{display:block}
 .actionDock{position:sticky;top:61px;z-index:24;margin:8px -2px 10px;padding:8px;background:var(--dockbg);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}.actionBtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.actionBtns button{min-height:58px;font-size:17px}.arrivalReady{background:var(--gold);border-color:var(--gold);color:#1a1409}.departureReady{background:var(--green);border-color:var(--green);color:#07170d}.dockStatus{margin-top:6px;text-align:center;color:var(--muted);font-size:12px;min-height:17px}.dockStatus.good{color:var(--green)}.dockStatus.warn{color:var(--gold2)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:15px;margin:10px 0;box-shadow:var(--shadow)}h2{font-size:19px;margin:0 0 12px}h3{font-size:16px;margin:0 0 9px}.muted{color:var(--muted)}.label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}.row{display:flex;gap:8px;align-items:center}.row>*{min-width:0}.grow{flex:1}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.actions button{flex:1;min-width:135px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:15px;margin:10px 0;box-shadow:var(--shadow)}h2{font-size:19px;margin:0 0 12px}h3{font-size:16px;margin:0 0 9px}.muted{color:var(--muted)}.label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}.row{display:flex;gap:8px;align-items:center}.row>*{min-width:0}.grow{flex:1}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.actions button{flex:1;min-width:110px}
 .step{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}.stepNo{width:29px;height:29px;flex:0 0 29px;border-radius:50%;display:grid;place-items:center;background:var(--input);border:1px solid var(--line);color:var(--gold2);font-weight:900}.stepBody{flex:1;min-width:0}.stepTitle{font-weight:850;margin:4px 0 8px}.okDot{color:var(--green)}
 .compactLine{display:grid;grid-template-columns:1fr 1fr;gap:8px}.typeToggle{display:grid;grid-template-columns:1fr 1fr;gap:7px}.typeToggle button.active{background:var(--gold);border-color:var(--gold);color:#1b150a}
 .projectInputWrap{position:relative}.suggestions{margin-top:7px;display:grid;gap:6px}.suggestion{border:1px solid var(--line);background:var(--input);border-radius:12px;padding:10px;cursor:pointer}.suggestion:active{transform:scale(.995)}.sTitle{font-weight:850}.sMeta{font-size:12px;color:var(--muted);margin-top:3px}.nearTag{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:999px;background:var(--nearbg);color:var(--neartext);font-size:11px}.newProject{margin-top:7px;padding:9px 10px;border-radius:10px;background:var(--newbg);border:1px solid var(--newline);color:var(--newtext);font-size:13px}.projectFields{margin-top:9px}
@@ -42,35 +42,19 @@ main{padding:0 12px 42px}.tab{display:none}.tab.active{display:block}
 .dateTime{display:grid;grid-template-columns:1fr 1fr 64px;gap:7px;align-items:end}.dateTime button{min-height:48px;padding:8px}.notice{padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--input);color:var(--muted);font-size:13px}.activeVisit{border-color:var(--activeline);background:var(--activebg)}.activeVisit .hero{font-size:21px;font-weight:900}.activeVisit .meta{color:var(--activemeta);margin-top:4px;font-size:13px}.departTime{margin-top:13px}
 .toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,25px);z-index:100;max-width:calc(100vw - 28px);background:var(--toastbg);border:1px solid var(--toastline);color:var(--toasttext);border-radius:13px;padding:11px 15px;font-weight:800;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}.toast.error{background:#2c1618;border-color:#7c4248;color:#ffd7d7}
 .search{margin-bottom:9px}.list{display:grid;gap:8px}.item{background:var(--input);border:1px solid var(--line);border-radius:14px;padding:11px}.itemTitle{font-weight:850}.itemMeta{font-size:12px;color:var(--muted);margin-top:3px}.itemActions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.itemActions button{padding:8px 10px;font-size:13px}.historyType{font-size:11px;font-weight:900;padding:3px 7px;border-radius:999px;border:1px solid var(--line);display:inline-block}.historyType.arr{color:#f0cc79}.historyType.dep{color:#91dfad}.empty{text-align:center;color:var(--muted);padding:22px 10px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:var(--input);border:1px solid var(--line);border-radius:12px;padding:10px}.stat small{color:var(--muted)}.stat b{display:block;margin-top:3px;font-size:19px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:var(--input);border:1px solid var(--line);border-radius:12px;padding:10px}.stat small{color:var(--muted)}.stat b{display:block;margin-top:3px;font-size:18px}
 .modal{position:fixed;inset:0;display:none;align-items:flex-end;background:rgba(0,0,0,.65);z-index:80}.modal.show{display:flex}.sheet{width:100%;max-width:760px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:20px 20px 0 0;max-height:92vh;overflow:auto;padding:15px 15px calc(15px + env(safe-area-inset-bottom))}.sheetHead{position:sticky;top:-15px;background:var(--card);padding:10px 0 9px;z-index:2}.sheet h2{margin:0}.hr{height:1px;background:var(--line);margin:12px 0}.statusLine{font-size:12px;color:var(--muted);margin-top:8px}.success{color:var(--green)}.warning{color:var(--gold2)}
 details.geoDetails{margin-top:9px;border:1px solid var(--line);border-radius:12px;background:var(--input);padding:9px 10px}details.geoDetails summary{cursor:pointer;color:var(--muted);font-weight:750}.geoGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.geoResult{margin-top:7px;padding:8px 9px;border:1px solid var(--line);border-radius:10px;background:var(--card2);font-size:12px}.geoChoice{width:100%;text-align:left;margin-top:6px}.backupOk{color:var(--green)}.scrollList{max-height:42vh;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}.recentScroll{max-height:250px;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}.lockedInput{background:var(--card2);color:var(--muted);font-weight:800}.themeToggle{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.themeToggle button.active{background:var(--gold);border-color:var(--gold);color:#1b150a}.carMini{margin-top:8px;padding:9px 10px;border:1px solid var(--line);border-radius:11px;background:var(--input);font-size:13px}.backupState.ok{border-color:var(--green)}.backupState.bad{border-color:var(--red)}
-.hoursControls{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:8px;align-items:end}
-.hoursStats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.hoursTable{width:100%;border-collapse:collapse;font-size:13px}
-.hoursTable th,.hoursTable td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
-.hoursTable th{color:var(--muted);font-size:11px;text-transform:uppercase}
-.hoursTable .num{text-align:right;white-space:nowrap}
-.hoursRowOver{background:rgba(238,142,142,.07)}
-.periodButtons{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
-.periodButtons button.active{background:var(--gold);border-color:var(--gold);color:#1b150a}
-.chartWrap{position:relative;height:300px;margin-top:10px}
-#hoursChart{width:100%;height:100%;display:block;background:var(--input);border:1px solid var(--line);border-radius:13px}
-.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
-.legend span{display:inline-flex;align-items:center;gap:5px}.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
-.hoursDayEdit{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.hoursDayEdit button{min-height:42px}
-@media(max-width:560px){.hoursControls,.hoursDayEdit{grid-template-columns:1fr 1fr}.hoursControls .wideMob{grid-column:1/-1}.hoursStats{grid-template-columns:1fr 1fr}.periodButtons{grid-template-columns:repeat(3,1fr)}.hoursTable{font-size:12px}.hoursTable th:nth-child(5),.hoursTable td:nth-child(5){display:none}.chartWrap{height:270px}}
 @media(max-width:560px){.grid,.compactLine{grid-template-columns:1fr}.full{grid-column:auto}.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:1/-1}.actions button{min-width:100%}.dateTime{grid-template-columns:1fr 1fr 58px}.logo{width:46px;height:46px}h1{font-size:20px}}
 </style>
 </head>
 <body>
-<header><img src="app_icon.jpg" class="logo" alt=""><div><h1>Kilometerregistratie</h1><div class="sub">Snel registreren onderweg <b>v1.9</b></div></div></header>
+<header><img src="app_icon.jpg" class="logo" alt=""><div><h1>Kilometerregistratie</h1><div class="sub">Snel registreren & Uren <b>v1.9</b></div></div></header>
 <nav>
   <button class="tabbtn active" data-tab="rit">🚗<br>Rit</button>
+  <button class="tabbtn" data-tab="uren">⏱️<br>Uren</button>
   <button class="tabbtn" data-tab="history">📋<br>Historie</button>
   <button class="tabbtn" data-tab="projects">📁<br>Projecten</button>
-  <button class="tabbtn" data-tab="hours">⏱️<br>Uren</button>
   <button class="tabbtn" data-tab="settings">⚙️<br>Instellingen</button>
 </nav>
 <main>
@@ -119,6 +103,66 @@ details.geoDetails{margin-top:9px;border:1px solid var(--line);border-radius:12p
   </div>
 </section>
 
+<!-- Urenregistratie Tab -->
+<section id="uren" class="tab">
+  <div class="card">
+    <h2>⏱️ Urenregistratie & Periode</h2>
+    <div class="grid" style="align-items:end; gap:10px">
+      <div>
+        <span class="label">Zoek op weeknummer</span>
+        <div class="row">
+          <input id="hoursWeekInput" type="number" min="1" max="53" placeholder="Weeknr (bijv. 38)" style="width:130px">
+          <select id="hoursYearSelect" style="width:110px"></select>
+          <button id="hoursJumpWeekBtn" class="primary small">Zoeken</button>
+        </div>
+      </div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:end">
+        <button id="hoursPrevWeekBtn" class="secondary small">◄ Vorige week</button>
+        <button id="hoursCurrentWeekBtn" class="secondary small">Deze week</button>
+        <button id="hoursNextWeekBtn" class="secondary small">Volgende week ►</button>
+      </div>
+    </div>
+    <div id="hoursPeriodLabel" class="notice" style="margin-top:10px; font-weight:800; color:var(--text)">—</div>
+  </div>
+
+  <div class="card">
+    <div class="row" style="flex-wrap:wrap; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px">
+      <h3 style="margin:0">📊 Totalen & Grafiek</h3>
+      <div id="hoursFilterBtns" class="typeToggle" style="grid-template-columns:repeat(6,auto); gap:4px">
+        <button data-period="week" class="active small">Week</button>
+        <button data-period="month" class="small">Maand</button>
+        <button data-period="3months" class="small">3 Mnd</button>
+        <button data-period="6months" class="small">6 Mnd</button>
+        <button data-period="year" class="small">Jaar</button>
+        <button data-period="ytd" class="small">YTD</button>
+      </div>
+    </div>
+
+    <div class="stats" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat"><small>Deur tot deur</small><b id="uStatDoorToDoor">0.0u</b></div>
+      <div class="stat"><small>Op de klus</small><b id="uStatOnKlus">0.0u</b></div>
+      <div class="stat"><small>Reis baas</small><b id="uStatTravelBetween">0.0u</b></div>
+      <div class="stat"><small>Werktijd (baas)</small><b id="uStatNetWork">0.0u</b></div>
+      <div class="stat"><small>Normale uren</small><b id="uStatNormal">0.0u</b></div>
+      <div class="stat"><small>Overuren</small><b id="uStatOvertime" style="color:var(--green)">0.0u</b></div>
+    </div>
+
+    <div style="margin-top:16px">
+      <div style="display:flex; gap:14px; font-size:12px; font-weight:750; margin-bottom:8px; justify-content:center; flex-wrap:wrap">
+        <span><span style="color:var(--blue)">■</span> Deur tot deur</span>
+        <span><span style="color:var(--gold)">■</span> Op de klus</span>
+        <span><span style="color:var(--green)">■</span> Overuren</span>
+      </div>
+      <div id="hoursChartBox" style="width:100%; overflow-x:auto"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📅 Dagelijks Urenoverzicht</h2>
+    <div id="hoursDailyList" class="list" style="margin-top:10px"></div>
+  </div>
+</section>
+
 <section id="history" class="tab">
   <div class="card"><h2>Geschiedenis</h2><input id="historySearch" class="search" placeholder="Zoek project, klant, kenteken, bestuurder...">
     <div class="stats"><div class="stat"><small>Registraties</small><b id="countStat">0</b></div><div class="stat"><small>Aankomsten</small><b id="arrivalStat">0</b></div><div class="stat"><small>Laatste km</small><b id="lastKmStat">—</b></div></div>
@@ -131,64 +175,24 @@ details.geoDetails{margin-top:9px;border:1px solid var(--line);border-radius:12p
   <div class="card"><h2>Project toevoegen / wijzigen</h2><div class="grid"><div><span class="label">Projectnummer *</span><input id="pNumber"></div><div><span class="label">Klant</span><input id="pCustomer"></div><div><span class="label">Straat / huisnummer</span><input id="pStreet"></div><div><span class="label">Plaats</span><input id="pCity"></div><div><span class="label">RD X (optioneel)</span><input id="pRdX" inputmode="decimal" placeholder="155000"></div><div><span class="label">RD Y (optioneel)</span><input id="pRdY" inputmode="decimal" placeholder="463000"></div><div><span class="label">Latitude</span><input id="pLat" inputmode="decimal"></div><div><span class="label">Longitude</span><input id="pLon" inputmode="decimal"></div></div><div class="actions"><button id="pdokProjectBtn">📍 Adres → locatie (PDOK)</button><button id="saveProjectBtn" class="primary">💾 Project opslaan</button><button id="clearProjectBtn">Wissen</button></div><div id="pGeoStatus" class="statusLine"></div><div id="pGeoResults" class="suggestions"></div></div>
 </section>
 
-<section id="hours" class="tab">
-  <div class="card">
-    <h2>⏱️ Urenregistratie</h2>
-    <p class="muted">De app gebruikt je ritten als basis. Een werkdag loopt standaard van je eerste <b>Aankomst</b> tot je laatste <b>Vertrek</b>. De tijd op de klus is Aankomst → Vertrek; de tijd tussen klussen telt mee in deur-tot-deur.</p>
-    <div class="hoursControls">
-      <div><span class="label">Periode</span>
-        <select id="hoursPeriod">
-          <option value="week">Deze week</option><option value="month">Deze maand</option><option value="3months">3 maanden</option>
-          <option value="6months">6 maanden</option><option value="year">Dit jaar</option><option value="ytd">YTD</option>
-        </select>
-      </div>
-      <div><span class="label">Weeknummer</span><input id="hoursWeekNo" type="number" min="1" max="53" placeholder="bijv. 39"></div>
-      <div><span class="label">Jaar</span><input id="hoursWeekYear" type="number" min="2000" max="2100" placeholder="bijv. 2026"></div>
-    </div>
-    <div class="actions"><button id="hoursApplyWeekBtn" class="secondary">🔎 Week bekijken</button><button id="hoursTodayBtn">📅 Vandaag</button></div>
-  </div>
-
-  <div class="card">
-    <h2 id="hoursPeriodTitle">Overzicht</h2>
-    <div class="hoursStats">
-      <div class="stat"><small>Deur-tot-deur</small><b id="hoursDoorStat">0:00</b></div>
-      <div class="stat"><small>Op de klus</small><b id="hoursSiteStat">0:00</b></div>
-      <div class="stat"><small>Normaal</small><b id="hoursNormalStat">0:00</b></div>
-      <div class="stat"><small>Overuren</small><b id="hoursOverStat">0:00</b></div>
-    </div>
-    <div id="hoursPeriodMeta" class="statusLine"></div>
-  </div>
-
-  <div class="card">
-    <h2>Dagoverzicht</h2>
-    <div id="hoursDays"></div>
-  </div>
-
-  <div class="card">
-    <h2>Grafiek</h2>
-    <p class="muted">Per dag: deur-tot-deur, tijd op de klus en overuren.</p>
-    <div class="chartWrap"><canvas id="hoursChart"></canvas></div>
-    <div class="legend">
-      <span><i style="background:#7fc4ff"></i>Deur-tot-deur</span>
-      <span><i style="background:#74d39b"></i>Op de klus</span>
-      <span><i style="background:#ee8e8e"></i>Overuren</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Uren handmatig aanpassen</h2>
-    <p class="muted">Pas per dag de start/eindtijd aan. Je kunt ook de tijd op de klus handmatig overschrijven. Laat een veld leeg om de automatische berekening uit de ritten te gebruiken.</p>
-    <div id="hoursEditList" class="list"></div>
-  </div>
-</section>
-
 <section id="settings" class="tab">
   <div class="card"><h2>Standaardgegevens</h2><p class="muted">Deze staan bij een nieuwe aankomst automatisch klaar. Een tijdelijke auto wissel je in het rit-scherm.</p><div class="grid"><div><span class="label">Standaardbestuurder</span><input id="defaultDriver"></div><div><span class="label">Standaardkenteken</span><input id="defaultPlate" autocapitalize="characters"></div></div><div id="activeCarSettings" class="carMini">Actieve auto: —</div><div class="actions"><button id="saveDefaultsBtn" class="primary">💾 Opslaan</button></div></div>
+  <div class="card"><h2>⏱️ Urenregistratie instellingen</h2><p class="muted">Standaardnormen voor het automatisch berekenen van werktijd en reistijd.</p><div class="grid"><div><span class="label">Normale werkdag (uur)</span><input id="settingTargetNormal" type="number" step="0.5" value="8.0"></div><div><span class="label">Standaard pauze (min)</span><input id="settingPauseMinutes" type="number" step="5" value="30"></div><div class="full"><span class="label">Geschatte eigen reistijd 1e/laatste rit (min)</span><input id="settingCommuteMinutes" type="number" step="5" value="30"></div></div><div class="actions"><button id="saveHoursSettingsBtn" class="primary">💾 Ureninstellingen opslaan</button></div></div>
   <div class="card"><h2>Weergave</h2><p class="muted">De indeling blijft hetzelfde. Alleen de kleuren veranderen.</p><div class="themeToggle"><button id="themeSystemBtn" data-theme-choice="system">📱 Systeem</button><button id="themeLightBtn" data-theme-choice="light">☀️ Licht</button><button id="themeDarkBtn" data-theme-choice="dark">🌙 Donker</button></div></div>
   <div class="card"><h2>Automatische backup</h2><div id="autoBackupStatus" class="notice backupState"></div><p class="muted">Kies één map. Na iedere opslag of wijziging overschrijft de app daar steeds dezelfde twee bestanden: <b>Kilometerregistratie_backup.json</b> en <b>Kilometerregistratie_export.csv</b>.</p><div class="actions"><button id="backupFolderBtn" class="primary">📁 Backupmap kiezen / wijzigen</button></div><div class="hr"></div><h3>Losse export</h3><p class="muted">Alleen gebruiken als je bewust een extra los bestand wilt maken.</p><div class="actions"><button id="jsonExportBtn">💾 JSON backup</button><button id="csvExportBtn">📊 CSV / Excel</button></div><div class="hr"></div><span class="label">Backup terugzetten</span><input id="importFile" type="file" accept=".json,.csv,.txt"><div class="actions"><button id="importBtn">📥 Bestand controleren</button><button id="replaceImportBtn" class="danger" disabled>Geschiedenis vervangen</button></div><div id="importStatus" class="statusLine"></div></div>
   <div class="card"><h2>Gegevens wissen</h2><div class="actions"><button id="deleteAllBtn" class="danger">🗑️ Alle registraties wissen</button></div></div>
 </section>
 </main>
+
+<!-- Modals -->
+<div id="editHoursModal" class="modal"><div class="sheet"><div class="sheetHead"><div class="row"><div class="grow"><h2 id="editHoursTitle">Uren aanpassen</h2><div id="editHoursSub" class="muted"></div></div><button id="closeHoursModalBtn" class="small">✕</button></div></div><input id="editHoursDate" type="hidden"><div class="grid">
+  <div><span class="label">Eerste vertrek (deur-tot-deur)</span><input id="ehStartTime" type="time"></div><div><span class="label">Laatste aankomst thuis</span><input id="ehEndTime" type="time"></div>
+  <div><span class="label">Tijd op de klus (uren)</span><input id="ehTimeOnKlus" type="number" step="0.25" min="0"></div><div><span class="label">Reistijd tussen klussen (uren)</span><input id="ehTravelBetween" type="number" step="0.25" min="0"></div>
+  <div><span class="label">Pauze (minuten)</span><input id="ehPauseMinutes" type="number" step="5" min="0"></div><div><span class="label">Normale uren norm (uren)</span><input id="ehTargetNormal" type="number" step="0.5" min="0"></div>
+  <div><span class="label">Werktijd override (optioneel)</span><input id="ehManualNetWork" type="number" step="0.25" placeholder="Automatisch"></div><div><span class="label">Overuren override (optioneel)</span><input id="ehManualOvertime" type="number" step="0.25" placeholder="Automatisch"></div>
+  <div class="full"><span class="label">Deur-tot-deur uren (optioneel)</span><input id="ehManualDoorToDoor" type="number" step="0.25" placeholder="Automatisch"></div>
+  <div class="full"><span class="label">Opmerking</span><textarea id="ehNote" placeholder="Bijv. Wachturen op locatie / overwerk geaccordeerd"></textarea></div>
+</div><div class="actions"><button id="saveHoursBtn" class="primary">💾 Uren opslaan</button><button id="resetHoursBtn" class="secondary">🔄 Herstellen naar automatisch</button></div></div></div>
 
 <div id="editModal" class="modal"><div class="sheet"><div class="sheetHead"><div class="row"><div class="grow"><h2>Registratie wijzigen</h2><div id="editTypeLabel" class="muted"></div></div><button id="closeEditBtn" class="small">✕</button></div></div><input id="editId" type="hidden"><div class="grid">
   <div><span class="label">Datum</span><input id="eDate" type="date"></div><div><span class="label">Tijd</span><input id="eTime" type="time"></div>
@@ -198,6 +202,7 @@ details.geoDetails{margin-top:9px;border:1px solid var(--line);border-radius:12p
   <div><span class="label">Plaats</span><input id="eCity"></div><div><span class="label">Reistype</span><select id="eReis"><option>Zakelijk</option><option>Privé</option></select></div>
   <div class="full"><span class="label">Opmerking</span><textarea id="eNote"></textarea></div>
 </div><div class="actions"><button id="saveEditBtn" class="primary">💾 Wijziging opslaan</button><button id="deleteEditBtn" class="danger">🗑️ Verwijderen</button></div></div></div>
+
 <div id="confirmModal" class="modal"><div class="sheet" style="max-height:none"><div class="sheetHead"><h2 id="confirmTitle">Bevestigen</h2></div><div id="confirmText" class="notice" style="font-size:15px;color:var(--text)"></div><div class="actions"><button id="confirmCancelBtn" class="secondary">Annuleren</button><button id="confirmOkBtn" class="danger">Verwijderen</button></div></div></div>
 <div id="carModal" class="modal"><div class="sheet" style="max-height:none"><div class="sheetHead"><div class="row"><div class="grow"><h2>Auto wisselen</h2><div class="muted">Kenteken wisselen is een aparte actie. De locatie blijft ongewijzigd.</div></div><button id="closeCarModalBtn" class="small">✕</button></div></div><div><span class="label">Kenteken</span><input id="switchPlate" list="plateList" autocapitalize="characters" autocomplete="off" placeholder="Kenteken"></div><div style="margin-top:9px"><span class="label">Actuele kilometerstand van deze auto</span><input id="switchKm" inputmode="numeric" pattern="[0-9]*" placeholder="Volledige kilometerstand"></div><div id="switchKmHint" class="statusLine"></div><div class="actions"><button id="cancelCarSwitchBtn" class="secondary">Annuleren</button><button id="confirmCarSwitchBtn" class="primary">✓ Auto activeren</button></div></div></div>
 <div id="toast" class="toast"></div>
@@ -216,18 +221,21 @@ const AUTO_CSV_KEY='kilometerregistratie_auto_csv_v1';
 const AUTO_TIME_KEY='kilometerregistratie_auto_time_v1';
 const AUTO_SUCCESS_TIME_KEY='kilometerregistratie_auto_success_time_v1';
 const AUTO_NATIVE_RESULT_KEY='kilometerregistratie_auto_native_result_v1';
-const HOURS_KEY='kilometerregistratie_hours_v1';
+const HOURS_OVERRIDES_KEY='kilometerregistratie_hours_overrides_v1';
+const HOURS_SETTINGS_KEY='kilometerregistratie_hours_settings_v1';
+
 const $=id=>document.getElementById(id);
 let logs=[],projects=[],reisType='Zakelijk',activeVisit=null,pendingImport=null,lastLocation=null,selectedProjectKey='',rdInputEdited=false,pRdInputEdited=false;
-let hoursOverrides={},hoursView={period:'week',weekNo:null,weekYear:null};
 let nearbyProjectKeys=new Set(),confirmResolver=null;
+let currentWeekYear=new Date().getFullYear(), currentWeekNum=1, currentPeriodFilter='week';
+
 const themeMedia=window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):null;
 const NATIVE_ANDROID=new URLSearchParams(location.search).get('native')==='1';
-
 function nativeCall(cmd,payload=''){if(!NATIVE_ANDROID)return'';try{const r=window.prompt('KMREG:'+cmd,String(payload??''));return r===null?'':String(r)}catch(e){return'ERROR'}}
+
 function pad(n){return String(n).padStart(2,'0')}
 function now(){const d=new Date();return{datum:d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),tijd:pad(d.getHours())+':'+pad(d.getMinutes())}}
-function setNow(dateId,timeId){const n=now();if($(dateId))$(dateId).value=n.datum;if($(timeId))$(timeId).value=n.tijd}
+function setNow(dateId,timeId){const n=now();$(dateId).value=n.datum;$(timeId).value=n.tijd}
 function id(prefix='r'){return prefix+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function nnum(v){if(v===null||v===undefined||String(v).trim()==='')return null;const n=Number(String(v).replace(',','.'));return Number.isFinite(n)?n:null}
@@ -237,16 +245,14 @@ function normProjectKey(v){return String(v||'').trim().toLowerCase()}
 function rdToWgs84(x,y){x=nnum(x);y=nnum(y);if(x===null||y===null)return null;const dx=(x-155000)*1e-5,dy=(y-463000)*1e-5;const lat=52.15517440+(3235.65389*dy-32.58297*dx*dx-0.2475*dy*dy-0.84978*dx*dx*dy-0.0655*dy*dy*dy-0.01709*dx*dx*dy*dy-0.00738*dx+0.0053*Math.pow(dx,4)-0.00039*dx*dx*Math.pow(dy,3)+0.00033*Math.pow(dx,4)*dy-0.00012*dx*dy)/3600;const lon=5.38720621+(5260.52916*dx+105.94684*dx*dy+2.45656*dx*dy*dy-0.81885*Math.pow(dx,3)+0.05594*dx*Math.pow(dy,3)-0.05607*Math.pow(dx,3)*dy+0.01199*dy-0.00256*Math.pow(dx,3)*dy*dy+0.00128*dx*Math.pow(dy,4)+0.00022*dy*dy-0.00022*dx*dx+0.00026*Math.pow(dx,5))/3600;return{lat,lon}}
 function wgs84ToRd(lat,lon){lat=nnum(lat);lon=nnum(lon);if(lat===null||lon===null)return null;const dLat=0.36*(lat-52.15517440),dLon=0.36*(lon-5.38720621);const x=155000+190094.945*dLon-11832.228*dLat*dLon-114.221*dLat*dLat*dLon-32.391*Math.pow(dLon,3)-0.705*dLat-2.340*Math.pow(dLat,3)*dLon-0.608*dLat*Math.pow(dLon,3)-0.008*dLon*dLon+0.148*dLat*dLat*Math.pow(dLon,3);const y=463000+309056.544*dLat+3638.893*dLon*dLon+73.077*dLat*dLat-157.984*dLat*dLon*dLon+59.788*Math.pow(dLat,3)+0.433*dLon-6.439*dLat*dLat*dLon*dLon-0.032*dLat*dLon+0.092*Math.pow(dLon,4)-0.054*dLat*Math.pow(dLon,4);return{rdX:x,rdY:y}}
 function parseWktPoint(v){const m=String(v||'').match(/POINT\s*\(\s*([-+0-9.]+)\s+([-+0-9.]+)\s*\)/i);return m?{a:Number(m[1]),b:Number(m[2])}:null}
-
 async function pdokAddressResults(straat,plaats){const q=[straat,plaats].map(x=>String(x||'').trim()).filter(Boolean).join(' ');if(q.length<3)return[];const url='https://api.pdok.nl/bzk/locatieserver/search/v3_1/free?q='+encodeURIComponent(q)+'&rows=5&fl=weergavenaam,type,centroide_ll,centroide_rd,score&fq='+encodeURIComponent('type:adres');const r=await fetch(url,{method:'GET'});if(!r.ok)throw Error('PDOK '+r.status);const j=await r.json();return((j&&j.response&&j.response.docs)||[]).map(d=>{const ll=parseWktPoint(d.centroide_ll),rd=parseWktPoint(d.centroide_rd);return{label:String(d.weergavenaam||q),lat:ll?ll.b:null,lon:ll?ll.a:null,rdX:rd?rd.a:null,rdY:rd?rd.b:null,score:Number(d.score)||0}}).filter(x=>x.lat!=null&&x.lon!=null)}
 function applyGeoToProject(p,g){return normalizeProject({...p,lat:g.lat,lon:g.lon,rdX:g.rdX,rdY:g.rdY,coordSource:'pdok',updatedAt:Date.now()})}
 async function geocodeProjectTop(p){p=normalizeProject(p);if(p.coordSource==='rd'&&p.rdX!=null&&p.rdY!=null){const ll=rdToWgs84(p.rdX,p.rdY);if(ll)return normalizeProject({...p,...ll,coordSource:'rd'})}if(p.coordSource==='pdok'&&p.lat!=null&&p.lon!=null)return p;if(p.straat||p.plaats){try{const a=await pdokAddressResults(p.straat,p.plaats);if(a.length)return applyGeoToProject(p,a[0])}catch(e){}}if(p.rdX!=null&&p.rdY!=null){const ll=rdToWgs84(p.rdX,p.rdY);if(ll)return normalizeProject({...p,...ll})}return p}
 async function geocodeMissingProjects(limit=20){let changed=false,n=0;for(let i=0;i<projects.length&&n<limit;i++){const p=projects[i];if((p.coordSource==='rd'||p.coordSource==='pdok')&&p.lat!=null&&p.lon!=null)continue;if(!(p.straat||p.plaats))continue;n++;const g=await geocodeProjectTop(p);if(g.lat!=null&&g.lon!=null){projects[i]=g;changed=true}}if(changed)localStorage.setItem(PROJECT_KEY,JSON.stringify(projects));return changed}
 
-function showToast(msg,error=false){const t=$('toast');if(!t)return;t.textContent=msg;t.className='toast show'+(error?' error':'');clearTimeout(showToast.t);showToast.t=setTimeout(()=>t.className='toast',2200)}
+function showToast(msg,error=false){const t=$('toast');t.textContent=msg;t.className='toast show'+(error?' error':'');clearTimeout(showToast.t);showToast.t=setTimeout(()=>t.className='toast',2200)}
 function askConfirm(title,text,okText='Verwijderen'){return new Promise(resolve=>{confirmResolver=resolve;$('confirmTitle').textContent=title;$('confirmText').textContent=text;$('confirmOkBtn').textContent=okText;$('confirmModal').classList.add('show')})}
 function closeConfirm(result){$('confirmModal').classList.remove('show');const r=confirmResolver;confirmResolver=null;if(r)r(result)}
-
 function settings(){try{return JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')||{}}catch(e){return{}}}
 function saveSettings(s){localStorage.setItem(SETTINGS_KEY,JSON.stringify(s))}
 function themeChoice(){return String(settings().theme||'system')}
@@ -254,111 +260,39 @@ function applyTheme(){const c=themeChoice(),dark=c==='dark'||(c==='system'&&them
 function setThemeChoice(v){saveSettings({...settings(),theme:v});applyTheme();makeAutoSnapshot();showToast('✓ Weergave opgeslagen')}
 if(themeMedia&&themeMedia.addEventListener)themeMedia.addEventListener('change',()=>{if(themeChoice()==='system')applyTheme()})
 
-function hoursSettings(){const s=settings();return{day:Number.isFinite(Number(s.normalHoursDay))?Number(s.normalHoursDay):8,week:Number.isFinite(Number(s.normalHoursWeek))?Number(s.normalHoursWeek):40}}
-function loadHoursOverrides(){try{const x=JSON.parse(localStorage.getItem(HOURS_KEY)||'{}');hoursOverrides=x&&typeof x==='object'?x:{}}catch(e){hoursOverrides={}}}
-function saveHoursOverrides(){localStorage.setItem(HOURS_KEY,JSON.stringify(hoursOverrides));makeAutoSnapshot()}
-function dateObj(ds){const [y,m,d]=String(ds).split('-').map(Number);return new Date(y,m-1,d)}
-function isoDate(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
-function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
-function mondayOf(d){const x=new Date(d);const day=x.getDay()||7;x.setDate(x.getDate()-(day-1));x.setHours(0,0,0,0);return x}
-function isoWeekInfo(ds){const d=dateObj(ds);const thu=new Date(d);const day=thu.getDay()||7;thu.setDate(thu.getDate()+4-day);const year=thu.getFullYear();const jan4=new Date(year,0,4);const week=1+Math.round(((thu-jan4)/86400000-3)/7);return{year,week}}
-function weekDates(year,week){const jan4=new Date(year,0,4),m=mondayOf(jan4);return{start:addDays(m,(week-1)*7),end:addDays(m,(week-1)*7+6)}}
-function minutesBetween(date1,time1,date2,time2){const a=Date.parse(date1+'T'+time1),b=Date.parse(date2+'T'+time2);return Number.isFinite(a)&&Number.isFinite(b)?Math.max(0,Math.round((b-a)/60000)):0}
-function pairDayLogs(ds){const day=logs.filter(x=>x.datum===ds).sort((a,b)=>logTime(a)-logTime(b));const arrivals=day.filter(x=>x.type==='Aankomst'),deps=day.filter(x=>x.type==='Vertrek');return{day,arrivals,deps}}
-
-function autoDayHours(ds){
-  const {arrivals,deps}=pairDayLogs(ds);
-  if(!arrivals.length&&!deps.length)return null;
-  const first=arrivals[0],last=deps.length?deps[deps.length-1]:null;
-  let site=0;
-  const byVisit=new Map();
-  arrivals.forEach(a=>byVisit.set(a.visitId||a.id,a));
-  deps.forEach(d=>{const a=byVisit.get(d.visitId||'');if(a)site+=minutesBetween(a.datum,a.tijd,d.datum,d.tijd)});
-  let door=0;
-  if(first&&last)door=minutesBetween(first.datum,first.tijd,last.datum,last.tijd);
-  else if(first)door=0;
-  return{date:ds,start:first?.tijd||'',end:last?.tijd||'',door,site,between:Math.max(0,door-site),source:first&&last?'ritten':'onvolledig'};
-}
-
-function dayHours(ds){
-  const a=autoDayHours(ds);if(!a)return null;
-  const o=hoursOverrides[ds]||{};
-  const start=o.start||a.start,end=o.end||a.end;
-  let door=(o.door!==''&&o.door!=null)?Math.max(0,Number(o.door)):minutesBetween(ds,start,ds,end);
-  let site=(o.site!==''&&o.site!=null)?Math.max(0,Number(o.site)):a.site;
-  const normal=Math.min(door,hoursSettings().day*60),over=Math.max(0,door-hoursSettings().day*60);
-  return{...a,start,end,door,site,between:Math.max(0,door-site),normal,over,manual:!!(o.start||o.end||o.door!==undefined||o.site!==undefined)};
-}
-
-function dateRange(start,end){const out=[];for(let d=new Date(start);d<=end;d=addDays(d,1))out.push(isoDate(d));return out}
-function periodRange(kind){
-  const today=new Date();today.setHours(0,0,0,0);
-  if(kind==='week'){const s=mondayOf(today);return{s,end:addDays(s,6),label:'Week '+isoWeekInfo(isoDate(today)).week+' · '+today.getFullYear()}}
-  if(kind==='month')return{s:new Date(today.getFullYear(),today.getMonth(),1),end:new Date(today.getFullYear(),today.getMonth()+1,0),label:today.toLocaleString('nl-NL',{month:'long',year:'numeric'})};
-  if(kind==='3months'){const s=new Date(today.getFullYear(),today.getMonth()-2,1);return{s,end:new Date(today.getFullYear(),today.getMonth()+1,0),label:'Laatste 3 maanden'}};
-  if(kind==='6months'){const s=new Date(today.getFullYear(),today.getMonth()-5,1);return{s,end:new Date(today.getFullYear(),today.getMonth()+1,0),label:'Laatste 6 maanden'}};
-  if(kind==='year'){return{s:new Date(today.getFullYear(),0,1),end:new Date(today.getFullYear(),11,31),label:'Jaar '+today.getFullYear()}};
-  return{s:new Date(today.getFullYear(),0,1),end:today,label:'YTD '+today.getFullYear()};
-}
-
-function hoursCurrentDates(){
-  if(hoursView.period==='specificWeek'&&hoursView.weekNo&&hoursView.weekYear){const r=weekDates(hoursView.weekYear,hoursView.weekNo);return{...r,label:'Week '+hoursView.weekNo+' · '+hoursView.weekYear}}
-  return periodRange(hoursView.period);
-}
-
-function fmtMin(m){m=Math.max(0,Math.round(Number(m)||0));return Math.floor(m/60)+':'+pad(m%60)}
-function hoursDaysForRange(){const r=hoursCurrentDates(),dates=dateRange(r.start,r.end);return dates.map(d=>dayHours(d)).filter(Boolean)}
-function hoursTotals(days){return days.reduce((a,d)=>{a.door+=d.door;a.site+=d.site;a.normal+=d.normal;a.over+=d.over;return a},{door:0,site:0,normal:0,over:0})}
-
-function renderHoursEditList(days){
-  const box=$('hoursEditList'); if(!box)return;
-  box.innerHTML=days.length?days.map(d=>{const o=hoursOverrides[d.date]||{};return `<div class="item"><div class="itemTitle">${new Date(d.date+'T12:00').toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'})}</div><div class="itemMeta">Automatisch: ${d.start||'—'} → ${d.end||'—'} · ${fmtMin(autoDayHours(d.date)?.site||0)} op klus</div><div class="hoursDayEdit" style="margin-top:8px"><div><span class="label">Start</span><input class="hStart" data-date="${d.date}" type="time" value="${esc(o.start||'')}"></div><div><span class="label">Einde</span><input class="hEnd" data-date="${d.date}" type="time" value="${esc(o.end||'')}"></div><div><span class="label">Op klus (min)</span><input class="hSite" data-date="${d.date}" type="number" min="0" step="5" value="${o.site!==undefined?esc(o.site):''}" placeholder="auto"></div></div><div class="actions"><button class="secondary clearDayOverride" data-date="${d.date}">↩ Automatisch</button></div></div>`}).join(''):'<div class="empty">Geen werkdagen in deze periode.</div>';
-}
-
-function renderHours(){
-  const sel=$('hoursPeriod');if(!sel)return;
-  if(hoursView.period!=='specificWeek')sel.value=hoursView.period;
-  const r=hoursCurrentDates(),days=hoursDaysForRange(),t=hoursTotals(days),hs=hoursSettings();
-  const wi=isoWeekInfo(isoDate(new Date()));if(!$('hoursWeekNo').value)$('hoursWeekNo').value=wi.week;if(!$('hoursWeekYear').value)$('hoursWeekYear').value=wi.year;
-  
-  $('hoursPeriodTitle').textContent=r.label;
-  $('hoursDoorStat').textContent=fmtMin(t.door);$('hoursSiteStat').textContent=fmtMin(t.site);
-  const summaryNormal=hoursView.period==='specificWeek'?Math.min(t.door,hs.week*60):t.normal;
-  const summaryOver=hoursView.period==='specificWeek'?Math.max(0,t.door-hs.week*60):t.over;
-  $('hoursNormalStat').textContent=fmtMin(summaryNormal);$('hoursOverStat').textContent=fmtMin(summaryOver);
-  $('hoursPeriodMeta').textContent=days.length+' werkdag(en) gevonden · dagelijkse norm '+hs.day+' u · weeknorm '+hs.week+' u';
-  $('hoursDays').innerHTML=days.length?`<div style="overflow:auto"><table class="hoursTable"><thead><tr><th>Dag</th><th>Start–einde</th><th class="num">Deur-deur</th><th class="num">Klus</th><th class="num">Tussen klussen</th><th class="num">Normaal</th><th class="num">Over</th></tr></thead><tbody>${days.map(d=>`<tr class="${d.over?'hoursRowOver':''}"><td>${new Date(d.date+'T12:00').toLocaleDateString('nl-NL',{weekday:'short',day:'2-digit',month:'2-digit'})}</td><td>${d.start||'—'} – ${d.end||'—'}${d.manual?' ✏️':''}</td><td class="num">${fmtMin(d.door)}</td><td class="num">${fmtMin(d.site)}</td><td class="num">${fmtMin(d.between)}</td><td class="num">${fmtMin(d.normal)}</td><td class="num">${fmtMin(d.over)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Geen werkdagen in deze periode.</div>';
-  renderHoursEditList(days);drawHoursChart(days,r);
-}
-
-function drawHoursChart(days,r){
-  const c=$('hoursChart');if(!c)return;const rect=c.getBoundingClientRect(),dpr=window.devicePixelRatio||1,w=Math.max(300,rect.width),h=Math.max(220,rect.height);c.width=w*dpr;c.height=h*dpr;const ctx=c.getContext('2d');ctx.scale(dpr,dpr);
-  const cs=getComputedStyle(document.documentElement),text=cs.getPropertyValue('--text').trim(),muted=cs.getPropertyValue('--muted').trim(),line=cs.getPropertyValue('--line').trim();
-  ctx.clearRect(0,0,w,h);ctx.fillStyle=cs.getPropertyValue('--input').trim();ctx.fillRect(0,0,w,h);
-  if(!days.length){ctx.fillStyle=muted;ctx.font='14px system-ui';ctx.textAlign='center';ctx.fillText('Geen gegevens voor deze periode',w/2,h/2);return}
-  const max=Math.max(60,...days.map(d=>Math.max(d.door,d.site,d.over))),left=42,right=10,top=18,bottom=45,pw=w-left-right,ph=h-top-bottom;
-  ctx.strokeStyle=line;ctx.lineWidth=1;ctx.font='10px system-ui';ctx.fillStyle=muted;ctx.textAlign='right';
-  for(let i=0;i<=4;i++){const val=max*i/4,y=top+ph-(val/max)*ph;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(w-right,y);ctx.stroke();ctx.fillText((val/60).toFixed(1)+'u',left-5,y+3)}
-  const group=pw/days.length,bar=Math.min(18,Math.max(5,group*.22));
-  days.forEach((d,i)=>{const x=left+i*group+group/2;[['#7fc4ff',d.door,-bar],['#74d39b',d.site,0],['#ee8e8e',d.over,bar]].forEach(([col,val,off])=>{const bh=(val/max)*ph;ctx.fillStyle=col;ctx.fillRect(x+off-bar/2,top+ph-bh,bar,bh)});ctx.fillStyle=muted;ctx.textAlign='center';const lab=d.date.slice(8);if(days.length<=14||i%Math.ceil(days.length/14)===0)ctx.fillText(lab,x,h-20)});
-  ctx.fillStyle=text;ctx.font='11px system-ui';ctx.textAlign='left';ctx.fillText('dag',left,h-6);
-}
-
-function setHoursWeekFromInputs(){
-  const no=Math.max(1,Math.min(53,Number($('hoursWeekNo').value)||isoWeekInfo(isoDate(new Date())).week));
-  const yr=Math.max(2000,Math.min(2100,Number($('hoursWeekYear').value)||new Date().getFullYear()));
-  hoursView={period:'specificWeek',weekNo:no,weekYear:yr};renderHours();
-}
-function saveDayOverride(date){
-  const o={...(hoursOverrides[date]||{})},s=document.querySelector('.hStart[data-date="'+date+'"]'),e=document.querySelector('.hEnd[data-date="'+date+'"]'),site=document.querySelector('.hSite[data-date="'+date+'"]');
-  if(s)o.start=s.value; if(e)o.end=e.value; if(site){if(site.value==='')delete o.site;else o.site=Math.max(0,Number(site.value)||0)}
-  if(!o.start)delete o.start;if(!o.end)delete o.end;
-  if(Object.keys(o).length)hoursOverrides[date]=o;else delete hoursOverrides[date];saveHoursOverrides();renderHours();
-}
-function clearDayOverride(date){delete hoursOverrides[date];saveHoursOverrides();renderHours()}
+function getHoursSettings(){try{return JSON.parse(localStorage.getItem(HOURS_SETTINGS_KEY)||'{}')||{}}catch(e){return{}}}
+function saveHoursSettings(s){localStorage.setItem(HOURS_SETTINGS_KEY,JSON.stringify(s))}
+function getHoursOverrides(){try{return JSON.parse(localStorage.getItem(HOURS_OVERRIDES_KEY)||'{}')||{}}catch(e){return{}}}
+function saveHoursOverrides(o){localStorage.setItem(HOURS_OVERRIDES_KEY,JSON.stringify(o))}
 
 function normalizeProject(x){let rdX=nnum(x.rdX??x.rdx??x.x),rdY=nnum(x.rdY??x.rdy??x.y),lat=nnum(x.lat??x.latitude),lon=nnum(x.lon??x.longitude),coordSource=String(x.coordSource||x.locationSource||'legacy').trim().toLowerCase()||'legacy';if((lat===null||lon===null)&&rdX!==null&&rdY!==null){const ll=rdToWgs84(rdX,rdY);if(ll){lat=ll.lat;lon=ll.lon}}if((rdX===null||rdY===null)&&lat!==null&&lon!==null){const rd=wgs84ToRd(lat,lon);if(rd){rdX=rd.rdX;rdY=rd.rdY}}return{project:String(x.project||x.projectnummer||'').trim(),klant:String(x.klant||'').trim(),straat:String(x.straat||'').trim(),plaats:String(x.plaats||'').trim(),lat,lon,rdX,rdY,coordSource,updatedAt:Number(x.updatedAt)||Date.now()}}
 function normalizeLog(x,i=0){const n=now(),km=nnum(x.km??x.kilometerstand),p=normalizeProject(x);return{id:String(x.id||id()),visitId:String(x.visitId||''),type:String(x.type||x.logtype||'Aankomst'),reisType:String(x.reisType||x.reistype||'Zakelijk'),datum:String(x.datum||n.datum).slice(0,10),tijd:/^([01]\d|2[0-3]):[0-5]\d$/.test(String(x.tijd||''))?String(x.tijd).slice(0,5):n.tijd,km:km===null?0:km,kenteken:normPlate(x.kenteken||x.plate),bestuurder:String(x.bestuurder||x.driver||'').trim(),klant:p.klant,project:p.project,straat:p.straat,plaats:p.plaats,lat:p.lat,lon:p.lon,rdX:p.rdX,rdY:p.rdY,opmerking:String(x.opmerking||'').trim(),createdAt:Number(x.createdAt)||Date.now()+i}}
+
+// ISO Week helpers
+function getISOWeekDetails(dObj){
+  const d=new Date(dObj.getTime());
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate()+3-(d.getDay()+6)%7);
+  const week1=new Date(d.getFullYear(),0,4);
+  const weekNum=1+Math.round(((d-week1)/86400000-3+(week1.getDay()+6)%7)/7);
+  return{year:d.getFullYear(),week:weekNum};
+}
+
+function getWeekDateRange(year,weekNum){
+  const simple=new Date(year,0,1+(weekNum-1)*7);
+  const dow=simple.getDay();
+  const ISOweekStart=new Date(simple);
+  if(dow<=4) ISOweekStart.setDate(simple.getDate()-simple.getDay()+1);
+  else ISOweekStart.setDate(simple.getDate()+8-simple.getDay());
+  
+  const dates=[];
+  for(let i=0;i<7;i++){
+    const d=new Date(ISOweekStart);
+    d.setDate(d.getDate()+i);
+    dates.push(d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()));
+  }
+  return dates;
+}
 
 function load(){
   applyTheme();
@@ -366,7 +300,14 @@ function load(){
   let pp=[];try{pp=JSON.parse(localStorage.getItem(PROJECT_KEY)||'[]')||[]}catch(e){}if(!pp.length){try{pp=JSON.parse(localStorage.getItem(LEGACY_PROJECT_KEY)||'[]')||[]}catch(e){}}
   projects=pp.map(normalizeProject).filter(p=>p.project);
   if(!localStorage.getItem(SETTINGS_KEY)&&localStorage.getItem(LEGACY_SETTINGS_KEY)){try{saveSettings(JSON.parse(localStorage.getItem(LEGACY_SETTINGS_KEY)||'{}'))}catch(e){}}
-  syncProjectsFromLogs();rebuildActiveFromHistory();applyDefaults();loadHoursOverrides();setNow('arrivalDate','arrivalTime');setNow('departureDate','departureTime');renderAll();
+  
+  const todayWeek=getISOWeekDetails(new Date());
+  currentWeekYear=todayWeek.year;
+  currentWeekNum=todayWeek.week;
+
+  syncProjectsFromLogs();rebuildActiveFromHistory();applyDefaults();setNow('arrivalDate','arrivalTime');setNow('departureDate','departureTime');
+  populateYearSelect();
+  renderAll();
 }
 
 function rebuildActiveFromHistory(){const last=[...logs].sort((a,b)=>`${b.datum}T${b.tijd}`.localeCompare(`${a.datum}T${a.tijd}`)||b.createdAt-a.createdAt)[0]||null;activeVisit=last&&last.type==='Aankomst'?{arrivalId:last.id,visitId:last.visitId||''}:null;saveActive();return activeVisit}
@@ -374,29 +315,34 @@ function saveActive(){activeVisit?localStorage.setItem(ACTIVE_KEY,JSON.stringify
 function projectByNumber(num){const k=normProjectKey(num);return projects.find(p=>normProjectKey(p.project)===k)||null}
 function upsertProject(p){p=normalizeProject(p);if(!p.project)return null;const k=normProjectKey(p.project),old=projectByNumber(p.project);const merged=normalizeProject({...old,...p,klant:p.klant||old?.klant||'',straat:p.straat||old?.straat||'',plaats:p.plaats||old?.plaats||'',lat:p.lat??old?.lat??null,lon:p.lon??old?.lon??null,rdX:p.rdX??old?.rdX??null,rdY:p.rdY??old?.rdY??null,updatedAt:Date.now()});projects=projects.filter(x=>normProjectKey(x.project)!==k);projects.push(merged);localStorage.setItem(PROJECT_KEY,JSON.stringify(projects));return merged}
 function syncProjectsFromLogs(){const map=new Map(projects.map(p=>[normProjectKey(p.project),p]));[...logs].sort((a,b)=>a.createdAt-b.createdAt).forEach(x=>{if(!x.project)return;const k=normProjectKey(x.project),o=map.get(k)||{};map.set(k,normalizeProject({...o,project:x.project,klant:x.klant||o.klant,straat:x.straat||o.straat,plaats:x.plaats||o.plaats,lat:x.lat??o.lat,lon:x.lon??o.lon,rdX:x.rdX??o.rdX,rdY:x.rdY??o.rdY,updatedAt:x.createdAt}))});projects=[...map.values()];localStorage.setItem(PROJECT_KEY,JSON.stringify(projects))}
-
 function rows(){const a=[...logs].sort((a,b)=>`${a.datum}T${a.tijd}`.localeCompare(`${b.datum}T${b.tijd}`)||a.createdAt-b.createdAt);return[['Datum','Tijd','Logtype','Reistype','Kilometerstand','Kenteken','Bestuurder','Klant','Projectnummer','Straat','Plaats','Latitude','Longitude','RD X','RD Y','Opmerking'],...a.map(x=>[x.datum,x.tijd,x.type,x.reisType,x.km,x.kenteken,x.bestuurder,x.klant,x.project,x.straat,x.plaats,x.lat??'',x.lon??'',x.rdX??'',x.rdY??'',x.opmerking])]}
 function csvText(){return '\ufeff'+rows().map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n')}
-function backupObject(){return{app:'Kilometerregistratie',version:'1.9',exportedAt:new Date().toISOString(),settings:settings(),projects,activeVisit,hoursOverrides,logs}}
+function backupObject(){return{app:'Kilometerregistratie',version:'1.9',exportedAt:new Date().toISOString(),settings:settings(),projects,activeVisit,logs,hoursOverrides:getHoursOverrides(),hoursSettings:getHoursSettings()}}
 function backupJson(){return JSON.stringify(backupObject(),null,2)}
-
 function makeAutoSnapshot(){const j=backupJson(),c=csvText(),stamp=new Date().toISOString();try{localStorage.setItem(AUTO_JSON_KEY,j);localStorage.setItem(AUTO_CSV_KEY,c);localStorage.setItem(AUTO_TIME_KEY,stamp)}catch(e){}let result={external:false,ok:true,status:'INTERNAL'};if(NATIVE_ANDROID){const folder=nativeCall('BACKUP_STATUS');if(folder&&folder!=='ERROR'&&folder!=='NO_FOLDER'){const r1=nativeCall('AUTO_JSON',j),r2=nativeCall('AUTO_CSV',c),nr=r1+'|'+r2;localStorage.setItem(AUTO_NATIVE_RESULT_KEY,nr);result={external:true,ok:nr==='OK|OK',status:nr};if(result.ok)localStorage.setItem(AUTO_SUCCESS_TIME_KEY,stamp)}else{localStorage.setItem(AUTO_NATIVE_RESULT_KEY,'NO_FOLDER');result={external:true,ok:false,status:'NO_FOLDER'}}}renderBackupStatus();return result}
 function saveLogs(){localStorage.setItem(KEY,JSON.stringify(logs));syncProjectsFromLogs();rebuildActiveFromHistory();const b=makeAutoSnapshot();renderAll();return b}
 
-function renderBackupStatus(){const internalIso=localStorage.getItem(AUTO_TIME_KEY),successIso=localStorage.getItem(AUTO_SUCCESS_TIME_KEY),folder=NATIVE_ANDROID?nativeCall('BACKUP_STATUS'):'',nr=localStorage.getItem(AUTO_NATIVE_RESULT_KEY)||'';const box=$('autoBackupStatus');if(!box)return;let s='';box.classList.remove('ok','bad');if(NATIVE_ANDROID&&folder&&folder!=='ERROR'&&folder!=='NO_FOLDER'){if(nr==='OK|OK'&&successIso){s='✓ Automatische backup actief. JSON + CSV zijn bevestigd bijgewerkt: '+new Date(successIso).toLocaleString('nl-NL');box.classList.add('ok')}else{s='⚠ Backupmap is ingesteld, maar de laatste externe backup is nog niet bevestigd.';box.classList.add('bad')}}else if(NATIVE_ANDROID){s='⚠ Nog geen backupmap ingesteld. Kies één keer een lokale map; daarna worden dezelfde JSON + CSV overschreven.';box.classList.add('bad')}else{s='Automatische externe backup is alleen beschikbaar in de Android-app.';if(internalIso)s+=' Interne snapshot: '+new Date(internalIso).toLocaleString('nl-NL')}box.textContent=s}
+function renderBackupStatus(){const internalIso=localStorage.getItem(AUTO_TIME_KEY),successIso=localStorage.getItem(AUTO_SUCCESS_TIME_KEY),folder=NATIVE_ANDROID?nativeCall('BACKUP_STATUS'):'',nr=localStorage.getItem(AUTO_NATIVE_RESULT_KEY)||'';const box=$('autoBackupStatus');let s='';box.classList.remove('ok','bad');if(NATIVE_ANDROID&&folder&&folder!=='ERROR'&&folder!=='NO_FOLDER'){if(nr==='OK|OK'&&successIso){s='✓ Automatische backup actief. JSON + CSV zijn bevestigd bijgewerkt: '+new Date(successIso).toLocaleString('nl-NL');box.classList.add('ok')}else{s='⚠ Backupmap is ingesteld, maar de laatste externe backup is nog niet bevestigd.';box.classList.add('bad')}}else if(NATIVE_ANDROID){s='⚠ Nog geen backupmap ingesteld. Kies één keer een lokale map.';box.classList.add('bad')}else{s='Automatische externe backup is alleen beschikbaar in de Android-app.';if(internalIso)s+=' Interne snapshot: '+new Date(internalIso).toLocaleString('nl-NL')}box.textContent=s}
 
 function activePlate(){const s=settings();return normPlate(s.activePlate||s.defaultPlate||'')}
 function carBases(){const s=settings();return s.carKmBases&&typeof s.carKmBases==='object'?s.carKmBases:{}}
 function setCarBase(plate,km){plate=normPlate(plate);if(!plate||!Number.isFinite(Number(km)))return;const s=settings(),bases={...(s.carKmBases||{})};bases[plate]={km:Number(km),at:Date.now()};saveSettings({...s,activePlate:plate,carKmBases:bases})}
-function applyDefaults(){const s=settings(),ap=activePlate();$('plate').value=ap;$('driver').value=s.defaultDriver||'';$('defaultPlate').value=normPlate(s.defaultPlate||'');$('defaultDriver').value=s.defaultDriver||'';if($('activeCarSettings'))$('activeCarSettings').textContent='Actieve auto: '+(ap||'nog niet ingesteld');applyTheme()}
+function applyDefaults(){
+  const s=settings(),ap=activePlate(),hs=getHoursSettings();
+  $('plate').value=ap;$('driver').value=s.defaultDriver||'';$('defaultPlate').value=normPlate(s.defaultPlate||'');$('defaultDriver').value=s.defaultDriver||'';
+  if($('settingTargetNormal')) $('settingTargetNormal').value=hs.targetNormal||8.0;
+  if($('settingPauseMinutes')) $('settingPauseMinutes').value=hs.pauseMinutes||30;
+  if($('settingCommuteMinutes')) $('settingCommuteMinutes').value=hs.commuteMinutes||30;
+  if($('activeCarSettings'))$('activeCarSettings').textContent='Actieve auto: '+(ap||'nog niet ingesteld');
+  applyTheme();
+}
+
 function allDrivers(){return[...new Set([settings().defaultDriver,...logs.map(x=>x.bestuurder)].map(x=>String(x||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'nl'))}
 function allPlates(){return[...new Set([settings().defaultPlate,activePlate(),...Object.keys(carBases()),...logs.map(x=>x.kenteken)].map(normPlate).filter(Boolean))].sort()}
 function latestForPlate(plate){plate=normPlate(plate);if(!plate)return null;const log=[...logs].filter(x=>x.type==='Aankomst'&&normPlate(x.kenteken)===plate&&Number.isFinite(Number(x.km))).sort((a,b)=>`${b.datum}T${b.tijd}`.localeCompare(`${a.datum}T${a.tijd}`)||b.createdAt-a.createdAt)[0]||null,b=carBases()[plate];if(b&&Number.isFinite(Number(b.km))&&(!log||Number(b.at||0)>Number(log.createdAt||0)))return{km:Number(b.km),createdAt:Number(b.at)||0,kenteken:plate,type:'Basis'};return log}
-
 function smartKm(){const raw=$('km').value.trim().replace(/\D/g,''),last=latestForPlate($('plate').value);if(!raw)return{value:null,mode:'empty',last};const n=Number(raw);if(!Number.isFinite(n))return{value:null,mode:'bad',last};if(raw.length<=3){if(!last)return{value:null,mode:'needfull',last,raw};let cand=Math.floor(Number(last.km)/1000)*1000+n;if(cand<Number(last.km))cand+=1000;return{value:cand,mode:'smart',last,raw}}return{value:n,mode:'full',last,raw}}
 function updateKm(){const k=smartKm(),plate=normPlate($('plate').value);$('kmLast').textContent=k.last?'Laatste '+plate+': '+Number(k.last.km).toLocaleString('nl-NL')+' km':plate?'Nog geen kilometerhistorie voor '+plate:'Kies of vul eerst een kenteken';if(k.mode==='empty'){$('kmResult').textContent='Vul kilometerstand in';$('kmResult').className='big';$('kmExplain').textContent='Typ de laatste 3 cijfers, of de volledige stand.'}else if(k.mode==='needfull'){$('kmResult').textContent='Volledige stand nodig';$('kmResult').className='big bad';$('kmExplain').textContent='Deze auto is nog niet bekend. Vul bijvoorbeeld 152684 in.'}else if(k.value!==null){$('kmResult').textContent=Number(k.value).toLocaleString('nl-NL')+' km';$('kmResult').className='big';$('kmExplain').textContent=k.mode==='smart'?'Je typte '+k.raw+' → dit wordt opgeslagen. Klopt het niet? Typ dan de volledige stand.':'Volledige kilometerstand wordt zo opgeslagen.'}updateDock()}
 function setReis(v){reisType=v;$('businessBtn').classList.toggle('active',v==='Zakelijk');$('privateBtn').classList.toggle('active',v==='Privé')}
-
 function fillProject(p){if(!p)return;rdInputEdited=false;selectedProjectKey=normProjectKey(p.project);$('projectInput').value=p.project;$('customer').value=p.klant||'';$('street').value=p.straat||'';$('city').value=p.plaats||'';$('rdX').value=p.rdX??'';$('rdY').value=p.rdY??'';$('newProjectHint').style.display='none';renderProjectSuggestions();updateNavigate();updateDock()}
 function currentProjectDraft(){const known=projectByNumber($('projectInput').value),rdX=nnum($('rdX').value),rdY=nnum($('rdY').value),manualRd=rdInputEdited&&rdX!==null&&rdY!==null;return normalizeProject({project:$('projectInput').value,klant:$('customer').value,straat:$('street').value,plaats:$('city').value,rdX:rdX??known?.rdX??null,rdY:rdY??known?.rdY??null,lat:manualRd?null:(known?.lat??null),lon:manualRd?null:(known?.lon??null),coordSource:manualRd?'rd':(known?.coordSource||'legacy')})}
 function projectHay(p){return[p.project,p.klant,p.straat,p.plaats].join(' ').toLowerCase()}
@@ -405,432 +351,505 @@ function logTime(x){const t=Date.parse(String(x.datum||'')+'T'+String(x.tijd||'0
 function recentProjectStats(){const cutoff=Date.now()-35*24*60*60*1000,map=new Map();logs.filter(x=>x.type==='Aankomst'&&x.project&&logTime(x)>=cutoff).forEach(x=>{const k=normProjectKey(x.project),o=map.get(k)||{count:0,last:0};o.count++;o.last=Math.max(o.last,logTime(x));map.set(k,o)});return map}
 function recentProjects5Weeks(){const st=recentProjectStats();return projects.filter(p=>st.has(normProjectKey(p.project))).sort((a,b)=>{const A=st.get(normProjectKey(a.project)),B=st.get(normProjectKey(b.project));return B.count-A.count||B.last-A.last||a.project.localeCompare(b.project,'nl')})}
 function sortedProjects(q=''){q=q.trim().toLowerCase();const st=recentProjectStats();return[...projects].filter(p=>!q||projectHay(p).includes(q)).sort((a,b)=>{const A=st.get(normProjectKey(a.project)),B=st.get(normProjectKey(b.project));return (B?.count||0)-(A?.count||0)||(B?.last||0)-(A?.last||0)||a.project.localeCompare(b.project,'nl')})}
-
 function projectSuggestionHtml(p,near=false){const addr=[p.straat,p.plaats].filter(Boolean).join(', ');let d='';if(near&&lastLocation){const m=distanceMeters(lastLocation,p);if(m!=null)d='<span class="nearTag">'+(m<1000?Math.round(m)+' m':(m/1000).toFixed(1)+' km')+'</span>'}return'<div class="suggestion projectChoice" data-project="'+esc(p.project)+'"><div class="sTitle">'+esc(p.project)+(p.klant?' — '+esc(p.klant):'')+d+'</div><div class="sMeta">'+esc(addr||'Geen adres opgeslagen')+'</div></div>'}
 function renderProjectSuggestions(){const q=$('projectInput').value.trim(),known=projectByNumber(q),box=$('projectSuggestions');if(known&&selectedProjectKey!==normProjectKey(known.project)){selectedProjectKey=normProjectKey(known.project);$('customer').value=known.klant||'';$('street').value=known.straat||'';$('city').value=known.plaats||'';$('rdX').value=known.rdX??'';$('rdY').value=known.rdY??''}if(!known&&selectedProjectKey&&normProjectKey(q)!==selectedProjectKey)selectedProjectKey='';let arr=[];if(!(known&&normProjectKey(q)===normProjectKey(known.project))){arr=(q?sortedProjects(q):recentProjects5Weeks()).filter(p=>!nearbyProjectKeys.has(normProjectKey(p.project))).slice(0,q?20:50)}box.classList.toggle('recentScroll',!q&&arr.length>0);box.innerHTML=arr.length?'<div class="label">'+(q?'Zoekresultaten':'Recent gebruikt · laatste 5 weken · meest gebruikt bovenaan')+'</div>'+arr.map(p=>projectSuggestionHtml(p)).join(''):'';const hint=$('newProjectHint');if(q&&!known){hint.style.display='block';hint.textContent='Nieuw project '+q+' — wordt bij Aankomst automatisch aan Projecten toegevoegd.'}else hint.style.display='none';updateNavigate();updateDock()}
-
 function renderNearby(){nearbyProjectKeys.clear();if(!lastLocation){$('nearbyBox').innerHTML='';renderProjectSuggestions();return}const a=projects.map(p=>({p,m:distanceMeters(lastLocation,p)})).filter(x=>x.m!=null).sort((a,b)=>a.m-b.m).filter(x=>x.m<=5000).slice(0,4);if(!a.length){$('nearbyBox').innerHTML='<div class="notice">Geen project met bekende locatie in de buurt.</div>';renderProjectSuggestions();return}const close=a.filter(x=>x.m<=1200);const use=close.length?close:a.slice(0,2);use.forEach(x=>nearbyProjectKeys.add(normProjectKey(x.p.project)));$('nearbyBox').innerHTML='<div class="label">Dichtstbijzijnde projecten</div>'+use.map(x=>projectSuggestionHtml(x.p,true)).join('');renderProjectSuggestions()}
-async function setNearbyLocation(lat,lon){const st=$('locationStatus');lat=Number(lat);lon=Number(lon);if(!Number.isFinite(lat)||!Number.isFinite(lon)){st.textContent='Locatie kon niet worden gebruikt. Je kunt het project gewoon typen of zoeken.';st.className='statusLine warning';return}lastLocation={lat,lon};st.textContent='Locatie gevonden. Projectlocaties aanvullen via PDOK…';st.className='statusLine';try{await geocodeMissingProjects(20)}catch(e){}st.textContent='✓ Locatie gevonden';st.className='statusLine success';renderNearby();renderLists()}
-function detectNearby(){const st=$('locationStatus');st.textContent='Locatie bepalen…';st.className='statusLine';if(NATIVE_ANDROID){const r=nativeCall('LOCATION');if(r==='PERMISSION_REQUESTED'){st.textContent='Geef locatie-toestemming. Daarna zoekt de app opnieuw.';return}if(r==='NO_LOCATION'){st.textContent='Nog geen telefoonlocatie beschikbaar. Zet locatie aan en probeer opnieuw.';st.className='statusLine warning';return}if(r==='ERROR'||!r){st.textContent='Locatie kon niet worden gebruikt. Je kunt het project gewoon typen of zoeken.';st.className='statusLine warning';return}const p=r.split(',');return setNearbyLocation(p[0],p[1])}if(!navigator.geolocation){st.textContent='Locatie is op dit toestel niet beschikbaar.';return}navigator.geolocation.getCurrentPosition(pos=>setNearbyLocation(pos.coords.latitude,pos.coords.longitude),err=>{st.textContent='Locatie kon niet worden gebruikt. Je kunt het project gewoon typen of zoeken.';st.className='statusLine warning';renderNearby()},{enableHighAccuracy:true,timeout:9000,maximumAge:60000})}
-
+async function setNearbyLocation(lat,lon){const st=$('locationStatus');lat=Number(lat);lon=Number(lon);if(!Number.isFinite(lat)||!Number.isFinite(lon)){st.textContent='Locatie kon niet worden gebruikt.';st.className='statusLine warning';return}lastLocation={lat,lon};st.textContent='Locatie gevonden. Projectlocaties aanvullen via PDOK…';st.className='statusLine';try{await geocodeMissingProjects(20)}catch(e){}st.textContent='✓ Locatie gevonden';st.className='statusLine success';renderNearby();renderLists()}
+function detectNearby(){const st=$('locationStatus');st.textContent='Locatie bepalen…';st.className='statusLine';if(NATIVE_ANDROID){const r=nativeCall('LOCATION');if(r==='PERMISSION_REQUESTED'){st.textContent='Geef locatie-toestemming.';return}if(r==='NO_LOCATION'){st.textContent='Geen telefoonlocatie beschikbaar.';st.className='statusLine warning';return}if(r==='ERROR'||!r){st.textContent='Locatie kon niet worden gebruikt.';st.className='statusLine warning';return}const p=r.split(',');return setNearbyLocation(p[0],p[1])}if(!navigator.geolocation){st.textContent='Locatie is niet beschikbaar.';return}navigator.geolocation.getCurrentPosition(pos=>setNearbyLocation(pos.coords.latitude,pos.coords.longitude),err=>{st.textContent='Locatie kon niet worden gebruikt.';st.className='statusLine warning';renderNearby()},{enableHighAccuracy:true,timeout:9000,maximumAge:60000})}
 function updateNavigate(){const p=currentProjectDraft(),hasCoords=(p.lat!=null&&p.lon!=null&&!(p.lat===0&&p.lon===0)),hasRd=(p.rdX!=null&&p.rdY!=null),hasAddress=!!(p.straat||p.plaats);$('navigateBtn').disabled=!(hasCoords||hasRd||hasAddress)}
 async function resolveNavigationDestination(){let p=currentProjectDraft();const label=(p.project||'Project')+(p.klant?' — '+p.klant:'');if(p.coordSource==='rd'&&p.rdX!=null&&p.rdY!=null){const ll=rdToWgs84(p.rdX,p.rdY);if(ll)return{...ll,label,source:'RD'}}if((p.straat||p.plaats)){try{const arr=await pdokAddressResults(p.straat,p.plaats);if(arr.length){const g=arr[0],saved=normalizeProject({...p,lat:g.lat,lon:g.lon,rdX:g.rdX,rdY:g.rdY,coordSource:'pdok',updatedAt:Date.now()});if(saved.project)upsertProject(saved);return{lat:g.lat,lon:g.lon,label,source:'PDOK'}}}catch(e){}}if(p.rdX!=null&&p.rdY!=null){const ll=rdToWgs84(p.rdX,p.rdY);if(ll)return{...ll,label,source:'RD'}}if(p.lat!=null&&p.lon!=null&&!(p.lat===0&&p.lon===0))return{lat:p.lat,lon:p.lon,label,source:'opgeslagen locatie'};return null}
-async function navigateCurrent(){const b=$('navigateBtn');if(b)b.disabled=true;showToast('Projectlocatie controleren…');try{const d=await resolveNavigationDestination();if(!d)return showToast('Geen projectlocatie beschikbaar. Vul adres of RD X/Y in.',true);if(!Number.isFinite(Number(d.lat))||!Number.isFinite(Number(d.lon)))return showToast('Projectlocatie is ongeldig',true);const lat=Number(d.lat).toFixed(7),lon=Number(d.lon).toFixed(7),uri='google.navigation:q='+lat+','+lon+'&mode=d';showToast('🗺️ Navigeren naar '+d.label+' ('+d.source+')');if(NATIVE_ANDROID){const r=nativeCall('NAVIGATE',uri);if(r==='ERROR')showToast('Navigatie-app kon niet worden geopend',true);return}const fallback='https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(lat+','+lon);try{const a=document.createElement('a');a.href=fallback;a.target='_blank';a.rel='noopener';a.style.display='none';document.body.appendChild(a);a.click();setTimeout(()=>a.remove(),200)}catch(e){window.location.href=fallback}}finally{updateNavigate()}}
+async function navigateCurrent(){const b=$('navigateBtn');if(b)b.disabled=true;showToast('Projectlocatie controleren…');try{const d=await resolveNavigationDestination();if(!d)return showToast('Geen projectlocatie beschikbaar.',true);if(!Number.isFinite(Number(d.lat))||!Number.isFinite(Number(d.lon)))return showToast('Projectlocatie is ongeldig',true);const lat=Number(d.lat).toFixed(7),lon=Number(d.lon).toFixed(7),uri='google.navigation:q='+lat+','+lon+'&mode=d';showToast('🗺️ Navigeren naar '+d.label);if(NATIVE_ANDROID){const r=nativeCall('NAVIGATE',uri);if(r==='ERROR')showToast('Navigatie-app kon niet worden geopend',true);return}const fallback='https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(lat+','+lon);try{const a=document.createElement('a');a.href=fallback;a.target='_blank';a.rel='noopener';a.style.display='none';document.body.appendChild(a);a.click();setTimeout(()=>a.remove(),200)}catch(e){window.location.href=fallback}}finally{updateNavigate()}}
 
 function requiredMissing(){if(activeVisit)return[];const m=[];if(!normPlate($('plate').value))m.push('kenteken');if(!$('driver').value.trim())m.push('bestuurder');if(!$('projectInput').value.trim())m.push('project');const k=smartKm();if(k.value===null)m.push(k.mode==='needfull'?'volledige km-stand':'km-stand');if(!$('arrivalDate').value)m.push('datum');if(!$('arrivalTime').value)m.push('tijd');return m}
 function updateDock(){const a=$('saveArrivalBtn'),d=$('saveDepartureBtn'),st=$('dockStatus');if(activeVisit){a.disabled=true;a.className='';d.disabled=false;d.className='departureReady';st.textContent='Vertrek hoort bij de laatste aankomst';st.className='dockStatus good'}else{d.disabled=true;d.className='';const m=requiredMissing();a.disabled=m.length>0;a.className=m.length?'':'arrivalReady';st.textContent=m.length?'Nog nodig: '+m.join(', '):'Klaar om Aankomst op te slaan';st.className='dockStatus '+(m.length?'warn':'good')}}
-
 async function saveArrival(){const missing=requiredMissing();if(missing.length)return showToast('Nog nodig: '+missing.join(', '),true);const k=smartKm(),plate=normPlate($('plate').value),last=latestForPlate(plate);if(last&&k.value<Number(last.km))return showToast('Kilometerstand is lager dan de vorige stand',true);let draft=currentProjectDraft();if(draft.coordSource!=='rd'&&(draft.straat||draft.plaats)){$('locationStatus').textContent='Projectadres opzoeken via PDOK…';try{draft=await geocodeProjectTop(draft)}catch(e){}}const p=upsertProject(draft);const visitId=id('v');const item=normalizeLog({id:id(),visitId,type:'Aankomst',reisType,datum:$('arrivalDate').value,tijd:$('arrivalTime').value,km:k.value,kenteken:plate,bestuurder:$('driver').value.trim(),project:p.project,klant:p.klant,straat:p.straat,plaats:p.plaats,lat:p.lat,lon:p.lon,rdX:p.rdX,rdY:p.rdY,opmerking:$('arrivalNote').value.trim(),createdAt:Date.now()});logs.push(item);setCarBase(plate,k.value);const b=saveLogs();setNow('departureDate','departureTime');$('departureNote').value='';showToast(backupToast('✓ Aankomst opgeslagen',b),b&&b.external&&!b.ok);renderFlow()}
 function activeArrival(){return activeVisit?logs.find(x=>x.id===activeVisit.arrivalId&&x.type==='Aankomst')||null:null}
 function backupToast(base,b){return base+(b&&b.external?(b.ok?' · backup ✓':' · backup ⚠'):'')}
-
 function saveDeparture(){const a=activeArrival();if(!a){activeVisit=null;saveActive();renderFlow();return showToast('Geen openstaande aankomst gevonden',true)}if(!$('departureDate').value||!$('departureTime').value)return showToast('Vul datum en tijd in',true);const plate=activePlate()||a.kenteken,last=latestForPlate(plate),driver=($('departureDriver').value||a.bestuurder||settings().defaultDriver||'').trim();if(!driver)return showToast('Kies bestuurder',true);const dep=normalizeLog({...a,id:id(),type:'Vertrek',datum:$('departureDate').value,tijd:$('departureTime').value,kenteken:plate,bestuurder:driver,km:last?Number(last.km):a.km,opmerking:$('departureNote').value.trim(),createdAt:Date.now()});logs.push(dep);activeVisit=null;saveActive();const b=saveLogs();resetArrivalForNext();showToast(backupToast('✓ Vertrek opgeslagen',b),b&&b.external&&!b.ok);renderFlow()}
 function resetArrivalForNext(){rdInputEdited=false;const s=settings();$('plate').value=activePlate()||normPlate(s.defaultPlate||$('plate').value);$('driver').value=s.defaultDriver||$('driver').value;$('projectInput').value='';$('customer').value='';$('street').value='';$('city').value='';$('rdX').value='';$('rdY').value='';$('km').value='';$('arrivalNote').value='';selectedProjectKey='';setReis('Zakelijk');setNow('arrivalDate','arrivalTime');nearbyProjectKeys.clear();$('nearbyBox').innerHTML='';$('locationStatus').textContent='';updateKm();renderProjectSuggestions()}
-
 function renderFlow(){const a=activeArrival();if(a){$('arrivalPanel').style.display='none';$('departurePanel').style.display='block';const addr=[a.straat,a.plaats].filter(Boolean).join(', '),ap=activePlate()||a.kenteken;$('activeVisitSummary').innerHTML='<div class="hero">'+esc(a.project||'Zonder project')+(a.klant?' — '+esc(a.klant):'')+'</div><div class="meta">Aangekomen '+esc(a.datum)+' om '+esc(a.tijd)+' • '+esc(a.kenteken)+' • '+Number(a.km).toLocaleString('nl-NL')+' km</div>'+(addr?'<div class="meta">'+esc(addr)+'</div>':'');$('departurePlate').value=ap;if($('departureDriver').dataset.arrivalId!==a.id){$('departureDriver').value=a.bestuurder||settings().defaultDriver||'';$('departureDriver').dataset.arrivalId=a.id}if(!$('departureDate').value||!$('departureTime').value)setNow('departureDate','departureTime')}else{$('arrivalPanel').style.display='block';$('departurePanel').style.display='none';$('departureDriver').dataset.arrivalId=''}updateDock()}
 
-function openCarSwitch(){const plate=activePlate(),last=latestForPlate(plate);$('switchPlate').value=plate;$('switchKm').value=last&&Number.isFinite(Number(last.km))?Math.round(Number(last.km)):'';$('switchKmHint').textContent=last?'Laatst bekend voor '+plate+': '+Number(last.km).toLocaleString('nl-NL')+' km':'Vul bij een nieuwe/geleende auto de volledige actuele stand in.';$('carModal').classList.add('show');setTimeout(()=>$('switchPlate').focus(),120)}
+function openCarSwitch(){const plate=activePlate(),last=latestForPlate(plate);$('switchPlate').value=plate;$('switchKm').value=last&&Number.isFinite(Number(last.km))?Math.round(Number(last.km)):'';$('switchKmHint').textContent=last?'Laatst bekend voor '+plate+': '+Number(last.km).toLocaleString('nl-NL')+' km':'Vul de volledige actuele stand in.';$('carModal').classList.add('show');setTimeout(()=>$('switchPlate').focus(),120)}
 function closeCarSwitch(){$('carModal').classList.remove('show')}
-function updateSwitchKmHint(){const plate=normPlate($('switchPlate').value),last=latestForPlate(plate);$('switchKmHint').textContent=last?'Laatst bekend voor '+plate+': '+Number(last.km).toLocaleString('nl-NL')+' km. Controleer en pas zo nodig aan.':'Deze auto is nog niet bekend. Vul de volledige actuele kilometerstand in.'}
-function confirmCarSwitch(){const plate=normPlate($('switchPlate').value),km=Number(String($('switchKm').value||'').replace(/\D/g,''));if(!plate)return showToast('Vul kenteken in',true);if(!Number.isFinite(km)||km<0)return showToast('Vul de volledige actuele kilometerstand in',true);setCarBase(plate,km);$('plate').value=plate;if($('departurePlate'))$('departurePlate').value=plate;if($('activeCarSettings'))$('activeCarSettings').textContent='Actieve auto: '+plate;closeCarSwitch();updateKm();renderFlow();makeAutoSnapshot();showToast('✓ Auto '+plate+' actief · '+km.toLocaleString('nl-NL')+' km')}
+function updateSwitchKmHint(){const plate=normPlate($('switchPlate').value),last=latestForPlate(plate);$('switchKmHint').textContent=last?'Laatst bekend voor '+plate+': '+Number(last.km).toLocaleString('nl-NL')+' km.':'Vul de volledige actuele kilometerstand in.'}
+function confirmCarSwitch(){const plate=normPlate($('switchPlate').value),km=Number(String($('switchKm').value||'').replace(/\D/g,''));if(!plate)return showToast('Vul kenteken in',true);if(!Number.isFinite(km)||km<0)return showToast('Vul kilometerstand in',true);setCarBase(plate,km);$('plate').value=plate;if($('departurePlate'))$('departurePlate').value=plate;if($('activeCarSettings'))$('activeCarSettings').textContent='Actieve auto: '+plate;closeCarSwitch();updateKm();renderFlow();makeAutoSnapshot();showToast('✓ Auto '+plate+' actief')}
 
 function renderLists(){
  $('plateList').innerHTML=allPlates().map(x=>'<option value="'+esc(x)+'"></option>').join('');$('driverList').innerHTML=allDrivers().map(x=>'<option value="'+esc(x)+'"></option>').join('');
- const q=$('projectManagerSearch').value.trim().toLowerCase();const arr=sortedProjects(q);$('projectList').innerHTML=arr.length?arr.map(p=>{const addr=[p.straat,p.plaats].filter(Boolean).join(', ');return'<div class="item"><div class="itemTitle">'+esc(p.project)+(p.klant?' — '+esc(p.klant):'')+'</div><div class="itemMeta">'+esc(addr||'Geen adres')+(p.rdX!=null&&p.rdY!=null?' • RD '+Math.round(p.rdX*1000)/1000+', '+Math.round(p.rdY*1000)/1000:'')+'</div><div class="itemActions"><button class="useProject" data-p="'+esc(p.project)+'">✓ Gebruiken</button><button class="editProject" data-p="'+esc(p.project)+'">✏️ Wijzigen</button>'+(addr||p.lat!=null?'<button class="navProject navbtn" data-p="'+esc(p.project)+'">🗺️ Navigeren</button>':'')+'</div></div>'}).join(''):'<div class="empty">Nog geen projecten.</div>'
+ const q=$('projectManagerSearch').value.trim().toLowerCase();const arr=sortedProjects(q);$('projectList').innerHTML=arr.length?arr.map(p=>{const addr=[p.straat,p.plaats].filter(Boolean).join(', ');return'<div class="item"><div class="itemTitle">'+esc(p.project)+(p.klant?' — '+esc(p.klant):'')+'</div><div class="itemMeta">'+esc(addr||'Geen adres')+'</div><div class="itemActions"><button class="useProject" data-p="'+esc(p.project)+'">✓ Gebruiken</button><button class="editProject" data-p="'+esc(p.project)+'">✏️ Wijzigen</button>'+(addr||p.lat!=null?'<button class="navProject navbtn" data-p="'+esc(p.project)+'">🗺️ Navigeren</button>':'')+'</div></div>'}).join(''):'<div class="empty">Nog geen projecten.</div>'
 }
 function ordered(){return[...logs].sort((a,b)=>`${b.datum}T${b.tijd}`.localeCompare(`${a.datum}T${a.tijd}`)||b.createdAt-a.createdAt)}
 function renderHistory(){const q=$('historySearch').value.trim().toLowerCase(),a=ordered().filter(x=>!q||[x.datum,x.tijd,x.type,x.reisType,x.kenteken,x.bestuurder,x.project,x.klant,x.straat,x.plaats,x.opmerking].join(' ').toLowerCase().includes(q));$('countStat').textContent=logs.length;$('arrivalStat').textContent=logs.filter(x=>x.type==='Aankomst').length;const last=ordered().find(x=>x.type==='Aankomst'&&x.km);$('lastKmStat').textContent=last?Number(last.km).toLocaleString('nl-NL'):'—';$('historyList').innerHTML=a.length?a.map(x=>{const addr=[x.straat,x.plaats].filter(Boolean).join(', '),cls=x.type==='Vertrek'?'dep':'arr';return'<div class="item"><div class="row"><div class="grow"><span class="historyType '+cls+'">'+esc(x.type)+'</span> <b>'+esc(x.datum)+' '+esc(x.tijd)+'</b></div><button class="small editLog" data-id="'+esc(x.id)+'">✏️</button></div><div class="itemTitle" style="margin-top:7px">'+esc(x.project||'Geen project')+(x.klant?' — '+esc(x.klant):'')+'</div><div class="itemMeta">'+esc(x.kenteken)+' • '+esc(x.bestuurder)+' • '+Number(x.km||0).toLocaleString('nl-NL')+' km • '+esc(x.reisType)+(addr?' • '+esc(addr):'')+'</div>'+(x.opmerking?'<div class="itemMeta">'+esc(x.opmerking)+'</div>':'')+'</div>'}).join(''):'<div class="empty">Geen registraties gevonden.</div>'}
 
-function renderAll(){renderFlow();renderLists();renderHistory();renderProjectSuggestions();renderBackupStatus();updateKm();updateNavigate();renderHours()}
-function tab(name){document.querySelectorAll('.tabbtn').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));document.querySelectorAll('.tab').forEach(s=>s.classList.toggle('active',s.id===name));if(name==='rit')renderFlow();if(name==='hours')renderHours()}
+// ==================== URENREGISTRATIE MODULE ====================
+function calculateDayHours(dateStr){
+  const overrides=getHoursOverrides(), override=overrides[dateStr], hs=getHoursSettings();
+  const defaultTargetNormal=Number(hs.targetNormal||8.0), defaultPauseMin=Number(hs.pauseMinutes||30), defaultCommuteMin=Number(hs.commuteMinutes||30);
+
+  const dayLogs=logs.filter(x=>x.datum===dateStr)
+                    .sort((a,b)=>`${a.datum}T${a.tijd}`.localeCompare(`${b.datum}T${b.tijd}`)||a.createdAt-b.createdAt);
+
+  if(!dayLogs.length && (!override || !override.isModified)){
+    return {dateStr, hasLogs:false, isModified:false, startTime:'', endTime:'', timeOnKlus:0, travelBetween:0, pauseHours:0, grossWork:0, netWork:0, targetNormal:defaultTargetNormal, normalHours:0, overtimeHours:0, doorToDoor:0, note:''};
+  }
+
+  let timeOnKlus=0, travelBetween=0, doorToDoor=0, startTime='', endTime='';
+
+  if(dayLogs.length>0){
+    const firstLog=dayLogs[0], lastLog=dayLogs[dayLogs.length-1];
+    const toMin=t=>{const[h,m]=t.split(':').map(Number);return h*60+m;};
+
+    const firstMin=toMin(firstLog.tijd), lastMin=toMin(lastLog.tijd);
+
+    let d2dStart=firstMin;
+    if(firstLog.type==='Aankomst') d2dStart=Math.max(0, firstMin-defaultCommuteMin);
+
+    let d2dEnd=lastMin;
+    if(lastLog.type==='Vertrek') d2dEnd=lastMin+defaultCommuteMin;
+
+    doorToDoor=Math.max(0,(d2dEnd-d2dStart)/60);
+    startTime=pad(Math.floor(d2dStart/60))+':'+pad(d2dStart%60);
+    endTime=pad(Math.floor(d2dEnd/60))+':'+pad(d2dEnd%60);
+
+    let currentArrival=null, prevDeparture=null;
+
+    dayLogs.forEach(log=>{
+      const tMin=toMin(log.tijd);
+      if(log.type==='Aankomst'){
+        if(prevDeparture!==null){
+          const travelDur=Math.max(0, tMin-prevDeparture);
+          travelBetween += travelDur/60;
+        }
+        currentArrival=tMin;
+        prevDeparture=null;
+      }else if(log.type==='Vertrek'){
+        if(currentArrival!==null){
+          const klusDur=Math.max(0, tMin-currentArrival);
+          timeOnKlus += klusDur/60;
+          currentArrival=null;
+        }
+        prevDeparture=tMin;
+      }
+    });
+
+    if(currentArrival!==null && lastLog.type==='Aankomst'){
+      if(dayLogs.length===1){
+        const estEnd=Math.min(24*60, firstMin+Math.round(defaultTargetNormal*60)+defaultPauseMin);
+        timeOnKlus=(estEnd-firstMin)/60;
+        d2dEnd=estEnd+defaultCommuteMin;
+        doorToDoor=(d2dEnd-d2dStart)/60;
+        endTime=pad(Math.floor(d2dEnd/60))+':'+pad(d2dEnd%60);
+      }
+    }
+  }
+
+  const grossWork=timeOnKlus+travelBetween;
+  const pauseHours=(grossWork>5.5)?(defaultPauseMin/60):0;
+  const netWork=Math.max(0, grossWork-pauseHours);
+  const normalHours=Math.min(netWork, defaultTargetNormal);
+  const overtimeHours=Math.max(0, netWork-defaultTargetNormal);
+
+  if(override && override.isModified){
+    const tKlus=override.timeOnKlus!==undefined?Number(override.timeOnKlus):timeOnKlus;
+    const tTrav=override.travelBetween!==undefined?Number(override.travelBetween):travelBetween;
+    const pMin=override.pauseMinutes!==undefined?Number(override.pauseMinutes): (pauseHours*60);
+    const targetN=override.targetNormal!==undefined?Number(override.targetNormal):defaultTargetNormal;
+
+    const calculatedNet=Math.max(0, tKlus+tTrav-(pMin/60));
+    const net=override.manualNetWork!==undefined && override.manualNetWork!==null && override.manualNetWork!=='' ? Number(override.manualNetWork) : calculatedNet;
+    const norm=Math.min(net, targetN);
+    const over=override.manualOvertime!==undefined && override.manualOvertime!==null && override.manualOvertime!=='' ? Number(override.manualOvertime) : Math.max(0, net-targetN);
+    const d2d=override.manualDoorToDoor!==undefined && override.manualDoorToDoor!==null && override.manualDoorToDoor!=='' ? Number(override.manualDoorToDoor) : doorToDoor;
+
+    return {
+      dateStr, hasLogs:dayLogs.length>0, isModified:true,
+      startTime:override.startTime||startTime, endTime:override.endTime||endTime,
+      timeOnKlus:Math.round(tKlus*100)/100, travelBetween:Math.round(tTrav*100)/100, pauseHours:Math.round((pMin/60)*100)/100,
+      grossWork:Math.round((tKlus+tTrav)*100)/100, netWork:Math.round(net*100)/100, targetNormal:targetN,
+      normalHours:Math.round(norm*100)/100, overtimeHours:Math.round(over*100)/100, doorToDoor:Math.round(d2d*100)/100,
+      note:override.note||''
+    };
+  }
+
+  return {
+    dateStr, hasLogs:dayLogs.length>0, isModified:false,
+    startTime, endTime,
+    timeOnKlus:Math.round(timeOnKlus*100)/100, travelBetween:Math.round(travelBetween*100)/100, pauseHours:Math.round(pauseHours*100)/100,
+    grossWork:Math.round(grossWork*100)/100, netWork:Math.round(netWork*100)/100, targetNormal:defaultTargetNormal,
+    normalHours:Math.round(normalHours*100)/100, overtimeHours:Math.round(overtimeHours*100)/100, doorToDoor:Math.round(doorToDoor*100)/100,
+    note:''
+  };
+}
+
+function populateYearSelect(){
+  const sel=$('hoursYearSelect'); if(!sel) return;
+  const currentY=new Date().getFullYear();
+  let html='';
+  for(let y=currentY-2; y<=currentY+2; y++){
+    html+=`<option value="${y}" ${y===currentWeekYear?'selected':''}>${y}</option>`;
+  }
+  sel.innerHTML=html;
+}
+
+function getPeriodDates(){
+  if(currentPeriodFilter==='week'){
+    return getWeekDateRange(currentWeekYear, currentWeekNum);
+  }
+  const weekDates=getWeekDateRange(currentWeekYear, currentWeekNum);
+  const refDate=new Date(weekDates[0]+'T00:00:00');
+
+  if(currentPeriodFilter==='month'){
+    const y=refDate.getFullYear(), m=refDate.getMonth();
+    const daysInMonth=new Date(y, m+1, 0).getDate();
+    const dates=[];
+    for(let d=1; d<=daysInMonth; d++){
+      dates.push(y+'-'+pad(m+1)+'-'+pad(d));
+    }
+    return dates;
+  }
+
+  if(currentPeriodFilter==='3months'||currentPeriodFilter==='6months'){
+    const monthsCount = currentPeriodFilter==='3months' ? 3 : 6;
+    const endDate=new Date(refDate);
+    const startDate=new Date(refDate);
+    startDate.setMonth(startDate.getMonth() - (monthsCount - 1));
+    startDate.setDate(1);
+
+    const dates=[];
+    let cur=new Date(startDate);
+    while(cur<=endDate || cur.getMonth()===endDate.getMonth()){
+      dates.push(cur.getFullYear()+'-'+pad(cur.getMonth()+1)+'-'+pad(cur.getDate()));
+      cur.setDate(cur.getDate()+1);
+      if(dates.length>220) break;
+    }
+    return dates;
+  }
+
+  if(currentPeriodFilter==='year'){
+    const y=currentWeekYear, dates=[];
+    const daysInYear = (y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0)) ? 366 : 365;
+    let cur=new Date(y,0,1);
+    for(let i=0; i<daysInYear; i++){
+      dates.push(cur.getFullYear()+'-'+pad(cur.getMonth()+1)+'-'+pad(cur.getDate()));
+      cur.setDate(cur.getDate()+1);
+    }
+    return dates;
+  }
+
+  if(currentPeriodFilter==='ytd'){
+    const y=currentWeekYear, dates=[];
+    const today=new Date();
+    let cur=new Date(y,0,1);
+    while(cur<=today && cur.getFullYear()===y){
+      dates.push(cur.getFullYear()+'-'+pad(cur.getMonth()+1)+'-'+pad(cur.getDate()));
+      cur.setDate(cur.getDate()+1);
+      if(dates.length>366) break;
+    }
+    return dates;
+  }
+
+  return getWeekDateRange(currentWeekYear, currentWeekNum);
+}
+
+function getPeriodBuckets(dates){
+  if(currentPeriodFilter==='week'){
+    const days=['Ma','Di','Wo','Do','Vr','Za','Zo'];
+    return dates.map((dStr, idx)=>{
+      const data=calculateDayHours(dStr);
+      const dObj=new Date(dStr+'T00:00:00');
+      return {label: days[idx]+' '+dObj.getDate(), dates:[dStr], doorToDoor:data.doorToDoor, timeOnKlus:data.timeOnKlus, netWork:data.netWork, normalHours:data.normalHours, overtimeHours:data.overtimeHours};
+    });
+  }
+
+  if(currentPeriodFilter==='month'){
+    const weeksMap=new Map();
+    dates.forEach(dStr=>{
+      const dObj=new Date(dStr+'T00:00:00');
+      const w=getISOWeekDetails(dObj);
+      const key='W'+w.week;
+      const b=weeksMap.get(key)|||{label:key, dates:[], doorToDoor:0, timeOnKlus:0, netWork:0, normalHours:0, overtimeHours:0};
+      const data=calculateDayHours(dStr);
+      b.dates.push(dStr);
+      b.doorToDoor+=data.doorToDoor; b.timeOnKlus+=data.timeOnKlus; b.netWork+=data.netWork; b.normalHours+=data.normalHours; b.overtimeHours+=data.overtimeHours;
+      weeksMap.set(key,b);
+    });
+    return [...weeksMap.values()].map(b=>({...b, doorToDoor:Math.round(b.doorToDoor*10)/10, timeOnKlus:Math.round(b.timeOnKlus*10)/10, netWork:Math.round(b.netWork*10)/10, normalHours:Math.round(b.normalHours*10)/10, overtimeHours:Math.round(b.overtimeHours*10)/10}));
+  }
+
+  // Multi-month / Year grouping by month
+  const monthNames=['Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Dec'];
+  const monthsMap=new Map();
+  dates.forEach(dStr=>{
+    const dObj=new Date(dStr+'T00:00:00');
+    const key=monthNames[dObj.getMonth()]+' '+(currentPeriodFilter==='year'||currentPeriodFilter==='ytd'?'':("'" + String(dObj.getFullYear()).slice(2)));
+    const b=monthsMap.get(key)|||{label:key, dates:[], doorToDoor:0, timeOnKlus:0, netWork:0, normalHours:0, overtimeHours:0};
+    const data=calculateDayHours(dStr);
+    b.dates.push(dStr);
+    b.doorToDoor+=data.doorToDoor; b.timeOnKlus+=data.timeOnKlus; b.netWork+=data.netWork; b.normalHours+=data.normalHours; b.overtimeHours+=data.overtimeHours;
+    monthsMap.set(key,b);
+  });
+  return [...monthsMap.values()].map(b=>({...b, doorToDoor:Math.round(b.doorToDoor*10)/10, timeOnKlus:Math.round(b.timeOnKlus*10)/10, netWork:Math.round(b.netWork*10)/10, normalHours:Math.round(b.normalHours*10)/10, overtimeHours:Math.round(b.overtimeHours*10)/10}));
+}
+
+function drawHoursSVGChart(buckets){
+  const box=$('hoursChartBox'); if(!box) return;
+  if(!buckets || !buckets.length){
+    box.innerHTML='<div class="empty">Geen urengegevens beschikbaar.</div>';
+    return;
+  }
+
+  let maxVal=10;
+  buckets.forEach(b=>{
+    maxVal=Math.max(maxVal, b.doorToDoor||0, b.timeOnKlus||0, b.overtimeHours||0, b.netWork||0);
+  });
+  maxVal=Math.ceil(maxVal*1.15);
+
+  const svgWidth=Math.max(340, buckets.length * (currentPeriodFilter==='week'?65:50));
+  const svgHeight=210, padLeft=32, padBottom=35, padTop=20, padRight=15;
+  const chartW=svgWidth-padLeft-padRight, chartH=svgHeight-padTop-padBottom;
+
+  let gridLines=''; const ticks=4;
+  for(let i=0; i<=ticks; i++){
+    const val=Math.round((maxVal/ticks)*i*10)/10;
+    const y=padTop+chartH - (i/ticks)*chartH;
+    gridLines+=`<line x1="${padLeft}" y1="${y}" x2="${svgWidth-padRight}" y2="${y}" stroke="var(--line)" stroke-dasharray="3,3" opacity="0.5"/>`;
+    gridLines+=`<text x="${padLeft-5}" y="${y+4}" fill="var(--muted)" font-size="10" text-anchor="end">${val}u</text>`;
+  }
+
+  const groupWidth=chartW / buckets.length;
+  const barWidth=Math.max(5, Math.min(14, groupWidth / 3.8));
+
+  let barsHtml='';
+  buckets.forEach((b, idx)=>{
+    const cx=padLeft + idx*groupWidth + groupWidth/2;
+    const h1=(b.doorToDoor/maxVal)*chartH, y1=padTop+chartH - h1, x1=cx - barWidth*1.5;
+    const h2=(b.timeOnKlus/maxVal)*chartH, y2=padTop+chartH - h2, x2=cx - barWidth*0.3;
+    const h3=(b.overtimeHours/maxVal)*chartH, y3=padTop+chartH - h3, x3=cx + barWidth*0.9;
+
+    barsHtml+=`<g>`;
+    if(b.doorToDoor>0) barsHtml+=`<rect x="${x1}" y="${y1}" width="${barWidth}" height="${h1}" fill="var(--blue)" rx="3"><title>${esc(b.label)} - Deur tot deur: ${b.doorToDoor}u</title></rect>`;
+    if(b.timeOnKlus>0) barsHtml+=`<rect x="${x2}" y="${y2}" width="${barWidth}" height="${h2}" fill="var(--gold)" rx="3"><title>${esc(b.label)} - Op de klus: ${b.timeOnKlus}u</title></rect>`;
+    if(b.overtimeHours>0) barsHtml+=`<rect x="${x3}" y="${y3}" width="${barWidth}" height="${h3}" fill="var(--green)" rx="3"><title>${esc(b.label)} - Overuren: ${b.overtimeHours}u</title></rect>`;
+    barsHtml+=`<text x="${cx}" y="${svgHeight-10}" fill="var(--text)" font-size="11" font-weight="750" text-anchor="middle">${esc(b.label)}</text>`;
+    barsHtml+=`</g>`;
+  });
+
+  box.innerHTML=`<svg width="100%" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}" preserveAspectRatio="xMidYMid meet">${gridLines}${barsHtml}</svg>`;
+}
+
+function renderUrenTab(){
+  if($('hoursWeekInput'))$('hoursWeekInput').value=currentWeekNum;
+  if($('hoursYearSelect'))$('hoursYearSelect').value=currentWeekYear;
+
+  const dates=getPeriodDates();
+  const weekDates=getWeekDateRange(currentWeekYear, currentWeekNum);
+  const wStart=new Date(weekDates[0]+'T00:00:00'), wEnd=new Date(weekDates[6]+'T00:00:00');
+  const fmtDate=d=>d.getDate()+' '+['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'][d.getMonth()];
+  
+  $('hoursPeriodLabel').textContent=`Week ${currentWeekNum} (${fmtDate(wStart)} - ${fmtDate(wEnd)} ${currentWeekYear})`;
+
+  let totDoorToDoor=0, totOnKlus=0, totTravelBetween=0, totNetWork=0, totNormal=0, totOvertime=0;
+
+  dates.forEach(dStr=>{
+    const d=calculateDayHours(dStr);
+    totDoorToDoor+=d.doorToDoor; totOnKlus+=d.timeOnKlus; totTravelBetween+=d.travelBetween;
+    totNetWork+=d.netWork; totNormal+=d.normalHours; totOvertime+=d.overtimeHours;
+  });
+
+  $('uStatDoorToDoor').textContent=Math.round(totDoorToDoor*10)/10+'u';$('uStatOnKlus').textContent=Math.round(totOnKlus*10)/10+'u';
+  $('uStatTravelBetween').textContent=Math.round(totTravelBetween*10)/10+'u';$('uStatNetWork').textContent=Math.round(totNetWork*10)/10+'u';
+  $('uStatNormal').textContent=Math.round(totNormal*10)/10+'u';$('uStatOvertime').textContent=(totOvertime>0?'+':'')+Math.round(totOvertime*10)/10+'u';
+
+  const buckets=getPeriodBuckets(dates);
+  drawHoursSVGChart(buckets);
+
+  // Daily list
+  const monthsDutch=['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+  const daysDutch=['Zondag','Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag'];
+
+  const displayDates=currentPeriodFilter==='week'?dates:weekDates;
+
+  $('hoursDailyList').innerHTML=displayDates.map(dStr=>{
+    const d=calculateDayHours(dStr);
+    const dObj=new Date(dStr+'T00:00:00');
+    const title=`${daysDutch[dObj.getDay()]} ${dObj.getDate()} ${monthsDutch[dObj.getMonth()]}`;
+
+    return `<div class="item">
+      <div class="row">
+        <div class="grow">
+          <b>${title}</b>
+          ${d.isModified?'<span style="font-size:11px; padding:2px 6px; border-radius:999px; background:var(--newbg); color:var(--newtext); margin-left:6px; border:1px solid var(--newline)">✏️ Aangepast</span>':''}
+        </div>
+        <button class="small editHoursDayBtn" data-date="${dStr}">✏️ Uren aanpassen</button>
+      </div>
+      <div class="stats" style="margin-top:8px">
+        <div class="stat"><small>Deur tot deur</small><b>${d.doorToDoor}u</b><small>${d.startTime?d.startTime+' - '+d.endTime:'Geen ritten'}</small></div>
+        <div class="stat"><small>Op de klus</small><b>${d.timeOnKlus}u</b><small>Reis baas: ${d.travelBetween}u</small></div>
+        <div class="stat"><small>Werktijd (baas)</small><b>${d.netWork}u</b><small>Pauze: ${Math.round(d.pauseHours*60)}m</small></div>
+      </div>
+      <div class="row" style="margin-top:8px; font-size:13px; color:var(--muted)">
+        <div>Normaal: <b style="color:var(--text)">${d.normalHours}u</b></div>
+        <div style="margin-left:12px">Overuren: <b style="color:${d.overtimeHours>0?'var(--green)':'var(--text)'}">${d.overtimeHours>0?'+'+d.overtimeHours+'u':'0.0u'}</b></div>
+        ${d.note?'<div style="margin-left:auto; font-style:italic">'+esc(d.note)+'</div>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openEditHours(dateStr){
+  const d=calculateDayHours(dateStr);
+  $('editHoursDate').value=dateStr;
+  $('editHoursTitle').textContent='Uren aanpassen - '+dateStr;
+  $('editHoursSub').textContent=d.isModified?'Handmatig aangepaste waarden':'Automatisch berekend op basis van ritten';
+
+  $('ehStartTime').value=d.startTime||'';
+  $('ehEndTime').value=d.endTime\vert{}\vert{}'';$('ehTimeOnKlus').value=d.timeOnKlus;
+  $('ehTravelBetween').value=d.travelBetween;
+  $('ehPauseMinutes').value=Math.round(d.pauseHours*60);$('ehTargetNormal').value=d.targetNormal;
+  $('ehManualNetWork').value=d.isModified && d.netWork!==undefined ? d.netWork : '';
+  $('ehManualOvertime').value=d.isModified && d.overtimeHours!==undefined ? d.overtimeHours : '';
+  $('ehManualDoorToDoor').value=d.isModified && d.doorToDoor!==undefined ? d.doorToDoor : '';
+  $('ehNote').value=d.note||'';
+
+  $('editHoursModal').classList.add('show');
+}
+
+function closeEditHours(){ $('editHoursModal').classList.remove('show'); }
+
+function saveHoursOverride(){
+  const dateStr=$('editHoursDate').value; if(!dateStr) return;
+  const overrides=getHoursOverrides();
+
+  overrides[dateStr]={
+    isModified:true,
+    startTime:$('ehStartTime').value,
+    endTime:$('ehEndTime').value,
+    timeOnKlus:nnum($('ehTimeOnKlus').value)??0,
+    travelBetween:nnum($('ehTravelBetween').value)??0,
+    pauseMinutes:nnum($('ehPauseMinutes').value)??30,
+    targetNormal:nnum($('ehTargetNormal').value)??8.0,
+    manualNetWork:nnum($('ehManualNetWork').value),
+    manualOvertime:nnum($('ehManualOvertime').value),
+    manualDoorToDoor:nnum($('ehManualDoorToDoor').value),
+    note:$('ehNote').value.trim()
+  };
+
+  saveHoursOverrides(overrides);
+  closeEditHours();
+  makeAutoSnapshot();
+  renderUrenTab();
+  showToast('✓ Uren opgeslagen');
+}
+
+function resetHoursOverride(){
+  const dateStr=$('editHoursDate').value; if(!dateStr) return;
+  const overrides=getHoursOverrides();
+  delete overrides[dateStr];
+  saveHoursOverrides(overrides);
+  closeEditHours();
+  makeAutoSnapshot();
+  renderUrenTab();
+  showToast('✓ Berekend op basis van ritten');
+}
+
+function saveHoursSettingsFromUI(){
+  const hs=getHoursSettings();
+  hs.targetNormal=nnum($('settingTargetNormal').value)??8.0;
+  hs.pauseMinutes=nnum($('settingPauseMinutes').value)??30;
+  hs.commuteMinutes=nnum($('settingCommuteMinutes').value)??30;
+  saveHoursSettings(hs);
+  makeAutoSnapshot();
+  renderUrenTab();
+  showToast('✓ Ureninstellingen opgeslagen');
+}
+
+function renderAll(){renderFlow();renderLists();renderHistory();renderProjectSuggestions();renderBackupStatus();updateKm();updateNavigate();renderUrenTab();}
+function tab(name){document.querySelectorAll('.tabbtn').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));document.querySelectorAll('.tab').forEach(s=>s.classList.toggle('active',s.id===name));if(name==='rit')renderFlow();if(name==='uren')renderUrenTab()}
 
 function openEdit(idv){const x=logs.find(y=>y.id===idv);if(!x)return;$('editId').value=x.id;$('editTypeLabel').textContent=x.type;$('eDate').value=x.datum;$('eTime').value=x.tijd;$('ePlate').value=x.kenteken;$('eDriver').value=x.bestuurder;$('eKm').value=x.km;$('eProject').value=x.project;$('eCustomer').value=x.klant;$('eStreet').value=x.straat;$('eCity').value=x.plaats;$('eReis').value=x.reisType;$('eNote').value=x.opmerking;$('editModal').classList.add('show')}
 function closeEdit(){$('editModal').classList.remove('show')}
-
-function saveEdit(){
-  const idv=$('editId').value, i=logs.findIndex(x=>x.id===idv);
-  if(i<0) return;
-  const old=logs[i], km=nnum($('eKm').value);
-  if(!$('eDate').value\vert{}\vert{}!$('eTime').value) return showToast('Datum en tijd zijn verplicht', true);
-  logs[i]=normalizeLog({
-    ...old,
-    datum:$('eDate').value,
-    tijd:$('eTime').value,
-    kenteken:normPlate($('ePlate').value),
-    bestuurder:$('eDriver').value.trim(),
-    km:km===null?old.km:km,
-    project:$('eProject').value.trim(),
-    klant:$('eCustomer').value.trim(),
-    straat:$('eStreet').value.trim(),
-    plaats:$('eCity').value.trim(),
-    reisType:$('eReis').value,
-    opmerking:$('eNote').value.trim()
-  });
-  if(logs[i].project) upsertProject(logs[i]);
-  saveLogs();
-  closeEdit();
-  showToast('✓ Wijziging opgeslagen');
-}
-
+function saveEdit(){const idv=$('editId').value,i=logs.findIndex(x=>x.id===idv);if(i<0)return;const old=logs[i],km=nnum($('eKm').value);if(!$('eDate').value\vert{}\vert{}!$('eTime').value)return showToast('Datum en tijd zijn verplicht',true);logs[i]=normalizeLog({...old,datum:$('eDate').value,tijd:$('eTime').value,kenteken:$('ePlate').value,bestuurder:$('eDriver').value,km:km===null?old.km:km,project:$('eProject').value,klant:$('eCustomer').value,straat:$('eStreet').value,plaats:$('eCity').value,reisType:$('eReis').value,opmerking:$('eNote').value});if(logs[i].project)upsertProject(logs[i]);saveLogs();closeEdit();showToast('✓ Wijziging opgeslagen')}
 async function deleteEdit(){const idv=$('editId').value,x=logs.find(y=>y.id===idv);if(!x)return;const ok=await askConfirm('Registratie verwijderen?',(x.type||'Registratie')+' · '+(x.project||'zonder project')+' · '+x.datum+' '+x.tijd,'Verwijderen');if(!ok)return;logs=logs.filter(y=>y.id!==idv);saveLogs();closeEdit();showToast('Registratie verwijderd')}
-
 function download(content,name,type){if(NATIVE_ANDROID){const cmd=name.toLowerCase().endsWith('.json')?'EXPORT_JSON':'EXPORT_CSV',r=nativeCall(cmd,content);if(r==='ERROR')showToast('Export kon niet worden geopend',true);return}const u=URL.createObjectURL(new Blob([content],{type})),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
 
 function parseJSON(text){
   const x=JSON.parse(text),a=Array.isArray(x)?x:(x&&Array.isArray(x.logs)?x.logs:null);
   if(!a)throw Error('Geen registraties gevonden in JSON.');
-  return {
-    logs:a.map(normalizeLog),
-    projects:x&&Array.isArray(x.projects)?x.projects.map(normalizeProject).filter(p=>p.project):null,
-    settings:x&&x.settings&&typeof x.settings==='object'?x.settings:null,
-    hoursOverrides:x&&x.hoursOverrides&&typeof x.hoursOverrides==='object'?x.hoursOverrides:null
-  };
+  if(x&&Array.isArray(x.projects))projects=x.projects.map(normalizeProject).filter(p=>p.project);
+  if(x&&x.settings)saveSettings({...settings(),...x.settings});
+  if(x&&x.hoursOverrides)saveHoursOverrides(x.hoursOverrides);
+  if(x&&x.hoursSettings)saveHoursSettings(x.hoursSettings);
+  return a.map(normalizeLog);
 }
 
-function splitCsv(line){
-  const out=[]; let cur='', q=false;
-  for(let i=0;i<line.length;i++){
-    const c=line[i];
-    if(c==='"'){
-      if(q && line[i+1]==='"'){ cur+='"'; i++; }
-      else q=!q;
-    } else if(c===';' && !q){
-      out.push(cur); cur='';
-    } else cur+=c;
-  }
-  out.push(cur);
-  return out;
-}
+function splitCsv(line){const out=[];let cur='',q=false;for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'){if(q&&line[i+1]==='"'){cur+='"';i++}else q=!q}else if(c===';'&&!q){out.push(cur);cur=''}else cur+=c}out.push(cur);return out}
+function parseText(text){const lines=text.replace(/^\ufeff/,'').replace(/\r/g,'').split('\n').filter(x=>x.trim());if(lines.length<2)throw Error('Bestand bevat geen registraties.');const sep=lines[0].includes(';')?';':'\t',split=l=>sep===';'?splitCsv(l):l.split('\t'),h=split(lines[0]).map(x=>x.toLowerCase()),idx=n=>h.findIndex(x=>x.includes(n)),get=(p,n)=>{const i=idx(n);return i>=0?p[i]:''};return lines.slice(1).map((l,i)=>{const p=split(l);return normalizeLog({datum:get(p,'datum'),tijd:get(p,'tijd'),type:get(p,'logtype')||get(p,'type'),reisType:get(p,'reistype'),km:get(p,'kilometerstand'),kenteken:get(p,'kenteken'),bestuurder:get(p,'bestuurder'),klant:get(p,'klant'),project:get(p,'project'),straat:get(p,'straat'),plaats:get(p,'plaats'),lat:get(p,'latitude'),lon:get(p,'longitude'),rdX:get(p,'rd x'),rdY:get(p,'rd y'),opmerking:get(p,'opmerking')},i)})}
 
-function parseText(text){
-  const lines=text.replace(/^\ufeff/,'').replace(/\r/g,'').split('\n').filter(x=>x.trim());
-  if(lines.length<2) throw Error('Bestand bevat geen registraties.');
-  const sep=lines[0].includes(';')?';':'\t';
-  const split=l=>sep===';'?splitCsv(l):l.split('\t');
-  const h=split(lines[0]).map(x=>x.trim().toLowerCase());
-  
-  const getIdx=names=>names.map(n=>h.indexOf(n)).find(i=>i!==-1);
-  const idxDatum=getIdx(['datum','date']);
-  const idxTijd=getIdx(['tijd','time']);
-  const idxType=getIdx(['logtype','type']);
-  const idxReis=getIdx(['reistype','reis']);
-  const idxKm=getIdx(['kilometerstand','km']);
-  const idxKenteken=getIdx(['kenteken','plate']);
-  const idxBestuurder=getIdx(['bestuurder','driver']);
-  const idxKlant=getIdx(['klant','customer']);
-  const idxProject=getIdx(['projectnummer','project']);
-  const idxStraat=getIdx(['straat','street']);
-  const idxPlaats=getIdx(['plaats','city']);
-  const idxLat=getIdx(['latitude','lat']);
-  const idxLon=getIdx(['longitude','lon']);
-  const idxRdX=getIdx(['rd x','rdx','x']);
-  const idxRdY=getIdx(['rd y','rdy','y']);
-  const idxNote=getIdx(['opmerking','note']);
+// Events
+document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.tab)));
+$('saveArrivalBtn').onclick=saveArrival;$('saveDepartureBtn').onclick=saveDeparture;$('arrivalNowBtn').onclick=()=>{setNow('arrivalDate','arrivalTime');updateDock()};$('departureNowBtn').onclick=()=>setNow('departureDate','departureTime');$('departureDriver').addEventListener('input',updateDock);
+$('switchCarBtn').onclick=openCarSwitch;$('switchCarDepartureBtn').onclick=openCarSwitch;$('closeCarModalBtn').onclick=closeCarSwitch;$('cancelCarSwitchBtn').onclick=closeCarSwitch;$('confirmCarSwitchBtn').onclick=confirmCarSwitch;$('switchPlate').addEventListener('input',updateSwitchKmHint);$('carModal').addEventListener('click',e=>{if(e.target===$('carModal'))closeCarSwitch()});
+document.querySelectorAll('[data-theme-choice]').forEach(b=>b.onclick=()=>setThemeChoice(b.dataset.themeChoice));
+$('businessBtn').onclick=()=>{setReis('Zakelijk');updateDock()};$('privateBtn').onclick=()=>{setReis('Privé');updateDock()};
+['driver','arrivalDate','arrivalTime'].forEach(k=>$(k).addEventListener('input',()=>updateDock()));$('km').addEventListener('input',()=>{$('km').value=$('km').value.replace(/\D/g,'').slice(0,9);updateKm()});$('km').addEventListener('focus',()=>setTimeout(()=>$('km').closest('.step').scrollIntoView({block:'center',behavior:'smooth'}),250));$('projectInput').addEventListener('input',()=>{renderProjectSuggestions();updateDock()});['customer','street','city','rdX','rdY'].forEach(k=>$(k).addEventListener('input',()=>{if(k==='rdX'\vert{}\vert{}k==='rdY'){rdInputEdited=true;const ll=rdToWgs84($('rdX').value,$('rdY').value);$('rdStatus').textContent=ll?'✓ RD wordt gebruikt voor locatie en navigatie.':'Vul RD X en RD Y beide in.';$('rdStatus').className='statusLine '+(ll?'success':'')}updateNavigate();updateDock()}));
+$('projectSuggestions').addEventListener('click',e=>{const x=e.target.closest('.projectChoice');if(x)fillProject(projectByNumber(x.dataset.project))});$('nearbyBox').addEventListener('click',e=>{const x=e.target.closest('.projectChoice');if(x)fillProject(projectByNumber(x.dataset.project))});$('locationSuggestBtn').onclick=detectNearby;$('navigateBtn').onclick=navigateCurrent;
+$('historySearch').addEventListener('input',renderHistory);$('historyList').addEventListener('click',e=>{const x=e.target.closest('.editLog');if(x)openEdit(x.dataset.id)});$('closeEditBtn').onclick=closeEdit;$('editModal').addEventListener('click',e=>{if(e.target===$('editModal'))closeEdit()});$('saveEditBtn').onclick=saveEdit;$('deleteEditBtn').onclick=deleteEdit;
+$('projectManagerSearch').addEventListener('input',renderLists);$('projectList').addEventListener('click',e=>{const u=e.target.closest('.useProject'),ed=e.target.closest('.editProject'),nv=e.target.closest('.navProject');if(u){fillProject(projectByNumber(u.dataset.p));tab('rit')}if(ed){const p=projectByNumber(ed.dataset.p);if(p){pRdInputEdited=false;$('pNumber').value=p.project;$('pCustomer').value=p.klant;$('pStreet').value=p.straat;$('pCity').value=p.plaats;$('pRdX').value=p.rdX??'';$('pRdY').value=p.rdY??'';$('pLat').value=p.lat??'';$('pLon').value=p.lon??''}}if(nv){const p=projectByNumber(nv.dataset.p);if(p){fillProject(p);navigateCurrent()}}});
+$('pRdX').addEventListener('input',()=>pRdInputEdited=true);$('pRdY').addEventListener('input',()=>pRdInputEdited=true);$('saveProjectBtn').onclick=async()=>{const existing=projectByNumber($('pNumber').value),manualRd=pRdInputEdited&&nnum($('pRdX').value)!==null&&nnum($('pRdY').value)!==null;let draft=normalizeProject({project:$('pNumber').value,klant:$('pCustomer').value,straat:$('pStreet').value,plaats:$('pCity').value,rdX:$('pRdX').value,rdY:$('pRdY').value,lat:manualRd?null:$('pLat').value,lon:manualRd?null:$('pLon').value,coordSource:manualRd?'rd':(existing?.coordSource\vert{}\vert{}'legacy')});if(!draft.project)return showToast('Projectnummer is verplicht',true);if((draft.lat==null\vert{}\vert{}draft.lon==null)&&(draft.straat\vert{}\vert{}draft.plaats)){try{draft=await geocodeProjectTop(draft)}catch(e){}}const p=upsertProject(draft);makeAutoSnapshot();renderAll();$('pGeoStatus').textContent=p.lat!=null?'✓ Projectlocatie opgeslagen.':'Project opgeslagen zonder locatie.';showToast('✓ Project opgeslagen')};$('clearProjectBtn').onclick=()=>{pRdInputEdited=false;['pNumber','pCustomer','pStreet','pCity','pRdX','pRdY','pLat','pLon'].forEach(x=>$(x).value='');$('pGeoStatus').textContent='';$('pGeoResults').innerHTML=''};$('pdokProjectBtn').onclick=async()=>{const st=$('pGeoStatus'),box=$('pGeoResults');st.textContent='Adres zoeken via PDOK…';box.innerHTML='';try{const arr=await pdokAddressResults($('pStreet').value,$('pCity').value);if(!arr.length){st.textContent='Geen adres gevonden.';st.className='statusLine warning';return}st.textContent=arr.length===1?'✓ Adres gevonden.':'Kies het juiste adres:';st.className='statusLine success';box.innerHTML=arr.map((g,i)=>'<button class="geoChoice pdokChoice" data-i="'+i+'"><b>'+esc(g.label)+'</b><br><span class="muted">RD '+Math.round(g.rdX*1000)/1000+', '+Math.round(g.rdY*1000)/1000+'</span></button>').join('');box._pdok=arr;if(arr.length===1)applyPdokChoice(arr[0])}catch(e){st.textContent='PDOK kon niet worden bereikt.';st.className='statusLine warning'}};function applyPdokChoice(g){if(!g)return;pRdInputEdited=false;$('pLat').value=g.lat.toFixed(7);$('pLon').value=g.lon.toFixed(7);$('pRdX').value=g.rdX!=null?(Math.round(g.rdX*1000)/1000):'';$('pRdY').value=g.rdY!=null?(Math.round(g.rdY*1000)/1000):'';$('pGeoStatus').textContent='✓ Locatie ingevuld via PDOK.';$('pGeoResults').innerHTML=''}$('pGeoResults').addEventListener('click',e=>{const b=e.target.closest('.pdokChoice');if(b&&$('pGeoResults')._pdok)applyPdokChoice($('pGeoResults')._pdok[Number(b.dataset.i)])});$('saveDefaultsBtn').onclick=()=>{const old=settings(),newPlate=normPlate($('defaultPlate').value),wasFollowingDefault=!old.activePlate\vert{}\vert{}normPlate(old.activePlate)===normPlate(old.defaultPlate);saveSettings({...old,defaultDriver:$('defaultDriver').value.trim(),defaultPlate:newPlate,activePlate:wasFollowingDefault?newPlate:(old.activePlate||newPlate)});applyDefaults();makeAutoSnapshot();renderAll();showToast('✓ Standaardgegevens opgeslagen')};
 
-  const results=[];
-  for(let i=1; i<lines.length; i++){
-    const cols=split(lines[i]);
-    if(cols.length<2) continue;
-    const val=idx=>idx!==-1&&idx!=null&&idx<cols.length?cols[idx].trim():'';
-    results.push(normalizeLog({
-      id: id(),
-      datum: val(idxDatum),
-      tijd: val(idxTijd),
-      type: val(idxType) || 'Aankomst',
-      reisType: val(idxReis) || 'Zakelijk',
-      km: val(idxKm),
-      kenteken: val(idxKenteken),
-      bestuurder: val(idxBestuurder),
-      klant: val(idxKlant),
-      project: val(idxProject),
-      straat: val(idxStraat),
-      plaats: val(idxPlaats),
-      lat: val(idxLat),
-      lon: val(idxLon),
-      rdX: val(idxRdX),
-      rdY: val(idxRdY),
-      opmerking: val(idxNote)
-    }, i));
-  }
-  return results;
-}
+// Uren Events
+$('hoursJumpWeekBtn').onclick=()=>{
+  const w=parseInt($('hoursWeekInput').value,10), y=parseInt($('hoursYearSelect').value,10);
+  if(w>=1 && w<=53 && y>2000){
+    currentWeekNum=w; currentWeekYear=y;
+    currentPeriodFilter='week';
+    document.querySelectorAll('#hoursFilterBtns button').forEach(b=>b.classList.toggle('active', b.dataset.period==='week'));
+    renderUrenTab();
+  } else { showToast('Vul een geldig weeknummer in', true); }
+};
+$('hoursPrevWeekBtn').onclick=()=>{
+  currentWeekNum--;
+  if(currentWeekNum<1){ currentWeekNum=52; currentWeekYear--; }
+  renderUrenTab();
+};
+$('hoursNextWeekBtn').onclick=()=>{
+  currentWeekNum++;
+  if(currentWeekNum>52){ currentWeekNum=1; currentWeekYear++; }
+  renderUrenTab();
+};
+$('hoursCurrentWeekBtn').onclick=()=>{
+  const tw=getISOWeekDetails(new Date());
+  currentWeekNum=tw.week; currentWeekYear=tw.year;
+  renderUrenTab();
+};
 
-function parseImportText(text,isJson){
-  if(isJson)return parseJSON(text);
-  return {logs:parseText(text),projects:null,settings:null,hoursOverrides:null};
-}
+$('hoursFilterBtns').addEventListener('click', e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  document.querySelectorAll('#hoursFilterBtns button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  currentPeriodFilter=b.dataset.period;
+  renderUrenTab();
+});
 
-function checkImportFile(){
-  const fileInput = $('importFile');
-  if(!fileInput || !fileInput.files || !fileInput.files[0]){
-    showToast('Kies eerst een bestand', true);
-    return;
-  }
-  const file = fileInput.files[0];
-  const reader = new FileReader();
-  reader.onload = function(e){
-    try {
-      const text = e.target.result;
-      const isJson = file.name.toLowerCase().endsWith('.json');
-      pendingImport = parseImportText(text, isJson);
-      const count = pendingImport.logs ? pendingImport.logs.length : 0;
-      if(!count){
-        $('importStatus').textContent = '⚠ Geen geldige registraties gevonden in dit bestand.';
-        $('importStatus').className = 'statusLine warning';$('replaceImportBtn').disabled = true;
-      } else {
-        $('importStatus').textContent = '✓ ' + count + ' registratie(s) gecontroleerd. Klik op "Geschiedenis vervangen" om te overschrijven.';
-        $('importStatus').className = 'statusLine success';$('replaceImportBtn').disabled = false;
-      }
-    } catch(err) {
-      $('importStatus').textContent = '❌ Fout bij lezen bestand: ' + err.message;
-      $('importStatus').className = 'statusLine warning';$('replaceImportBtn').disabled = true;
-    }
-  };
-  reader.readAsText(file);
-}
+$('hoursDailyList').addEventListener('click', e=>{
+  const b=e.target.closest('.editHoursDayBtn');
+  if(b) openEditHours(b.dataset.date);
+});
 
-async function executeReplaceImport(){
-  if(!pendingImport || !pendingImport.logs || !pendingImport.logs.length){
-    return showToast('Geen gecontroleerde gegevens om te importeren', true);
-  }
-  const ok = await askConfirm('Geschiedenis vervangen?', 'Weet je zeker dat je alle '+logs.length+' huidige registratie(s) wilt VERVANGEN door '+pendingImport.logs.length+' registratie(s) uit het bestand? Dit kan niet ongedaan worden gemaakt.');
-  if(!ok) return;
+$('closeHoursModalBtn').onclick=closeEditHours;
+$('saveHoursBtn').onclick=saveHoursOverride;
+$('resetHoursBtn').onclick=resetHoursOverride;
+$('saveHoursSettingsBtn').onclick=saveHoursSettingsFromUI;
 
-  logs = pendingImport.logs;
-  if(pendingImport.projects && pendingImport.projects.length){
-    projects = pendingImport.projects;
-    localStorage.setItem(PROJECT_KEY, JSON.stringify(projects));
-  }
-  if(pendingImport.settings){
-    saveSettings(pendingImport.settings);
-  }
-  if(pendingImport.hoursOverrides){
-    hoursOverrides = pendingImport.hoursOverrides;
-    saveHoursOverrides();
-  }
-  
-  saveLogs();
-  pendingImport = null;
-  $('replaceImportBtn').disabled = true;
-  $('importFile').value = '';$('importStatus').textContent = '✓ Geschiedenis succesvol vervangen!';
-  $('importStatus').className = 'statusLine success';
-  showToast('✓ Geschiedenis vervangen');
-}
+$('backupFolderBtn').onclick=()=>{if(!NATIVE_ANDROID)return showToast('Backupmap kiezen werkt in de Android-app',true);const r=nativeCall('CHOOSE_BACKUP');if(r==='ERROR')showToast('Backupmap kon niet worden geopend',true);else if(r&&r!=='OPENED')renderBackupStatus()};$('jsonExportBtn').onclick=()=>download(backupJson(),'Kilometerregistratie_backup.json','application/json');$('csvExportBtn').onclick=()=>download(csvText(),'Kilometerregistratie_export.csv','text/csv');$('importBtn').onclick=async()=>{const f=$('importFile').files[0];pendingImport=null;$('replaceImportBtn').disabled=true;if(!f)return showToast('Kies eerst een bestand',true);try{const text=await f.text();pendingImport=f.name.toLowerCase().endsWith('.json')?parseJSON(text):parseText(text);if(!pendingImport.length)throw Error('Geen registraties gevonden.');$('replaceImportBtn').disabled=false;$('importStatus').textContent='✓ '+pendingImport.length+' registraties gevonden. Choose Geschiedenis vervangen.';$('importStatus').className='statusLine success'}catch(e){$('importStatus').textContent='✕ '+e.message;$('importStatus').className='statusLine warning'}};$('replaceImportBtn').onclick=async()=>{if(!pendingImport)return;const ok=await askConfirm('Geschiedenis vervangen?','De huidige registraties worden vervangen door de gekozen backup.','Vervangen');if(!ok)return;logs=pendingImport;saveLogs();applyDefaults();pendingImport=null;$('replaceImportBtn').disabled=true;$('importStatus').textContent='';showToast('✓ Backup teruggezet')};
+$('deleteAllBtn').onclick=async()=>{if(!logs.length)return;const ok=await askConfirm('Alle registraties verwijderen?','Dit verwijdert de volledige geschiedenis uit de app.','Alles verwijderen');if(!ok)return;logs=[];saveLogs();resetArrivalForNext();showToast('Alle registraties verwijderd')};
 
-async function doPdokProjectLookup(){
-  const st = $('pStreet').value.trim(), ct =$('pCity').value.trim();
-  if(!st && !ct) return showToast('Vul straat of plaats in om te zoeken', true);
-  $('pGeoStatus').textContent = 'Zoeken via PDOK...';$('pGeoStatus').className = 'statusLine';
-  try {
-    const res = await pdokAddressResults(st, ct);
-    if(!res.length){
-      $('pGeoStatus').textContent = 'Geen resultaten gevonden bij PDOK';
-      $('pGeoStatus').className = 'statusLine warning';$('pGeoResults').innerHTML = '';
-      return;
-    }
-    $('pGeoStatus').textContent = 'Kies het juiste adres:';$('pGeoResults').innerHTML = res.map(r => `
-      <div class="suggestion pdokChoice" data-lat="${r.lat}" data-lon="${r.lon}" data-rdx="${r.rdX||''}" data-rdy="${r.rdY||''}">
-        <div class="sTitle">${esc(r.label)}</div>
-        <div class="sMeta">RD: ${r.rdX?Math.round(r.rdX):'—'}, ${r.rdY?Math.round(r.rdY):'—'} | Lat/Lon: ${r.lat?.toFixed(5)}, ${r.lon?.toFixed(5)}</div>
-      </div>
-    `).join('');
-  } catch(e) {
-    $('pGeoStatus').textContent = 'Fout bij PDOK zoeken: ' + e.message;
-    $('pGeoStatus').className = 'statusLine warning';
-  }
-}
+$('confirmCancelBtn').onclick=()=>closeConfirm(false);$('confirmOkBtn').onclick=()=>closeConfirm(true);$('confirmModal').addEventListener('click',e=>{if(e.target===$('confirmModal'))closeConfirm(false)});
+window.onNativeBackupFolderChanged=()=>{makeAutoSnapshot();showToast('✓ Backupmap ingesteld')};
+window.onNativeLocationPermissionChanged=ok=>{if(ok)detectNearby();else{const st=$('locationStatus');st.textContent='Locatie-toestemming geweigerd.';st.className='statusLine warning'}};
 
-function saveProjectForm(){
-  const num = $('pNumber').value.trim();
-  if(!num) return showToast('Projectnummer is verplicht', true);
-  const p = normalizeProject({
-    project: num,
-    klant: $('pCustomer').value.trim(),
-    straat: $('pStreet').value.trim(),
-    plaats: $('pCity').value.trim(),
-    rdX: $('pRdX').value,
-    rdY: $('pRdY').value,
-    lat: $('pLat').value,
-    lon: $('pLon').value,
-    coordSource: ($('pRdX').value \vert{}\vert{}$('pRdY').value) ? 'rd' : (($('pLat').value \vert{}\vert{}$('pLon').value) ? 'pdok' : 'manual'),
-    updatedAt: Date.now()
-  });
-  upsertProject(p);
-  clearProjectForm();
-  renderLists();
-  renderProjectSuggestions();
-  showToast('✓ Project '+num+' opgeslagen');
-}
-
-function clearProjectForm(){
-  $('pNumber').value = '';$('pCustomer').value = '';
-  $('pStreet').value = '';$('pCity').value = '';
-  $('pRdX').value = '';$('pRdY').value = '';
-  $('pLat').value = '';$('pLon').value = '';
-  $('pGeoStatus').textContent = '';$('pGeoResults').innerHTML = '';
-}
-
-function editProjectInForm(pNum){
-  const p = projectByNumber(pNum);
-  if(!p) return;
-  $('pNumber').value = p.project || '';
-  $('pCustomer').value = p.klant \vert{}\vert{} '';$('pStreet').value = p.straat || '';
-  $('pCity').value = p.plaats \vert{}\vert{} '';$('pRdX').value = p.rdX ?? '';
-  $('pRdY').value = p.rdY ?? '';
-  $('pLat').value = p.lat ?? '';
-  $('pLon').value = p.lon ?? '';
-  $('pNumber').focus();
-}
-
-function saveDefaultsFromForm(){
-  const d = $('defaultDriver').value.trim();
-  const p = normPlate($('defaultPlate').value);
-  const s = settings();
-  saveSettings({...s, defaultDriver: d, defaultPlate: p});
-  applyDefaults();
-  makeAutoSnapshot();
-  showToast('✓ Standaardgegevens opgeslagen');
-}
-
-function initEventListeners(){
-  document.querySelectorAll('.tabbtn').forEach(b => {
-    b.addEventListener('click', () => tab(b.dataset.tab));
-  });
-
-  $('saveArrivalBtn')?.addEventListener('click', saveArrival);$('saveDepartureBtn')?.addEventListener('click', saveDeparture);
-  $('arrivalNowBtn')?.addEventListener('click', () => { setNow('arrivalDate','arrivalTime'); updateDock(); });$('departureNowBtn')?.addEventListener('click', () => { setNow('departureDate','departureTime'); });
-  $('businessBtn')?.addEventListener('click', () => setReis('Zakelijk'));$('privateBtn')?.addEventListener('click', () => setReis('Privé'));
-  
-  $('projectInput')?.addEventListener('input', () => { rdInputEdited=false; renderProjectSuggestions(); });$('locationSuggestBtn')?.addEventListener('click', detectNearby);
-  $('navigateBtn')?.addEventListener('click', navigateCurrent);$('rdX')?.addEventListener('input', () => { rdInputEdited=true; updateNavigate(); updateDock(); });
-  $('rdY')?.addEventListener('input', () => { rdInputEdited=true; updateNavigate(); updateDock(); });$('km')?.addEventListener('input', updateKm);
-  
-  $('switchCarBtn')?.addEventListener('click', openCarSwitch);$('switchCarDepartureBtn')?.addEventListener('click', openCarSwitch);
-
-  $('arrivalDate')?.addEventListener('change', updateDock);
-  $('arrivalTime')?.addEventListener('change', updateDock);$('driver')?.addEventListener('input', updateDock);
-
-  const handleProjectClick = (e) => {
-    const card = e.target.closest('.projectChoice');
-    if(card && card.dataset.project){
-      const p = projectByNumber(card.dataset.project) || {project: card.dataset.project};
-      fillProject(p);
-    }
-  };
-  $('nearbyBox')?.addEventListener('click', handleProjectClick);$('projectSuggestions')?.addEventListener('click', handleProjectClick);
-
-  $('historySearch')?.addEventListener('input', renderHistory);$('historyList')?.addEventListener('click', (e) => {
-    const btn = e.target.closest('.editLog');
-    if(btn && btn.dataset.id) openEdit(btn.dataset.id);
-  });
-
-  $('projectManagerSearch')?.addEventListener('input', renderLists);$('pdokProjectBtn')?.addEventListener('click', doPdokProjectLookup);
-  $('saveProjectBtn')?.addEventListener('click', saveProjectForm);$('clearProjectBtn')?.addEventListener('click', clearProjectForm);
-
-  $('pGeoResults')?.addEventListener('click', (e) => {
-    const choice = e.target.closest('.pdokChoice');
-    if(choice){
-      $('pLat').value = choice.dataset.lat \vert{}\vert{} '';$('pLon').value = choice.dataset.lon || '';
-      if(choice.dataset.rdx) $('pRdX').value = choice.dataset.rdx;
-      if(choice.dataset.rdy) $('pRdY').value = choice.dataset.rdy;
-      $('pGeoStatus').textContent = '✓ Coördinaten overgenomen!';
-      $('pGeoStatus').className = 'statusLine success';
-    }
-  });
-
-  $('projectList')?.addEventListener('click', (e) => {
-    const useBtn = e.target.closest('.useProject');
-    if(useBtn && useBtn.dataset.p){
-      const p = projectByNumber(useBtn.dataset.p) || {project: useBtn.dataset.p};
-      fillProject(p);
-      tab('rit');
-      return;
-    }
-    const editBtn = e.target.closest('.editProject');
-    if(editBtn && editBtn.dataset.p){
-      editProjectInForm(editBtn.dataset.p);
-      return;
-    }
-    const navBtn = e.target.closest('.navProject');
-    if(navBtn && navBtn.dataset.p){
-      const p = projectByNumber(navBtn.dataset.p);
-      if(p){
-        fillProject(p);
-        navigateCurrent();
-      }
-    }
-  });
-
-  $('hoursPeriod')?.addEventListener('change', (e) => {
-    hoursView.period = e.target.value;
-    renderHours();
-  });
-  $('hoursWeekNo')?.addEventListener('change', setHoursWeekFromInputs);$('hoursWeekYear')?.addEventListener('change', setHoursWeekFromInputs);
-  $('hoursApplyWeekBtn')?.addEventListener('click', setHoursWeekFromInputs);$('hoursTodayBtn')?.addEventListener('click', () => {
-    hoursView = {period:'week', weekNo:null, weekYear:null};
-    renderHours();
-  });
-
-  $('hoursEditList')?.addEventListener('input', (e) => {     const date = e.target.dataset.date;     if(date) saveDayOverride(date);   });$('hoursEditList')?.addEventListener('click', (e) => {
-    const btn = e.target.closest('.clearDayOverride');
-    if(btn && btn.dataset.date) clearDayOverride(btn.dataset.date);
-  });
-
-  $('saveDefaultsBtn')?.addEventListener('click', saveDefaultsFromForm);
-  document.querySelectorAll('[data-theme-choice]').forEach(btn => {
-    btn.addEventListener('click', () => setThemeChoice(btn.dataset.themeChoice));
-  });
-
-  $('backupFolderBtn')?.addEventListener('click', () => {
-    if(NATIVE_ANDROID){
-      nativeCall('CHOOSE_BACKUP_FOLDER');
-      makeAutoSnapshot();
-    } else {
-      showToast('Backupmap kiezen is alleen in de Android app beschikbaar');
-    }
-  });
-  $('jsonExportBtn')?.addEventListener('click', () => download(backupJson(), 'Kilometerregistratie_backup.json', 'application/json'));$('csvExportBtn')?.addEventListener('click', () => download(csvText(), 'Kilometerregistratie_export.csv', 'text/csv;charset=utf-8;'));
-
-  $('importBtn')?.addEventListener('click', checkImportFile);$('replaceImportBtn')?.addEventListener('click', executeReplaceImport);
-
-  $('deleteAllBtn')?.addEventListener('click', async () => {
-    const ok = await askConfirm('Alle registraties wissen?', 'Weet je zeker dat je ALLE registraties definitief wilt wisssen? Sla eerst een backup op!');
-    if(!ok) return;
-    logs = [];
-    activeVisit = null;
-    saveActive();
-    saveLogs();
-    showToast('Alle registraties zijn gewist');
-  });
-
-  $('closeEditBtn')?.addEventListener('click', closeEdit);
-  $('saveEditBtn')?.addEventListener('click', saveEdit);$('deleteEditBtn')?.addEventListener('click', deleteEdit);
-
-  $('confirmCancelBtn')?.addEventListener('click', () => closeConfirm(false));$('confirmOkBtn')?.addEventListener('click', () => closeConfirm(true));
-
-  $('closeCarModalBtn')?.addEventListener('click', closeCarSwitch);$('cancelCarSwitchBtn')?.addEventListener('click', closeCarSwitch);
-  $('confirmCarSwitchBtn')?.addEventListener('click', confirmCarSwitch);$('switchPlate')?.addEventListener('input', updateSwitchKmHint);
-
-  document.querySelectorAll('.modal').forEach(m => {
-    m.addEventListener('click', (e) => {
-      if(e.target === m){
-        if(m.id === 'editModal') closeEdit();
-        if(m.id === 'carModal') closeCarSwitch();
-        if(m.id === 'confirmModal') closeConfirm(false);
-      }
-    });
-  });
-}
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    initEventListeners();
-    load();
-  });
-} else {
-  initEventListeners();
-  load();
-}
+load();
+if(NATIVE_ANDROID){setTimeout(()=>{const folder=nativeCall('BACKUP_STATUS');if(!folder&&!sessionStorage.getItem('kmreg_backup_prompted')){sessionStorage.setItem('kmreg_backup_prompted','1');nativeCall('CHOOSE_BACKUP')}},800)}
 })();
 </script>
 </body>
