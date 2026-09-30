@@ -84,6 +84,14 @@ nav{grid-template-columns:repeat(5,minmax(0,1fr))}
 .backupPaste{min-height:150px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}
 .historyPauseMeta{font-size:12px;color:var(--blue);margin-top:5px}
 .hoursPauseEdit{display:flex;gap:5px;align-items:center}.hoursPauseEdit input{width:80px;min-height:40px;padding:7px 8px}.hoursPauseEdit span{font-size:12px;color:var(--muted)}
+.hoursColumnManager{margin:10px 0 12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card2)}
+.hoursColumnRow{display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.hoursColumnRow:last-child{border-bottom:0}
+.hoursColumnLabel{font-weight:800}.hoursColumnMeta{font-size:11px;color:var(--muted)}
+.hoursColumnButtons{display:flex;gap:5px}.hoursColumnButtons button{min-width:38px;min-height:38px;padding:6px 8px}
+.hoursColumnRow input[type="checkbox"]{width:20px;height:20px;min-height:20px}
+@media(max-width:560px){.hoursColumnRow{grid-template-columns:auto 1fr auto}.hoursColumnButtons{grid-column:2/-1}.hoursColumnButtons button{flex:1}}
+
 @media(max-width:560px){
   nav button{font-size:10px;padding:7px 2px}
   .hoursKpiGrid{grid-template-columns:1fr 1fr}
@@ -127,7 +135,7 @@ nav{grid-template-columns:repeat(5,minmax(0,1fr))}
 </style>
 </head>
 <body>
-<header><img src="app_icon.jpg" class="logo" alt=""><div><h1>Kilometerregistratie</h1><div class="sub">Snel registreren onderweg <b>v1.8</b></div></div></header>
+<header><img src="app_icon.jpg" class="logo" alt=""><div><h1>Kilometerregistratie</h1><div class="sub">Snel registreren onderweg <b>v1.9</b></div></div></header>
 <nav>
   <button class="tabbtn active" data-tab="rit">&#x1F697;<br>Rit</button>
   <button class="tabbtn" data-tab="history">&#x1F4CB;<br>Historie</button>
@@ -209,14 +217,14 @@ nav{grid-template-columns:repeat(5,minmax(0,1fr))}
   <div class="card"><div class="hoursSummaryRow"><div><h2 style="margin-bottom:4px">Urenregistratie</h2><div class="muted">Volledig automatisch uit History. Alleen pauzes zijn hier rechtstreeks aanpasbaar.</div></div><span id="hoursDataState" class="hoursTag auto">Uit History</span></div></div>
   <div class="card"><h2>Week zoeken</h2><div class="grid"><div><span class="label">Weeknummer</span><input id="hoursWeekSearch" type="number" inputmode="numeric" min="1" max="53" placeholder="bijv. 39"></div><div><span class="label">Jaar van week (optioneel)</span><input id="hoursWeekYear" type="number" inputmode="numeric" min="2000" max="2100" placeholder="bijv. 2026"></div></div><div class="actions"><button id="hoursClearWeekBtn">Weekfilter wissen</button><button id="hoursRefreshBtn" class="secondary">&#x21BB; Herberekenen uit History</button></div><div id="hoursWeekFilterStatus" class="hoursHint"></div></div>
   <div class="card"><h2>Overzicht</h2><div class="hoursKpiGrid"><div class="hoursKpi"><small>Werktijd netto</small><b id="hoursTotalKpi">0:00</b></div><div class="hoursKpi"><small>Pauze</small><b id="hoursPauseKpi">0:00</b></div><div class="hoursKpi"><small>Normale uren</small><b id="hoursNormalKpi">0:00</b></div><div class="hoursKpi"><small>Overuren</small><b id="hoursOvertimeKpi">0:00</b></div><div class="hoursKpi"><small>Tijd op klus</small><b id="hoursJobKpi">0:00</b></div><div class="hoursKpi"><small>Deur-tot-deur</small><b id="hoursDoorKpi">0:00</b></div></div><div class="hoursHint">Norm: 8:00 uur per werkdag en 40:00 uur per week. Pauze wordt van de effectieve werktijd afgetrokken, maar niet van de deur-tot-deur tijd.</div></div>
-  <div class="card"><div class="hoursSummaryRow"><div><h2 style="margin-bottom:4px">Dagregistratie</h2><div class="muted">Nieuwste datum bovenaan. Alle vertrek- en aankomstmomenten uit History staan hieronder.</div></div></div><div class="hoursDayControls"><div class="field"><span class="label">Aantal dagen tonen</span><input id="hoursDaysPerPage" type="number" min="1" max="365" step="1" value="7"></div><button id="hoursShowMoreBtn" class="secondary">Toon meer</button><button id="hoursShowAllBtn">Alles tonen</button></div><div id="hoursDailyTable"></div></div>
+  <div class="card"><div class="hoursSummaryRow"><div><h2 style="margin-bottom:4px">Dagregistratie</h2><div class="muted">Nieuwste datum bovenaan. Alle vertrek- en aankomstmomenten uit History staan hieronder.</div></div></div><div class="hoursDayControls"><div class="field"><span class="label">Aantal dagen tonen</span><input id="hoursDaysPerPage" type="number" min="1" max="365" step="1" value="7"></div><button id="hoursShowMoreBtn" class="secondary">Toon meer</button><button id="hoursShowAllBtn">Alles tonen</button><button id="hoursColumnsBtn">&#x2699;&#xFE0F; Tabel aanpassen</button></div><div id="hoursColumnManager" class="hoursColumnManager" style="display:none"><div class="hoursHint"><b>Kolommen van de dagregistratie</b> — voeg velden toe, haal ze weg en wijzig de volgorde. Dit verandert alleen de weergave; de History-data blijft de bron.</div><div id="hoursColumnList"></div></div><div id="hoursDailyTable"></div></div>
   <div class="card"><h2>Weekoverzicht</h2><div id="hoursWeeklyTable"></div></div>
   <div class="card"><div class="hoursGraphHead"><div><h2 style="margin-bottom:4px">Grafiek</h2><div class="muted">Deur-tot-deur, tijd op klus, pauze en overuren.</div></div></div><div class="hoursRange"><button data-hours-range="week">Weekbasis</button><button data-hours-range="month">Maandbasis</button><button data-hours-range="3m">3 Maanden</button><button data-hours-range="6m">6 Maanden</button><button data-hours-range="year">Jaarbasis</button><button data-hours-range="ytd">YTD</button></div><div id="hoursGraph" class="hoursGraph"></div><div class="hoursLegend"><span class="legendItem"><span class="legendDot" style="background:#d7ad57"></span>Deur-tot-deur</span><span class="legendItem"><span class="legendDot" style="background:#7fc4ff"></span>Tijd op klus</span><span class="legendItem"><span class="legendDot" style="background:#74d39b"></span>Pauze</span><span class="legendItem"><span class="legendDot" style="background:#ee8e8e"></span>Overuren</span></div></div>
 </section>
 <section id="settings" class="tab">
   <div class="card"><h2>Standaardgegevens</h2><p class="muted">Deze staan bij een nieuwe aankomst automatisch klaar. Een tijdelijke auto wissel je in het rit-scherm.</p><div class="grid"><div><span class="label">Standaardbestuurder</span><input id="defaultDriver"></div><div><span class="label">Standaardkenteken</span><input id="defaultPlate" autocapitalize="characters"></div></div><div id="activeCarSettings" class="carMini">Actieve auto: &#x2014;</div><div class="actions"><button id="saveDefaultsBtn" class="primary">&#x1F4BE; Opslaan</button></div></div>
   <div class="card"><h2>Weergave</h2><p class="muted">De indeling blijft hetzelfde. Alleen de kleuren veranderen.</p><div class="themeToggle"><button id="themeSystemBtn" data-theme-choice="system">&#x1F4F1; Systeem</button><button id="themeLightBtn" data-theme-choice="light">&#x2600;&#xFE0F; Licht</button><button id="themeDarkBtn" data-theme-choice="dark">&#x1F319; Donker</button></div></div>
-  <div class="card"><h2>Automatische backup</h2><div id="autoBackupStatus" class="notice backupState"></div><p class="muted">Kies &#xE9;&#xE9;n map. Na iedere opslag of wijziging overschrijft de app daar steeds dezelfde twee bestanden: <b>Kilometerregistratie_backup.json</b> en <b>Kilometerregistratie_export.csv</b>. Je kunt deze map later altijd wijzigen. Voor de test adviseren we een lokale map; OneDrive koppelen we later rechtstreeks.</p><div class="actions"><button id="backupFolderBtn" class="primary">&#x1F4C1; Backupmap kiezen / wijzigen</button></div><div class="hr"></div><h3>Losse export</h3><p class="muted">Alleen gebruiken als je bewust een extra los bestand wilt maken. De automatische backup hierboven hoort steeds dezelfde twee bestanden te overschrijven.</p><div class="actions"><button id="jsonExportBtn">&#x1F4BE; JSON backup</button><button id="xlsxExportBtn">&#x1F4CA; Excel (.xlsx) met tabbladen</button></div><div class="actions"><button id="csvExportBtn" class="secondary">&#x1F4C4; CSV-pakket (.zip)</button><button id="jsonMailBtn" class="secondary">&#x1F4E7; JSON per e-mail</button></div><div class="statusLine">Excel bevat aparte tabbladen voor Ritten, Dagen, Weken, Pauzes en Projecten. Het CSV-pakket bevat dezelfde onderdelen als losse CSV-bestanden.</div><div class="hr"></div><span class="label">JSON backup terugzetten uit bestand</span><input id="importFile" type="file" accept=".json,.csv,.txt"><div class="actions"><button id="importBtn">&#x1F4E5; Bestand controleren</button><button id="replaceImportBtn" class="danger" disabled>Geschiedenis vervangen</button></div><div id="importStatus" class="statusLine"></div><div class="hr"></div><span class="label">JSON backup als tekst plakken</span><textarea id="jsonPasteInput" class="backupPaste" placeholder="Plak hier de volledige JSON-backup..."></textarea><div class="actions"><button id="jsonPasteCheckBtn" class="secondary">JSON-tekst controleren</button></div><div id="jsonPasteStatus" class="statusLine"></div></div>
+  <div class="card"><h2>Automatische backup</h2><div id="autoBackupStatus" class="notice backupState"></div><p class="muted">Kies &#xE9;&#xE9;n map. Na iedere opslag of wijziging overschrijft de app daar steeds dezelfde twee bestanden: <b>Kilometerregistratie_backup.json</b> en <b>Kilometerregistratie_export.csv</b>. Je kunt deze map later altijd wijzigen. Voor de test adviseren we een lokale map; OneDrive koppelen we later rechtstreeks.</p><div class="actions"><button id="backupFolderBtn" class="primary">&#x1F4C1; Backupmap kiezen / wijzigen</button></div><div class="hr"></div><h3>Losse export</h3><p class="muted">Alleen gebruiken als je bewust een extra los bestand wilt maken. De automatische backup hierboven hoort steeds dezelfde twee bestanden te overschrijven.</p><div class="actions"><button id="jsonExportBtn">&#x1F4BE; JSON backup</button><button id="xlsxExportBtn">&#x1F4CA; Excel (.xlsx) met tabbladen</button></div><div class="actions"><button id="csvExportBtn" class="secondary">&#x1F4C4; CSV-pakket (.zip)</button><button id="jsonMailBtn" class="secondary">&#x1F4E7; JSON per e-mail</button></div><div class="statusLine">Excel bevat aparte, strak opgemaakte tabbladen voor Overzicht, Dagregistratie, Weken, Ritten, Pauzes en Projecten. Het CSV-pakket bevat dezelfde onderdelen als losse CSV-bestanden.</div><div class="hr"></div><span class="label">JSON backup terugzetten uit bestand</span><input id="importFile" type="file" accept=".json,.csv,.txt"><div class="actions"><button id="importBtn">&#x1F4E5; Bestand controleren</button><button id="replaceImportBtn" class="danger" disabled>Geschiedenis vervangen</button></div><div id="importStatus" class="statusLine"></div><div class="hr"></div><span class="label">JSON backup als tekst plakken</span><textarea id="jsonPasteInput" class="backupPaste" placeholder="Plak hier de volledige JSON-backup..."></textarea><div class="actions"><button id="jsonPasteCheckBtn" class="secondary">JSON-tekst controleren</button></div><div id="jsonPasteStatus" class="statusLine"></div></div>
   <div class="card"><h2>Gegevens wissen</h2><div class="actions"><button id="deleteAllBtn" class="danger">&#x1F5D1;&#xFE0F; Alle registraties wissen</button></div></div>
 </section>
 </main>
@@ -297,7 +305,7 @@ function upsertProject(p){p=normalizeProject(p);if(!p.project)return null;const 
 function syncProjectsFromLogs(){const map=new Map(projects.map(p=>[normProjectKey(p.project),p]));[...logs].sort((a,b)=>a.createdAt-b.createdAt).forEach(x=>{if(!x.project)return;const k=normProjectKey(x.project),o=map.get(k)||{};map.set(k,normalizeProject({...o,project:x.project,klant:x.klant||o.klant,straat:x.straat||o.straat,plaats:x.plaats||o.plaats,lat:x.lat??o.lat,lon:x.lon??o.lon,rdX:x.rdX??o.rdX,rdY:x.rdY??o.rdY,updatedAt:x.createdAt}))});projects=[...map.values()];localStorage.setItem(PROJECT_KEY,JSON.stringify(projects))}
 function rows(){const a=[...logs].sort((a,b)=>`${a.datum}T${a.tijd}`.localeCompare(`${b.datum}T${b.tijd}`)||a.createdAt-b.createdAt);return[['Datum','Tijd','Logtype','Reistype','Kilometerstand','Kenteken','Bestuurder','Klant','Projectnummer','Straat','Plaats','Latitude','Longitude','RD X','RD Y','Priv\u{E9} km','Priv\u{E9} verklaring','Pauze (min)','Opmerking'],...a.map(x=>[x.datum,x.tijd,x.type,x.reisType,x.km,x.kenteken,x.bestuurder,x.klant,x.project,x.straat,x.plaats,x.lat??'',x.lon??'',x.rdX??'',x.rdY??'',x.privateKm||0,x.privateDescription||'',x.pauseMinutes||0,x.opmerking])]}
 function csvText(){return '\ufeff'+rows().map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n')}
-function backupObject(){return{app:'Kilometerregistratie',version:'1.8',exportedAt:new Date().toISOString(),settings:settings(),projects,activeVisit,logs,hoursRegistration:typeof hoursState!=='undefined'?JSON.parse(JSON.stringify(hoursState)):null}}
+function backupObject(){return{app:'Kilometerregistratie',version:'1.9',exportedAt:new Date().toISOString(),settings:settings(),projects,activeVisit,logs,hoursRegistration:typeof hoursState!=='undefined'?JSON.parse(JSON.stringify(hoursState)):null}}
 function backupJson(){return JSON.stringify(backupObject(),null,2)}
 function emailJsonBackup(){
   const recipient='rickyoung1997@gmail.com';
@@ -455,21 +463,81 @@ function u32(v){return new Uint8Array([v&255,(v>>>8)&255,(v>>>16)&255,(v>>>24)&2
 function concatBytes(...arrs){let n=0;arrs.forEach(a=>n+=a.length);const out=new Uint8Array(n);let o=0;arrs.forEach(a=>{out.set(a,o);o+=a.length});return out}
 function crc32(bytes){let c=0xffffffff;for(let i=0;i<bytes.length;i++){c^=bytes[i];for(let k=0;k<8;k++)c=(c>>>1)^(0xedb88320&-(c&1))}return (c^0xffffffff)>>>0}
 function zipStore(files){const enc=new TextEncoder(),parts=[],central=[];let offset=0;files.forEach(f=>{const name=enc.encode(f.name),data=f.data instanceof Uint8Array?f.data:enc.encode(f.data),crc=crc32(data),local=concatBytes(u32(0x04034b50),u16(20),u16(0x800),u16(0),u16(0),u16(0),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),name,data);parts.push(local);central.push({name,data,crc,offset});offset+=local.length});let centralSize=0,centralOffset=offset;central.forEach(f=>centralSize+=46+f.name.length);const centralParts=[];central.forEach(f=>centralParts.push(concatBytes(u32(0x02014b50),u16(20),u16(20),u16(0x800),u16(0),u16(0),u16(0),u32(f.crc),u32(f.data.length),u32(f.data.length),u16(f.name.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(f.offset),f.name)));const end=concatBytes(u32(0x06054b50),u16(0),u16(0),u16(files.length),u16(files.length),u32(centralSize),u32(centralOffset),u16(0));return concatBytes(...parts,...centralParts,end)}
-function xlsxStyles(){return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE6B85C"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/><xf numFmtId="0" fontId="1" fillId="1" borderId="0" applyFont="1" applyFill="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles><dxfs count="0"/><tableStyles count="0" defaultTableStyle="TableStyleMedium2" defaultPivotStyle="PivotStyleMedium9"/></styleSheet>`}
-function xlsxSheetXml(rows){const maxCols=rows.reduce((m,r)=>Math.max(m,r.length),0),rowXml=rows.map((r,ri)=>'<row r="'+(ri+1)+'">'+r.map((v,ci)=>{const ref=colName(ci+1)+(ri+1);if(typeof v==='number'&&Number.isFinite(v))return'<c r="'+ref+'" t="n"><v>'+v+'</v></c>';return'<c r="'+ref+'" t="inlineStr"'+(ri===0?' s="1"':'')+'><is><t xml:space="preserve">'+xmlEsc(v)+'</t></is></c>'}).join('')+'</row>').join('');let cols='';for(let i=0;i<maxCols;i++){let width=12;for(const r of rows)width=Math.max(width,String(r[i]??'').length+2);width=Math.min(32,Math.max(10,width));cols+='<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+width+'" customWidth="1"/>'}return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><dimension ref="A1:${colName(maxCols)}${rows.length}"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/><selection pane="bottomLeft" activeCell="A2" sqref="A2"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="18"/><cols>${cols}</cols><sheetData>${rowXml}</sheetData><autoFilter ref="A1:${colName(maxCols)}${rows.length}"/><pageMargins left="0.3" right="0.3" top="0.5" bottom="0.5" header="0.2" footer="0.2"/></worksheet>`}
-
+function xlsxStyles(){return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="164" formatCode="0.00"/></numFmts><fonts count="6"><font><sz val="11"/><name val="Aptos"/></font><font><b/><sz val="18"/><color rgb="FFFFFFFF"/><name val="Aptos Display"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Aptos"/></font><font><sz val="10"/><color rgb="FFD2DBE6"/><name val="Aptos"/></font><font><b/><sz val="11"/><color rgb="FF0B1624"/><name val="Aptos"/></font><font><b/><sz val="11"/><color rgb="FFB87912"/><name val="Aptos"/></font></fonts><fills count="7"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF0B1624"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFD7AD57"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF2F5F8"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFFFFF"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFEAF0F5"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFF6DD"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="3"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFD8E0E8"/></left><right style="thin"><color rgb="FFD8E0E8"/></right><top style="thin"><color rgb="FFD8E0E8"/></top><bottom style="thin"><color rgb="FFD8E0E8"/></bottom><diagonal/></border><border><left style="thin"><color rgb="FFB9C6D4"/></left><right style="thin"><color rgb="FFB9C6D4"/></right><top style="thin"><color rgb="FFB9C6D4"/></top><bottom style="thin"><color rgb="FFB9C6D4"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="7"><xf numFmtId="0" fontId="0" fillId="4" borderId="1"/><xf numFmtId="0" fontId="1" fillId="1" borderId="0" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="3" fillId="1" borderId="0"/><xf numFmtId="0" fontId="2" fillId="2" borderId="2" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="0" fillId="4" borderId="1"/><xf numFmtId="0" fontId="0" fillId="5" borderId="1" applyFill="1"/><xf numFmtId="0" fontId="5" fillId="6" borderId="1" applyFont="1" applyFill="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles><dxfs count="0"/><tableStyles count="0" defaultTableStyle="TableStyleMedium2" defaultPivotStyle="PivotStyleMedium9"/></styleSheet>`}
+function xlsxHeaderStyleFor(sheetName){return sheetName==='Overzicht'?3:3}
+function xlsxSheetXml(rows,opts={}){
+  const title=opts.title||'Kilometerregistratie',subtitle=opts.subtitle||'',tabColor=opts.tabColor||'D7AD57';
+  const maxCols=Math.max(1,rows.reduce((m,r)=>Math.max(m,r.length),0)),headerRow=4,dataStart=5,dataRows=Math.max(0,rows.length-1),lastRow=dataStart+dataRows-1;
+  const escv=v=>xmlEsc(v);
+  const rowXml=[];
+  rowXml.push('<row r="1" ht="28" customHeight="1"><c r="A1" s="1" t="inlineStr"><is><t xml:space="preserve">'+escv(title)+'</t></is></c></row>');
+  rowXml.push('<row r="2" ht="18" customHeight="1"><c r="A2" s="2" t="inlineStr"><is><t xml:space="preserve">'+escv(subtitle)+'</t></is></c></row>');
+  rowXml.push('<row r="3" ht="8" customHeight="1"></row>');
+  rowXml.push('<row r="4" ht="22" customHeight="1">'+rows[0].map((v,ci)=>'<c r="'+colName(ci+1)+'4" s="3" t="inlineStr"><is><t xml:space="preserve">'+escv(v)+'</t></is></c>').join('')+'</row>');
+  for(let ri=1;ri<rows.length;ri++){
+    const excelRow=ri+4,style=(ri%2===0?5:4);
+    rowXml.push('<row r="'+excelRow+'">'+rows[ri].map((v,ci)=>{
+      const val=(v===null||v===undefined)?'':String(v);
+      const st=(opts.highlightCols&&opts.highlightCols.includes(ci))?6:style;
+      return '<c r="'+colName(ci+1)+excelRow+'" s="'+st+'" t="inlineStr"><is><t xml:space="preserve">'+escv(val)+'</t></is></c>';
+    }).join('')+'</row>');
+  }
+  let cols='';
+  const widths=opts.widths||[];
+  for(let i=0;i<maxCols;i++){
+    let width=Number(widths[i])||0;if(!width){width=12;for(const r of rows)width=Math.max(width,String(r[i]??'').length+2)}
+    width=Math.min(42,Math.max(9,width));cols+='<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+width+'" customWidth="1"/>';
+  }
+  let merge='';if(maxCols>1)merge='<mergeCells count="2"><mergeCell ref="A1:'+colName(maxCols)+'1"/><mergeCell ref="A2:'+colName(maxCols)+'2"/></mergeCells>';
+  let cf='';if(opts.conditionalCol){const c=colName(opts.conditionalCol);cf='<conditionalFormatting sqref="'+c+dataStart+':'+c+lastRow+'"><cfRule type="cellIs" dxfId="0" operator="greaterThan"><formula>0</formula></cfRule></conditionalFormatting>'}
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><tabColor rgb="FF${tabColor}"/></sheetPr><dimension ref="A1:${colName(maxCols)}${Math.max(4,lastRow)}"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="4" topLeftCell="A5" activePane="bottomLeft" state="frozen"/><selection pane="bottomLeft" activeCell="A5" sqref="A5"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="19"/><cols>${cols}</cols><sheetData>${rowXml.join('')}</sheetData>${merge}<autoFilter ref="A4:${colName(maxCols)}${Math.max(4,lastRow)}"/><pageMargins left="0.3" right="0.3" top="0.5" bottom="0.5" header="0.2" footer="0.2"/></worksheet>`;
+}
+function exportOverviewRows(){
+  const days=hoursAllDays(),weeks=hoursGroupWeeks(days),rides=logs.length;
+  return [
+    ['Kengetal','Waarde'],
+    ['Deur-tot-deur',hoursFmt(hoursSum(days,'door'))],
+    ['Netto werktijd',hoursFmt(hoursSum(days,'effective'))],
+    ['Tijd op klus',hoursFmt(hoursSum(days,'job'))],
+    ['Werkritten',hoursFmt(hoursSum(days,'travel'))],
+    ['Pauze',hoursFmt(hoursSum(days,'pause'))],
+    ['Eigen tijd',hoursFmt(hoursSum(days,'own'))],
+    ['Overuren',hoursFmt(hoursSum(days,'overtime'))],
+    ['Aantal dagen',days.length],
+    ['Aantal ritregistraties',rides],
+    ['Aantal weken',weeks.length]
+  ];
+}
+function exportDayRows(){return [['Datum','ISO week','Eerste tijd','Laatste tijd','Deur-tot-deur','Eigen tijd','Tijd op klus','Werkritten','Pauze','Werktijd netto','Normale uren','Overuren'],...hoursAllDays().sort((a,b)=>b.date.localeCompare(a.date)).map(d=>[d.date,d.week,d.first,d.last,hoursFmt(d.door),hoursFmt(d.own),hoursFmt(d.job),hoursFmt(d.travel),hoursFmt(d.pause),hoursFmt(d.effective),hoursFmt(d.normal),hoursFmt(d.overtime)])]}
+function exportWeekRows(){const weeks=hoursGroupWeeks(hoursAllDays()).sort((a,b)=>b.sort.localeCompare(a.sort));return [['ISO week','Dagen','Deur-tot-deur','Tijd op klus','Pauze','Werktijd netto','Normale uren','Overuren'],...weeks.map(w=>{const dn=hoursAllDays().filter(d=>d.week===w.key).length;return[w.key,dn,hoursFmt(w.door),hoursFmt(w.job),hoursFmt(w.pause),hoursFmt(w.effective),hoursFmt(Math.min(w.effective,HOURS_WEEKLY_NORM)),hoursFmt(Math.max(0,w.effective-HOURS_WEEKLY_NORM))]})]}
+function exportPauseRows(){const a=[...logs].filter(x=>Number(x.pauseMinutes||0)>0).sort((a,b)=>String(b.datum+'T'+b.tijd).localeCompare(String(a.datum+'T'+a.tijd)));return [['Datum','Tijd','Type','Projectnummer','Klant','Pauze (min)','Pauze','Opmerking'],...a.map(x=>[x.datum,x.tijd,x.type,x.project||'',x.klant||'',Math.round(Number(x.pauseMinutes)||0),hoursFmt((Number(x.pauseMinutes)||0)/60),x.opmerking||''])]}
+function exportProjectRows(){return [['Projectnummer','Klant','Straat','Plaats','Latitude','Longitude','RD X','RD Y'],...sortedProjects('').map(p=>[p.project,p.klant,p.straat,p.plaats,p.lat??'',p.lon??'',p.rdX??'',p.rdY??''])]}
+function exportRideRows(){const a=[...logs].sort((x,y)=>String(y.datum+'T'+y.tijd).localeCompare(String(x.datum+'T'+x.tijd)));return [['Datum','Tijd','Type','Reistype','Kilometerstand','Kenteken','Bestuurder','Klant','Projectnummer','Straat','Plaats','Privé km','Privé verklaring','Pauze (min)','Pauze','Opmerking'],...a.map(x=>[x.datum,x.tijd,x.type,x.reisType,x.km,x.kenteken,x.bestuurder,x.klant,x.project,x.straat,x.plaats,x.privateKm||0,x.privateDescription||'',x.pauseMinutes||0,hoursFmt((Number(x.pauseMinutes)||0)/60),x.opmerking||''])]}
+function exportCsvString(data){return '\ufeff'+data.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n')+'\r\n'}
+function u16(v){return new Uint8Array([v&255,(v>>>8)&255])}
+function u32(v){return new Uint8Array([v&255,(v>>>8)&255,(v>>>16)&255,(v>>>24)&255])}
+function concatBytes(...arrs){let n=0;arrs.forEach(a=>n+=a.length);const out=new Uint8Array(n);let o=0;arrs.forEach(a=>{out.set(a,o);o+=a.length});return out}
+function crc32(bytes){let c=0xffffffff;for(let i=0;i<bytes.length;i++){c^=bytes[i];for(let k=0;k<8;k++)c=(c>>>1)^(0xedb88320&-(c&1))}return (c^0xffffffff)>>>0}
+function zipStore(files){const enc=new TextEncoder(),parts=[],central=[];let offset=0;files.forEach(f=>{const name=enc.encode(f.name),data=f.data instanceof Uint8Array?f.data:enc.encode(f.data),crc=crc32(data),local=concatBytes(u32(0x04034b50),u16(20),u16(0x800),u16(0),u16(0),u16(0),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),name,data);parts.push(local);central.push({name,data,crc,offset});offset+=local.length});let centralSize=0,centralOffset=offset;central.forEach(f=>centralSize+=46+f.name.length);const centralParts=[];central.forEach(f=>centralParts.push(concatBytes(u32(0x02014b50),u16(20),u16(20),u16(0x800),u16(0),u16(0),u16(0),u32(f.crc),u32(f.data.length),u32(f.data.length),u16(f.name.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(f.offset),f.name)));const end=concatBytes(u32(0x06054b50),u16(0),u16(0),u16(files.length),u16(files.length),u32(centralSize),u32(centralOffset),u16(0));return concatBytes(...parts,...centralParts,end)}
 function xlsxExport(){
-  const sheets=[['Ritten',exportRideRows()],['Dagen',exportDayRows()],['Weken',exportWeekRows()],['Pauzes',exportPauseRows()],['Projecten',exportProjectRows()]],enc=new TextEncoder(),files=[];
-  files.push({name:'[Content_Types].xml',data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'+sheets.map((_,i)=>'<Override PartName="/xl/worksheets/sheet'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>').join('')+'</Types>')});
+  const sheets=[
+    ['Overzicht',exportOverviewRows(),{tabColor:'D7AD57',widths:[26,18]}],
+    ['Dagregistratie',exportDayRows(),{tabColor:'74D39B',widths:[13,11,12,12,14,12,14,12,10,14,14,12]}],
+    ['Weken',exportWeekRows(),{tabColor:'7FC4FF',widths:[13,9,14,14,10,14,14,12]}],
+    ['Ritten',exportRideRows(),{tabColor:'D7AD57',widths:[13,9,13,12,16,12,18,22,18,24,16,12,30,12,10,30]}],
+    ['Pauzes',exportPauseRows(),{tabColor:'74D39B',widths:[13,9,13,18,22,13,10,30]}],
+    ['Projecten',exportProjectRows(),{tabColor:'7FC4FF',widths:[18,22,28,18,14,14,14,14]}]
+  ],enc=new TextEncoder(),files=[];
+  const contentTypes='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'+sheets.map((_,i)=>'<Override PartName="/xl/worksheets/sheet'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>').join('')+'</Types>';
+  files.push({name:'[Content_Types].xml',data:enc.encode(contentTypes)});
   files.push({name:'_rels/.rels',data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>')});
   const rels=sheets.map((_,i)=>'<Relationship Id="rId'+(i+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'+(i+1)+'.xml"/>').join('')+'<Relationship Id="rId'+(sheets.length+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>';
-  const wb=sheets.map((x,i)=>'<sheet name="'+xmlEsc(x[0])+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>').join('');
-  files.push({name:'xl/workbook.xml',data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView/></bookViews><sheets>'+wb+'</sheets></workbook>')});
+  files.push({name:'xl/workbook.xml',data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView/></bookViews><sheets>'+sheets.map((x,i)=>'<sheet name="'+xmlEsc(x[0])+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>').join('')+'</sheets></workbook>')});
   files.push({name:'xl/_rels/workbook.xml.rels',data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+rels+'</Relationships>')});
   files.push({name:'xl/styles.xml',data:enc.encode(xlsxStyles())});
-  sheets.forEach((x,i)=>files.push({name:'xl/worksheets/sheet'+(i+1)+'.xml',data:enc.encode(xlsxSheetXml(x[1]))}));
+  sheets.forEach((x,i)=>files.push({name:'xl/worksheets/sheet'+(i+1)+'.xml',data:enc.encode(xlsxSheetXml(x[1],{title:'Kilometerregistratie · '+x[0],subtitle:'Gegenereerd op '+new Date().toLocaleString('nl-NL')+' · bron: History',tabColor:x[2].tabColor,widths:x[2].widths}))}));
   downloadBinary(zipStore(files),'Kilometerregistratie_overzicht.xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-  showToast('✓ Excel-bestand met 5 tabbladen gemaakt');
+  showToast('✓ Ontworpen Excel-bestand met 6 tabbladen gemaakt');
 }
 function csvPackageExport(){
   const sheets=[['Ritten.csv',exportRideRows()],['Dagen.csv',exportDayRows()],['Weken.csv',exportWeekRows()],['Pauzes.csv',exportPauseRows()],['Projecten.csv',exportProjectRows()]],enc=new TextEncoder();
@@ -494,9 +562,39 @@ function parseText(text){const lines=text.replace(/^\ufeff/,'').replace(/\r/g,''
 const HOURS_KEY='kilometerregistratie_uren_v2';
 const HOURS_DAILY_NORM=8;
 const HOURS_WEEKLY_NORM=40;
-let hoursState={weekSearch:'',weekYear:'',graphRange:'month',daysPerPage:7,daysVisible:7};
+const HOURS_COLUMN_DEFS=[
+  {key:'time',label:'Tijd',meta:'Tijdstip uit History'},
+  {key:'type',label:'Type',meta:'Vertrek of Aankomst'},
+  {key:'customer',label:'Klant',meta:'Klant uit History'},
+  {key:'project',label:'Project',meta:'Projectnummer uit History'},
+  {key:'transition',label:'Overgang',meta:'Eigen tijd / werkrit / klus'},
+  {key:'interval',label:'Interval',meta:'Duur tot volgende registratie'},
+  {key:'km',label:'Kilometerstand',meta:'Kilometerstand uit History'},
+  {key:'plate',label:'Kenteken',meta:'Kenteken uit History'},
+  {key:'driver',label:'Bestuurder',meta:'Bestuurder uit History'},
+  {key:'travelType',label:'Reistype',meta:'Zakelijk of Privé'},
+  {key:'privateKm',label:'Privé km',meta:'Privé kilometers binnen de rit'},
+  {key:'pause',label:'Pauze',meta:'Alleen dit veld is hier direct aanpasbaar'},
+  {key:'address',label:'Locatie',meta:'Straat en plaats'},
+  {key:'note',label:'Opmerking',meta:'Opmerking uit History'}
+];
+const HOURS_DEFAULT_COLUMNS=['time','type','customer','project','transition','interval','pause','travelType'];
+let hoursState={weekSearch:'',weekYear:'',graphRange:'month',daysPerPage:7,daysVisible:7,columns:[...HOURS_DEFAULT_COLUMNS]};
 function hoursSettings(){try{return JSON.parse(localStorage.getItem(HOURS_KEY)||'{}')||{}}catch(e){return{}}}
-function loadHoursState(){const x=hoursSettings(),pageSize=Math.min(365,Math.max(1,Number(x.daysPerPage)||7)),visible=Math.min(365,Math.max(1,Number(x.daysVisible)||pageSize));hoursState={weekSearch:String(x.weekSearch||''),weekYear:String(x.weekYear||''),graphRange:String(x.graphRange||'month'),daysPerPage:pageSize,daysVisible:visible};if($('hoursWeekSearch'))$('hoursWeekSearch').value=hoursState.weekSearch;if($('hoursWeekYear'))$('hoursWeekYear').value=hoursState.weekYear;if($('hoursDaysPerPage'))$('hoursDaysPerPage').value=hoursState.daysPerPage}
+function normalizeHoursColumns(cols){
+  const valid=new Set(HOURS_COLUMN_DEFS.map(c=>c.key));
+  let a=Array.isArray(cols)?cols.filter(k=>valid.has(k)):[...HOURS_DEFAULT_COLUMNS];
+  a=[...new Set(a)];
+  return a.length?a:[...HOURS_DEFAULT_COLUMNS];
+}
+function loadHoursState(){
+  const x=hoursSettings(),pageSize=Math.min(365,Math.max(1,Number(x.daysPerPage)||7)),visible=Math.min(365,Math.max(1,Number(x.daysVisible)||pageSize));
+  hoursState={weekSearch:String(x.weekSearch||''),weekYear:String(x.weekYear||''),graphRange:String(x.graphRange||'month'),daysPerPage:pageSize,daysVisible:visible,columns:normalizeHoursColumns(x.columns)};
+  if($('hoursWeekSearch'))$('hoursWeekSearch').value=hoursState.weekSearch;
+  if($('hoursWeekYear'))$('hoursWeekYear').value=hoursState.weekYear;
+  if($('hoursDaysPerPage'))$('hoursDaysPerPage').value=hoursState.daysPerPage;
+  if($('hoursColumnManager'))renderHoursColumnManager();
+}
 function saveHoursState(){localStorage.setItem(HOURS_KEY,JSON.stringify(hoursState));if(typeof makeAutoSnapshot==='function')makeAutoSnapshot()}
 function hoursDateOnly(d){return new Date(d+'T12:00:00')}
 function hoursIsoWeekInfo(dateStr){const d=hoursDateOnly(dateStr);if(Number.isNaN(d.getTime()))return{year:0,week:0};const day=(d.getDay()+6)%7;d.setDate(d.getDate()-day+3);const year=d.getFullYear();const first=new Date(year,0,4,12);const week=1+Math.round(((d-first)/86400000-3+((first.getDay()+6)%7))/7);return{year,week}}
@@ -511,7 +609,64 @@ function hoursFilteredDays(){const all=hoursAllDays(),wn=Number(hoursState.weekS
 function hoursGroupWeeks(days){const m=new Map();days.forEach(d=>{const k=d.week,g=m.get(k)||{key:k,sort:d.date,door:0,job:0,pause:0,overtime:0,effective:0,normal:0};g.door+=d.door;g.job+=d.job;g.pause+=d.pause;g.overtime+=d.overtime;g.effective+=d.effective;g.normal+=d.normal;m.set(k,g)});return[...m.values()].sort((a,b)=>a.sort.localeCompare(b.sort))}
 function hoursGroupMonths(days){const m=new Map();days.forEach(d=>{const k=d.date.slice(0,7),g=m.get(k)||{key:k,sort:k,door:0,job:0,pause:0,overtime:0,effective:0,normal:0};g.door+=d.door;g.job+=d.job;g.pause+=d.pause;g.overtime+=d.overtime;g.effective+=d.effective;g.normal+=d.normal;m.set(k,g)});return[...m.values()].sort((a,b)=>a.sort.localeCompare(b.sort))}
 function hoursSum(days,field){return days.reduce((s,d)=>s+(Number(d[field])||0),0)}
-function hoursRenderDaily(){const all=hoursFilteredDays().sort((a,b)=>b.date.localeCompare(a.date)),box=$('hoursDailyTable');if(!all.length){box.innerHTML='<div class="hoursEmpty">Geen History-ritten gevonden voor de gekozen periode/het gekozen weeknummer.</div>';return}const visible=all.slice(0,Math.max(1,hoursState.daysVisible));let html='';visible.forEach(d=>{html+='<details class="hoursDayDetails" '+(d.date===now().datum?'open':'')+'><summary><div><b>'+esc(hoursDateLabel(d.date))+'</b><div class="historyDayMeta">'+esc(d.week)+' · '+d.logs.length+' registraties · '+esc(d.first||'—')+' → '+esc(d.last||'—')+'</div></div><div style="text-align:right"><b>'+hoursFmt(d.effective)+'</b><div class="historyDayMeta">netto werk · pauze '+hoursFmt(d.pause)+'</div></div></summary><div class="hoursDayBody">';html+='<div class="hoursTableWrap" style="margin-top:10px"><table class="hoursTable" style="min-width:1040px"><thead><tr><th>Type</th><th>Tijd</th><th>Overgang</th><th>Interval</th><th>Project</th><th>Pauze</th><th>Rit</th></tr></thead><tbody>';d.logs.forEach((x,idx)=>{const next=d.logs[idx+1],seg=d.segments[idx],kind=seg?(seg.kind==='eigen'?'EIGEN TIJD':seg.kind==='werkrit'?'WERKTIJD · RIT':'WERKTIJD · KLUS'):'—';html+='<tr><td><span class="historyType '+(x.type==='Vertrek'?'dep':'arr')+'">'+esc(x.type)+'</span></td><td><b>'+esc(x.tijd)+'</b></td><td>'+esc(kind)+'</td><td>'+(next&&seg?hoursFmt(seg.hours)+' · '+esc(next.tijd):'—')+'</td><td>'+esc(x.project||'Geen project')+'</td><td><div class="hoursPauseEdit"><input data-hours-pause="'+esc(x.id)+'" type="number" inputmode="numeric" min="0" step="1" value="'+esc(x.pauseMinutes||0)+'"><span>min</span></div></td><td><button class="small hoursEditLog" data-id="'+esc(x.id)+'">&#x270F;&#xFE0F; Wijzig rit</button></td></tr>'});html+='</tbody></table></div><div class="hoursKpiGrid" style="margin-top:10px"><div class="hoursKpi"><small>Deur-tot-deur</small><b>'+hoursFmt(d.door)+'</b></div><div class="hoursKpi"><small>Eigen tijd</small><b>'+hoursFmt(d.own)+'</b></div><div class="hoursKpi"><small>Tijd op klus</small><b>'+hoursFmt(d.job)+'</b></div><div class="hoursKpi"><small>Werkritten</small><b>'+hoursFmt(d.travel)+'</b></div><div class="hoursKpi"><small>Pauze</small><b>'+hoursFmt(d.pause)+'</b></div><div class="hoursKpi"><small>Overuren</small><b>'+hoursFmt(d.overtime)+'</b></div></div><div class="hoursHint">Pauze aanpassen schrijft direct naar de bijbehorende History-rit. Voor tijd, km, project of andere ritgegevens gebruik je <b>Wijzig rit</b>.</div></div></details>'});html+='<div class="muted" style="text-align:center;margin-top:8px">'+visible.length+' van '+all.length+' dagen weergegeven.</div>';box.innerHTML=html;const more=$('hoursShowMoreBtn'),allBtn=$('hoursShowAllBtn');more.style.display=visible.length<all.length?'inline-block':'none';more.textContent='Toon meer ('+hoursState.daysPerPage+')';allBtn.style.display=visible.length<all.length?'inline-block':'none'}
+function hoursTransitionLabel(seg){return seg?(seg.kind==='eigen'?'EIGEN TIJD':seg.kind==='werkrit'?'WERKTIJD · RIT':seg.kind==='klus'?'WERKTIJD · KLUS':'—'):'—'}
+function hoursColumnValue(key,x,seg,next){
+  switch(key){
+    case 'time': return '<b>'+esc(x.tijd)+'</b>';
+    case 'type': return '<span class="historyType '+(x.type==='Vertrek'?'dep':'arr')+'">'+esc(x.type)+'</span>';
+    case 'customer': return esc(x.klant||'—');
+    case 'project': return esc(x.project||'Geen project');
+    case 'transition': return '<span class="hoursTransition '+(seg?.kind||'')+'">'+esc(hoursTransitionLabel(seg))+'</span>';
+    case 'interval': return next&&seg?hoursFmt(seg.hours)+' · '+esc(next.tijd):'—';
+    case 'km': return Number(x.km||0).toLocaleString('nl-NL');
+    case 'plate': return esc(x.kenteken||'—');
+    case 'driver': return esc(x.bestuurder||'—');
+    case 'travelType': return esc(x.reisType||'—');
+    case 'privateKm': return Number(x.privateKm||0)>0?Number(x.privateKm).toLocaleString('nl-NL',{maximumFractionDigits:1})+' km':'—';
+    case 'pause': return '<div class="hoursPauseEdit"><input data-hours-pause="'+esc(x.id)+'" type="number" inputmode="numeric" min="0" step="1" value="'+esc(x.pauseMinutes||0)+'"><span>min</span></div>';
+    case 'address': return esc([x.straat,x.plaats].filter(Boolean).join(', ')||'—');
+    case 'note': return esc(x.opmerking||'—');
+    default: return '—';
+  }
+}
+function renderHoursColumnManager(){
+  const box=$('hoursColumnList');if(!box)return;
+  box.innerHTML=HOURS_COLUMN_DEFS.map((d,i)=>{
+    const on=hoursState.columns.includes(d.key),pos=hoursState.columns.indexOf(d.key),isActive=pos>=0;
+    return '<div class="hoursColumnRow" data-column-key="'+esc(d.key)+'">'+
+      '<input type="checkbox" '+(on?'checked':'')+' data-column-toggle="'+esc(d.key)+'" aria-label="'+esc(d.label)+'">'+
+      '<div><div class="hoursColumnLabel">'+esc(d.label)+'</div><div class="hoursColumnMeta">'+esc(d.meta)+(isActive?' · kolom '+(pos+1):' · niet zichtbaar')+'</div></div>'+
+      '<div class="hoursColumnButtons">'+
+        '<button type="button" class="small" data-column-up="'+esc(d.key)+'" '+(!isActive||pos===0?'disabled':'')+'>&#x2B06;&#xFE0F;</button>'+
+        '<button type="button" class="small" data-column-down="'+esc(d.key)+'" '+(!isActive||pos===hoursState.columns.length-1?'disabled':'')+'>&#x2B07;&#xFE0F;</button>'+
+      '</div></div>';
+  }).join('');
+}
+function hoursSetColumnVisible(key,on){
+  let cols=[...hoursState.columns];
+  if(on&&!cols.includes(key))cols.push(key);
+  if(!on)cols=cols.filter(k=>k!==key);
+  hoursState.columns=normalizeHoursColumns(cols);saveHoursState();hoursRenderDaily();renderHoursColumnManager();
+}
+function hoursMoveColumn(key,dir){
+  const cols=[...hoursState.columns],i=cols.indexOf(key);if(i<0)return;const j=i+dir;if(j<0||j>=cols.length)return;[cols[i],cols[j]]=[cols[j],cols[i]];hoursState.columns=cols;saveHoursState();hoursRenderDaily();renderHoursColumnManager();
+}
+function hoursRenderDaily(){
+  const all=hoursFilteredDays().sort((a,b)=>b.date.localeCompare(a.date)),box=$('hoursDailyTable');
+  if(!all.length){box.innerHTML='<div class="hoursEmpty">Geen History-ritten gevonden voor de gekozen periode/het gekozen weeknummer.</div>';return}
+  const visible=all.slice(0,Math.max(1,hoursState.daysVisible));
+  const defs=hoursState.columns.map(k=>HOURS_COLUMN_DEFS.find(d=>d.key===k)).filter(Boolean);
+  let html='';
+  visible.forEach(d=>{
+    html+='<details class="hoursDayDetails" '+(d.date===now().datum?'open':'')+'><summary><div><b>'+esc(hoursDateLabel(d.date))+'</b><div class="historyDayMeta">'+esc(d.week)+' · '+d.logs.length+' registraties · '+esc(d.first||'—')+' → '+esc(d.last||'—')+'</div></div><div style="text-align:right"><b>'+hoursFmt(d.effective)+'</b><div class="historyDayMeta">netto werk · pauze '+hoursFmt(d.pause)+'</div></div></summary><div class="hoursDayBody">';
+    html+='<div class="hoursTableWrap" style="margin-top:10px"><table class="hoursTable"><thead><tr>'+defs.map(def=>'<th>'+esc(def.label)+'</th>').join('')+'</tr></thead><tbody>';
+    d.logs.forEach((x,idx)=>{const next=d.logs[idx+1],seg=d.segments[idx];html+='<tr>'+defs.map(def=>'<td class="'+(['km','privateKm','pause'].includes(def.key)?'num':'')+'">'+hoursColumnValue(def.key,x,seg,next)+'</td>').join('')+'</tr>'});
+    html+='</tbody></table></div>';
+    html+='<div class="hoursKpiGrid" style="margin-top:10px"><div class="hoursKpi"><small>Deur-tot-deur</small><b>'+hoursFmt(d.door)+'</b></div><div class="hoursKpi"><small>Eigen tijd</small><b>'+hoursFmt(d.own)+'</b></div><div class="hoursKpi"><small>Tijd op klus</small><b>'+hoursFmt(d.job)+'</b></div><div class="hoursKpi"><small>Werkritten</small><b>'+hoursFmt(d.travel)+'</b></div><div class="hoursKpi"><small>Pauze</small><b>'+hoursFmt(d.pause)+'</b></div><div class="hoursKpi"><small>Overuren</small><b>'+hoursFmt(d.overtime)+'</b></div></div><div class="hoursHint">Wil je tijd, km, project, klant of andere ritgegevens wijzigen? Gebruik de bestaande History-registratie via <b>Wijzig rit</b>. Alleen pauze is hier rechtstreeks bewerkbaar.</div></div></details>';
+  });
+  html+='<div class="muted" style="text-align:center;margin-top:8px">'+visible.length+' van '+all.length+' dagen weergegeven.</div>';box.innerHTML=html;
+  const more=$('hoursShowMoreBtn'),allBtn=$('hoursShowAllBtn');more.style.display=visible.length<all.length?'inline-block':'none';more.textContent='Toon meer ('+hoursState.daysPerPage+')';allBtn.style.display=visible.length<all.length?'inline-block':'none';
+}
 function hoursChangeDayPageSize(){const n=Math.min(365,Math.max(1,Number($('hoursDaysPerPage').value)||7));hoursState.daysPerPage=n;hoursState.daysVisible=n;saveHoursState();hoursRenderDaily()}
 function hoursShowMore(){hoursState.daysVisible=Math.min(365,hoursState.daysVisible+hoursState.daysPerPage);saveHoursState();hoursRenderDaily()}
 function hoursShowAll(){hoursState.daysVisible=365;saveHoursState();hoursRenderDaily()}
@@ -539,6 +694,9 @@ $('hoursDailyTable').addEventListener('change',e=>{
   if(p){hoursUpdatePause(p.dataset.hoursPause,p.value)}
 });
 $('hoursDaysPerPage').addEventListener('change',hoursChangeDayPageSize);$('hoursShowMoreBtn').onclick=hoursShowMore;$('hoursShowAllBtn').onclick=hoursShowAll;
+$('hoursColumnsBtn').onclick=()=>{const box=$('hoursColumnManager');box.style.display=box.style.display==='none'?'block':'none';if(box.style.display==='block')renderHoursColumnManager()};
+$('hoursColumnList').addEventListener('change',e=>{const cb=e.target.closest('[data-column-toggle]');if(cb)hoursSetColumnVisible(cb.dataset.columnToggle,cb.checked)});
+$('hoursColumnList').addEventListener('click',e=>{const up=e.target.closest('[data-column-up]'),down=e.target.closest('[data-column-down]');if(up)hoursMoveColumn(up.dataset.columnUp,-1);if(down)hoursMoveColumn(down.dataset.columnDown,1)});
 
 $('saveArrivalBtn').onclick=saveArrival;$('saveDepartureBtn').onclick=saveDeparture;$('arrivalNowBtn').onclick=()=>{setNow('arrivalDate','arrivalTime');updateDock()};$('departureNowBtn').onclick=()=>setNow('departureDate','departureTime');$('departureDriver').addEventListener('input',updateDock);
 $('switchCarBtn').onclick=openCarSwitch;$('switchCarDepartureBtn').onclick=openCarSwitch;$('closeCarModalBtn').onclick=closeCarSwitch;$('cancelCarSwitchBtn').onclick=closeCarSwitch;$('confirmCarSwitchBtn').onclick=confirmCarSwitch;$('switchPlate').addEventListener('input',updateSwitchKmHint);$('carModal').addEventListener('click',e=>{if(e.target===$('carModal'))closeCarSwitch()});
@@ -583,7 +741,7 @@ $('replaceImportBtn').onclick=async()=>{
   if(!ok)return;
   logs=pendingImport;
   if(pendingImportHours&&typeof pendingImportHours==='object'){
-    hoursState={weekSearch:String(pendingImportHours.weekSearch||''),weekYear:String(pendingImportHours.weekYear||''),graphRange:String(pendingImportHours.graphRange||'month'),daysPerPage:Math.min(365,Math.max(1,Number(pendingImportHours.daysPerPage)||7)),daysVisible:Math.min(365,Math.max(1,Number(pendingImportHours.daysVisible)||7))};
+    hoursState={weekSearch:String(pendingImportHours.weekSearch||''),weekYear:String(pendingImportHours.weekYear||''),graphRange:String(pendingImportHours.graphRange||'month'),daysPerPage:Math.min(365,Math.max(1,Number(pendingImportHours.daysPerPage)||7)),daysVisible:Math.min(365,Math.max(1,Number(pendingImportHours.daysVisible)||7)),columns:normalizeHoursColumns(pendingImportHours.columns)};
     saveHoursState();
   }
   saveLogs();applyDefaults();pendingImport=null;pendingImportHours=null;$('replaceImportBtn').disabled=true;$('importStatus').textContent='';showToast('\u{2713} Backup teruggezet inclusief urenregistratie')} ;
