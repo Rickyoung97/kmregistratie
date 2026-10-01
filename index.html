@@ -88,6 +88,26 @@ nav{grid-template-columns:repeat(5,minmax(0,1fr))}
 .hoursColumnRow{display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
 .hoursColumnRow:last-child{border-bottom:0}
 .hoursColumnLabel{font-weight:800}.hoursColumnMeta{font-size:11px;color:var(--muted)}
+.hoursWeekControls{display:grid;grid-template-columns:minmax(110px,0.7fr) minmax(180px,1.6fr) minmax(130px,0.8fr);gap:8px;align-items:end}
+.hoursWeekControls button{min-height:48px}
+.hoursWeekControls .field{min-width:0}
+.hoursWeekSummary{padding:10px 0 4px;color:var(--muted);font-size:12px}
+.hoursWeekDetails{margin:8px 0;border:1px solid var(--line);border-radius:15px;background:var(--input);overflow:hidden}
+.hoursWeekDetails>summary,.hoursDayDetails>summary{list-style:none;cursor:pointer}
+.hoursWeekDetails>summary::-webkit-details-marker,.hoursDayDetails>summary::-webkit-details-marker{display:none}
+.hoursWeekDetails>summary{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:12px 14px;font-weight:800;background:var(--card2)}
+.hoursWeekBody{padding:10px 12px 12px}
+.hoursDayDetails{margin:8px 0;border:1px solid var(--line);border-radius:13px;background:var(--card)}
+.hoursDayDetails>summary{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px}
+.hoursTripCell{vertical-align:middle}
+.hoursActionBtns{display:flex;gap:5px;flex-wrap:wrap}
+.hoursActionBtns button{padding:7px 9px;font-size:12px}
+.hoursTransitionText{font-size:12px;font-weight:800}
+.hoursTransitionText.eigen{color:var(--gold2)}
+.hoursTransitionText.werkrit{color:var(--green)}
+.hoursTransitionText.klus{color:var(--blue)}
+@media(max-width:760px){.hoursWeekControls{grid-template-columns:1fr 1fr}.hoursWeekControls .field:nth-child(2){grid-column:1/-1}}
+
 .hoursColumnButtons{display:flex;gap:5px}.hoursColumnButtons button{min-width:38px;min-height:38px;padding:6px 8px}
 .hoursColumnRow input[type="checkbox"]{width:20px;height:20px;min-height:20px}
 @media(max-width:560px){.hoursColumnRow{grid-template-columns:auto 1fr auto}.hoursColumnButtons{grid-column:2/-1}.hoursColumnButtons button{flex:1}}
@@ -214,12 +234,10 @@ nav{grid-template-columns:repeat(5,minmax(0,1fr))}
 </section>
 
 <section id="uren" class="tab">
-  <div class="card"><div class="hoursSummaryRow"><div><h2 style="margin-bottom:4px">Urenregistratie</h2><div class="muted">Volledig automatisch uit History. Alleen pauzes zijn hier rechtstreeks aanpasbaar.</div></div><span id="hoursDataState" class="hoursTag auto">Uit History</span></div></div>
-  <div class="card"><h2>Week zoeken</h2><div class="grid"><div><span class="label">Weeknummer</span><input id="hoursWeekSearch" type="number" inputmode="numeric" min="1" max="53" placeholder="bijv. 39"></div><div><span class="label">Jaar van week (optioneel)</span><input id="hoursWeekYear" type="number" inputmode="numeric" min="2000" max="2100" placeholder="bijv. 2026"></div></div><div class="actions"><button id="hoursClearWeekBtn">Weekfilter wissen</button><button id="hoursRefreshBtn" class="secondary">&#x21BB; Herberekenen uit History</button></div><div id="hoursWeekFilterStatus" class="hoursHint"></div></div>
-  <div class="card"><h2>Overzicht</h2><div class="hoursKpiGrid"><div class="hoursKpi"><small>Werktijd netto</small><b id="hoursTotalKpi">0:00</b></div><div class="hoursKpi"><small>Pauze</small><b id="hoursPauseKpi">0:00</b></div><div class="hoursKpi"><small>Normale uren</small><b id="hoursNormalKpi">0:00</b></div><div class="hoursKpi"><small>Overuren</small><b id="hoursOvertimeKpi">0:00</b></div><div class="hoursKpi"><small>Tijd op klus</small><b id="hoursJobKpi">0:00</b></div><div class="hoursKpi"><small>Deur-tot-deur</small><b id="hoursDoorKpi">0:00</b></div></div><div class="hoursHint">Norm: 8:00 uur per werkdag en 40:00 uur per week. Pauze wordt van de effectieve werktijd afgetrokken, maar niet van de deur-tot-deur tijd.</div></div>
-  <div class="card"><div class="hoursSummaryRow"><div><h2 style="margin-bottom:4px">Dagregistratie</h2><div class="muted">Nieuwste datum bovenaan. Alle vertrek- en aankomstmomenten uit History staan hieronder.</div></div></div><div class="hoursDayControls"><div class="field"><span class="label">Aantal dagen tonen</span><input id="hoursDaysPerPage" type="number" min="1" max="365" step="1" value="7"></div><button id="hoursShowMoreBtn" class="secondary">Toon meer</button><button id="hoursShowAllBtn">Alles tonen</button><button id="hoursColumnsBtn">&#x2699;&#xFE0F; Tabel aanpassen</button></div><div id="hoursColumnManager" class="hoursColumnManager" style="display:none"><div class="hoursHint"><b>Kolommen van de dagregistratie</b> — voeg velden toe, haal ze weg en wijzig de volgorde. Dit verandert alleen de weergave; de History-data blijft de bron.</div><div id="hoursColumnList"></div></div><div id="hoursDailyTable"></div></div>
-  <div class="card"><h2>Weekoverzicht</h2><div id="hoursWeeklyTable"></div></div>
-  <div class="card"><div class="hoursGraphHead"><div><h2 style="margin-bottom:4px">Grafiek</h2><div class="muted">Deur-tot-deur, tijd op klus, pauze en overuren.</div></div></div><div class="hoursRange"><button data-hours-range="week">Weekbasis</button><button data-hours-range="month">Maandbasis</button><button data-hours-range="3m">3 Maanden</button><button data-hours-range="6m">6 Maanden</button><button data-hours-range="year">Jaarbasis</button><button data-hours-range="ytd">YTD</button></div><div id="hoursGraph" class="hoursGraph"></div><div class="hoursLegend"><span class="legendItem"><span class="legendDot" style="background:#d7ad57"></span>Deur-tot-deur</span><span class="legendItem"><span class="legendDot" style="background:#7fc4ff"></span>Tijd op klus</span><span class="legendItem"><span class="legendDot" style="background:#74d39b"></span>Pauze</span><span class="legendItem"><span class="legendDot" style="background:#ee8e8e"></span>Overuren</span></div></div>
+  <div class="card"><div class="hoursSummaryRow"><div><h2 style="margin-bottom:4px">Urenregistratie</h2><div class="muted">Automatisch opgebouwd uit History. Alleen pauze is rechtstreeks aanpasbaar.</div></div><span id="hoursDataState" class="hoursTag auto">Uit History</span></div></div>
+  <div class="card"><h2>Overzicht</h2><div class="hoursKpiGrid"><div class="hoursKpi"><small>Werktijd netto</small><b id="hoursTotalKpi">0:00</b></div><div class="hoursKpi"><small>Pauze</small><b id="hoursPauseKpi">0:00</b></div><div class="hoursKpi"><small>Normale uren</small><b id="hoursNormalKpi">0:00</b></div><div class="hoursKpi"><small>Overuren</small><b id="hoursOvertimeKpi">0:00</b></div><div class="hoursKpi"><small>Tijd op klus</small><b id="hoursJobKpi">0:00</b></div><div class="hoursKpi"><small>Deur-tot-deur</small><b id="hoursDoorKpi">0:00</b></div></div><div class="hoursHint">Pauze wordt van de netto werktijd afgetrokken, maar blijft onderdeel van de deur-tot-deur periode.</div></div>
+  <div class="card"><div class="hoursSummaryRow"><div><h2 style="margin-bottom:4px">Week- en dagregistratie</h2><div class="muted">Kies hoeveel weken zichtbaar zijn. Nieuwste jaar, week en dag staan standaard bovenaan.</div></div></div><div class="hoursWeekControls"><div class="field"><span class="label">Aantal weken tonen</span><input id="hoursWeeksPerPage" type="number" min="1" max="104" step="1" value="8"></div><div class="field"><span class="label">Filter weken · * is wildcard, ? één teken</span><input id="hoursWeekFilter" type="text" placeholder="bijv. *BAM* of 2026-W4* | week 39"></div><div class="field"><span class="label">Volgorde</span><select id="hoursWeekSort"><option value="desc">Nieuw → oud</option><option value="asc">Oud → nieuw</option></select></div><button id="hoursShowMoreWeeksBtn" class="secondary">Toon meer</button><button id="hoursShowAllWeeksBtn">Alles tonen</button><button id="hoursWeekColumnsBtn">&#x2699;&#xFE0F; Weektabel aanpassen</button></div><div id="hoursWeekColumnManager" class="hoursColumnManager" style="display:none"><div class="hoursHint"><b>Kolommen van de weektabel</b> — toevoegen, verwijderen en volgorde wijzigen. Alleen de weergave verandert.</div><div id="hoursWeekColumnList"></div></div><div id="hoursWeeksTable"></div></div>
+  <div class="card"><div class="hoursGraphHead"><div><h2 style="margin-bottom:4px">Grafiek</h2><div class="muted">Deur-tot-deur, tijd op klus, pauze en overuren. De cijfers komen uit dezelfde dag- en weekberekening hierboven.</div></div></div><div class="hoursRange"><button data-hours-range="week">Weekbasis</button><button data-hours-range="month">Maandbasis</button><button data-hours-range="3m">3 Maanden</button><button data-hours-range="6m">6 Maanden</button><button data-hours-range="year">Jaarbasis</button><button data-hours-range="ytd">YTD</button></div><div id="hoursGraph" class="hoursGraph"></div><div class="hoursLegend"><span class="legendItem"><span class="legendDot" style="background:#d7ad57"></span>Deur-tot-deur</span><span class="legendItem"><span class="legendDot" style="background:#7fc4ff"></span>Tijd op klus</span><span class="legendItem"><span class="legendDot" style="background:#74d39b"></span>Pauze</span><span class="legendItem"><span class="legendDot" style="background:#ee8e8e"></span>Overuren</span></div></div>
 </section>
 <section id="settings" class="tab">
   <div class="card"><h2>Standaardgegevens</h2><p class="muted">Deze staan bij een nieuwe aankomst automatisch klaar. Een tijdelijke auto wissel je in het rit-scherm.</p><div class="grid"><div><span class="label">Standaardbestuurder</span><input id="defaultDriver"></div><div><span class="label">Standaardkenteken</span><input id="defaultPlate" autocapitalize="characters"></div></div><div id="activeCarSettings" class="carMini">Actieve auto: &#x2014;</div><div class="actions"><button id="saveDefaultsBtn" class="primary">&#x1F4BE; Opslaan</button></div></div>
@@ -388,43 +406,53 @@ function historyInlineEditor(x){
     '<div class="actions"><button class="primary historySaveEdit" data-id="'+esc(x.id)+'">\u{1F4BE} Opslaan</button><button class="historyCancelEdit" data-id="'+esc(x.id)+'">Annuleren</button><button class="danger historyDeleteEdit" data-id="'+esc(x.id)+'">\u{1F5D1}\u{FE0F} Verwijderen</button></div>'+
   '</div>';
 }
+function historyRenderTreeKeyForId(idv){
+  const x=logs.find(y=>y.id===idv);return x?{year:hoursIsoWeekInfo(x.datum).year,week:historyWeekGroupKey(x.datum),date:x.datum}:null;
+}
 function renderHistory(){
   const q=$('historySearch').value.trim().toLowerCase();
   const filtered=ordered().filter(x=>historyTripMatches(x,q));
   $('countStat').textContent=logs.length;
   $('arrivalStat').textContent=logs.filter(x=>x.type==='Aankomst').length;
   const last=ordered().find(x=>x.type==='Aankomst'&&x.km);
-  $('lastKmStat').textContent=last?Number(last.km).toLocaleString('nl-NL'):'\u{2014}';
+  $('lastKmStat').textContent=last?Number(last.km).toLocaleString('nl-NL'):'\u2014';
   if(!filtered.length){$('historyList').innerHTML='<div class="empty">Geen registraties gevonden.</div>';return}
-  const dayMap=new Map();
-  filtered.forEach(x=>{if(!dayMap.has(x.datum))dayMap.set(x.datum,[]);dayMap.get(x.datum).push(x)});
-  const weeks=new Map();
-  [...dayMap.keys()].sort((a,b)=>b.localeCompare(a)).forEach(date=>{const key=historyWeekGroupKey(date);if(!weeks.has(key))weeks.set(key,[]);weeks.get(key).push({date,logs:dayMap.get(date)})});
-  const today=now().datum;
+  const today=now().datum,allHistoryDates=[...new Set(filtered.map(x=>x.datum))].sort(),latestHistoryDate=allHistoryDates.at(-1)||today,openHistoryDate=allHistoryDates.includes(today)?today:latestHistoryDate, currentYear=new Date().getFullYear(), latestHistoryYear=allHistoryDates.length?hoursIsoWeekInfo(latestHistoryDate).year:currentYear, editKey=historyRenderTreeKeyForId(historyEditId);
+  const years=new Map();
+  filtered.forEach(x=>{
+    const wi=hoursIsoWeekInfo(x.datum),year=String(wi.year),week=historyWeekGroupKey(x.datum);
+    if(!years.has(year))years.set(year,new Map());
+    const wm=years.get(year);if(!wm.has(week))wm.set(week,new Map());
+    const dm=wm.get(week);if(!dm.has(x.datum))dm.set(x.datum,[]);dm.get(x.datum).push(x);
+  });
   let html='';
-  [...weeks.entries()].forEach(([week,days])=>{
-    const weekOpen=days.some(d=>d.date===today);
-    const weekLogs=days.flatMap(d=>d.logs);
-    html+='<details class="historyWeek" '+(weekOpen?'open':'')+'><summary><span>\u{1F4C5} '+esc(historyWeekLabel(week))+'</span><span class="historyWeekStats">'+days.length+' dagen \u{B7} '+weekLogs.length+' registraties</span></summary>';
-    days.sort((a,b)=>b.date.localeCompare(a.date)).forEach(d=>{
-      const dayOpen=d.date===today;
-      const times=d.logs.map(x=>x.tijd).sort();
-      const dayOwn=d.logs.length>=2?'<span class="historyDayMeta">'+esc(times[0])+' \u{2192} '+esc(times[times.length-1])+'</span>':'';
-      html+='<details class="historyDay" '+(dayOpen?'open':'')+'><summary><span>\u{1F5D3}\u{FE0F} '+esc(hoursDateLabel(d.date))+' '+dayOwn+'</span><span class="historyWeekStats">'+d.logs.length+' ritten</span></summary><div class="historyDayBody">';
-      d.logs.sort(hoursSortLogs).forEach(x=>{
-        const addr=[x.straat,x.plaats].filter(Boolean).join(', '), cls=x.type==='Vertrek'?'dep':'arr';
-        html+='<div class="historyTrip" id="historyTrip_'+esc(x.id)+'"><div class="row"><div class="grow"><span class="historyType '+cls+'">'+esc(x.type)+'</span> <b>'+esc(x.tijd)+'</b></div><button class="small editLog" data-id="'+esc(x.id)+'">\u{270F}\u{FE0F} Wijzigen</button></div>'+
-          '<div class="itemTitle" style="margin-top:7px">'+esc(x.project||'Geen project')+(x.klant?' \u{2014} '+esc(x.klant):'')+'</div>'+
-          '<div class="itemMeta">'+esc(x.kenteken)+' \u{2022} '+esc(x.bestuurder)+' \u{2022} '+Number(x.km||0).toLocaleString('nl-NL')+' km \u{2022} '+esc(x.reisType)+(addr?' \u{2022} '+esc(addr):'')+'</div>'+
-          (Number(x.privateKm||0)>0?'<div class="historyPrivateMeta">\u{21AA} Waarvan priv\u{E9}: '+Number(x.privateKm).toLocaleString('nl-NL')+' km'+(x.privateDescription?' \u{B7} '+esc(x.privateDescription):'')+'</div>':'')+
-          (Number(x.pauseMinutes||0)>0?'<div class="historyPauseMeta">\u23F8 Pauze: '+hoursFmt(Number(x.pauseMinutes||0)/60)+'</div>':'')+
-          (x.opmerking?'<div class="itemMeta">'+esc(x.opmerking)+'</div>':'')+
-          (historyEditId===x.id?historyInlineEditor(x):'')+
-        '</div>';
+  [...years.entries()].sort((a,b)=>Number(b[0])-Number(a[0])).forEach(([year,weeks])=>{
+    const yearOpen=Number(year)===(allHistoryDates.some(d=>hoursIsoWeekInfo(d).year===currentYear)?currentYear:latestHistoryYear)||(editKey&&editKey.year===Number(year));
+    html+='<details class="historyYear" '+(yearOpen?'open':'')+'><summary><span>\u{1F4C6} '+esc(year)+'</span><span class="historyWeekStats">'+[...weeks.values()].reduce((n,dm)=>n+dm.size,0)+' dagen</span></summary><div class="historyYearBody">';
+    [...weeks.entries()].sort((a,b)=>a[0]===b[0]?0:b[0].localeCompare(a[0])).forEach(([week,days])=>{
+      const weekOpen=week===historyWeekGroupKey(openHistoryDate)||(editKey&&editKey.week===week);
+      const weekCount=[...days.values()].reduce((n,a)=>n+a.length,0);
+      html+='<details class="historyWeek" '+(weekOpen?'open':'')+'><summary><span>\u{1F5D3}\u{FE0F} week '+esc(week.split('-W')[1])+'</span><span class="historyWeekStats">'+days.size+' dagen \u{00B7} '+weekCount+' registraties</span></summary><div class="historyDayBody">';
+      [...days.entries()].sort((a,b)=>b[0].localeCompare(a[0])).forEach(([date,dayLogs])=>{
+        const dayOpen=date===openHistoryDate||(editKey&&editKey.date===date);
+        const times=dayLogs.map(x=>x.tijd).sort();
+        html+='<details class="historyDay" '+(dayOpen?'open':'')+'><summary><span>\u{1F4C5} '+esc(hoursDateLabel(date))+'</span><span class="historyWeekStats">'+dayLogs.length+' registraties'+(times.length>1?' \u{00B7} '+esc(times[0])+' \u{2192} '+esc(times[times.length-1]):'')+'</span></summary><div class="historyDayBody">';
+        dayLogs.sort(hoursSortLogs).forEach(x=>{
+          const addr=[x.straat,x.plaats].filter(Boolean).join(', '),cls=x.type==='Vertrek'?'dep':'arr';
+          html+='<div class="historyTrip" id="historyTrip_'+esc(x.id)+'"><div class="row"><div class="grow"><span class="historyType '+cls+'">'+esc(x.type)+'</span> <b>'+esc(x.tijd)+'</b></div><button class="small editLog" data-id="'+esc(x.id)+'">\u{270F}\u{FE0F} Wijzigen</button></div>'+
+            '<div class="itemTitle" style="margin-top:7px">'+esc(x.project||'Geen project')+(x.klant?' \u{2014} '+esc(x.klant):'')+'</div>'+
+            '<div class="itemMeta">'+esc(x.kenteken)+' \u{2022} '+esc(x.bestuurder)+' \u{2022} '+Number(x.km||0).toLocaleString('nl-NL')+' km \u{2022} '+esc(x.reisType)+(addr?' \u{2022} '+esc(addr):'')+'</div>'+
+            (Number(x.privateKm||0)>0?'<div class="historyPrivateMeta">\u{21AA} Waarvan priv\u{E9}: '+Number(x.privateKm).toLocaleString('nl-NL')+' km'+(x.privateDescription?' \u{00B7} '+esc(x.privateDescription):'')+'</div>':'')+
+            (Number(x.pauseMinutes||0)>0?'<div class="historyPauseMeta">\u23F8 Pauze: '+hoursFmt(Number(x.pauseMinutes||0)/60)+'</div>':'')+
+            (x.opmerking?'<div class="itemMeta">'+esc(x.opmerking)+'</div>':'')+
+            (historyEditId===x.id?historyInlineEditor(x):'')+
+          '</div>';
+        });
+        html+='</div></details>';
       });
       html+='</div></details>';
     });
-    html+='</details>';
+    html+='</div></details>';
   });
   $('historyList').innerHTML=html;
 }
@@ -453,61 +481,6 @@ function download(content,name,type){if(NATIVE_ANDROID){const cmd=name.toLowerCa
 function xmlEsc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;')}
 function colName(n){let s='';while(n>0){const r=(n-1)%26;s=String.fromCharCode(65+r)+s;n=Math.floor((n-1)/26)}return s}
 function exportDayRows(){return [['Datum','ISO week','Eerste tijd','Laatste tijd','Deur-tot-deur','Eigen tijd','Tijd op klus','Werkritten','Pauze','Werktijd netto','Normale uren','Overuren'],...hoursAllDays().sort((a,b)=>b.date.localeCompare(a.date)).map(d=>[d.date,d.week,d.first,d.last,hoursFmt(d.door),hoursFmt(d.own),hoursFmt(d.job),hoursFmt(d.travel),hoursFmt(d.pause),hoursFmt(d.effective),hoursFmt(d.normal),hoursFmt(d.overtime)])]}
-function exportWeekRows(){const weeks=hoursGroupWeeks(hoursAllDays()).sort((a,b)=>b.sort.localeCompare(a.sort));return [['ISO week','Dagen','Deur-tot-deur','Tijd op klus','Pauze','Werktijd netto','Normale uren','Overuren'],...weeks.map(w=>{const dn=hoursAllDays().filter(d=>d.week===w.key).length;return[w.key,dn,hoursFmt(w.door),hoursFmt(w.job),hoursFmt(w.pause),hoursFmt(w.effective),hoursFmt(Math.min(w.effective,HOURS_WEEKLY_NORM)),hoursFmt(Math.max(0,w.effective-HOURS_WEEKLY_NORM))]})]}
-function exportPauseRows(){const a=[...logs].filter(x=>Number(x.pauseMinutes||0)>0).sort(hoursSortLogs);return [['Datum','Tijd','Type','Projectnummer','Klant','Pauze (min)','Pauze','Opmerking'],...a.map(x=>[x.datum,x.tijd,x.type,x.project||'',x.klant||'',Math.round(Number(x.pauseMinutes)||0),hoursFmt((Number(x.pauseMinutes)||0)/60),x.opmerking||''])]}
-function exportProjectRows(){return [['Projectnummer','Klant','Straat','Plaats','Latitude','Longitude','RD X','RD Y'],...sortedProjects('').map(p=>[p.project,p.klant,p.straat,p.plaats,p.lat??'',p.lon??'',p.rdX??'',p.rdY??''])]}
-function exportRideRows(){const a=[...logs].sort(hoursSortLogs);return [['Datum','Tijd','Type','Reistype','Kilometerstand','Kenteken','Bestuurder','Klant','Projectnummer','Straat','Plaats','Privé km','Privé verklaring','Pauze (min)','Pauze','Opmerking'],...a.map(x=>[x.datum,x.tijd,x.type,x.reisType,x.km,x.kenteken,x.bestuurder,x.klant,x.project,x.straat,x.plaats,x.privateKm||0,x.privateDescription||'',x.pauseMinutes||0,hoursFmt((Number(x.pauseMinutes)||0)/60),x.opmerking||''])]}
-function exportCsvString(data){return '\ufeff'+data.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n')+'\r\n'}
-function u16(v){return new Uint8Array([v&255,(v>>>8)&255])}
-function u32(v){return new Uint8Array([v&255,(v>>>8)&255,(v>>>16)&255,(v>>>24)&255])}
-function concatBytes(...arrs){let n=0;arrs.forEach(a=>n+=a.length);const out=new Uint8Array(n);let o=0;arrs.forEach(a=>{out.set(a,o);o+=a.length});return out}
-function crc32(bytes){let c=0xffffffff;for(let i=0;i<bytes.length;i++){c^=bytes[i];for(let k=0;k<8;k++)c=(c>>>1)^(0xedb88320&-(c&1))}return (c^0xffffffff)>>>0}
-function zipStore(files){const enc=new TextEncoder(),parts=[],central=[];let offset=0;files.forEach(f=>{const name=enc.encode(f.name),data=f.data instanceof Uint8Array?f.data:enc.encode(f.data),crc=crc32(data),local=concatBytes(u32(0x04034b50),u16(20),u16(0x800),u16(0),u16(0),u16(0),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),name,data);parts.push(local);central.push({name,data,crc,offset});offset+=local.length});let centralSize=0,centralOffset=offset;central.forEach(f=>centralSize+=46+f.name.length);const centralParts=[];central.forEach(f=>centralParts.push(concatBytes(u32(0x02014b50),u16(20),u16(20),u16(0x800),u16(0),u16(0),u16(0),u32(f.crc),u32(f.data.length),u32(f.data.length),u16(f.name.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(f.offset),f.name)));const end=concatBytes(u32(0x06054b50),u16(0),u16(0),u16(files.length),u16(files.length),u32(centralSize),u32(centralOffset),u16(0));return concatBytes(...parts,...centralParts,end)}
-function xlsxStyles(){return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="164" formatCode="0.00"/></numFmts><fonts count="6"><font><sz val="11"/><name val="Aptos"/></font><font><b/><sz val="18"/><color rgb="FFFFFFFF"/><name val="Aptos Display"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Aptos"/></font><font><sz val="10"/><color rgb="FFD2DBE6"/><name val="Aptos"/></font><font><b/><sz val="11"/><color rgb="FF0B1624"/><name val="Aptos"/></font><font><b/><sz val="11"/><color rgb="FFB87912"/><name val="Aptos"/></font></fonts><fills count="7"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF0B1624"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFD7AD57"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF2F5F8"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFFFFF"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFEAF0F5"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFF6DD"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="3"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFD8E0E8"/></left><right style="thin"><color rgb="FFD8E0E8"/></right><top style="thin"><color rgb="FFD8E0E8"/></top><bottom style="thin"><color rgb="FFD8E0E8"/></bottom><diagonal/></border><border><left style="thin"><color rgb="FFB9C6D4"/></left><right style="thin"><color rgb="FFB9C6D4"/></right><top style="thin"><color rgb="FFB9C6D4"/></top><bottom style="thin"><color rgb="FFB9C6D4"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="7"><xf numFmtId="0" fontId="0" fillId="4" borderId="1"/><xf numFmtId="0" fontId="1" fillId="1" borderId="0" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="3" fillId="1" borderId="0"/><xf numFmtId="0" fontId="2" fillId="2" borderId="2" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="0" fillId="4" borderId="1"/><xf numFmtId="0" fontId="0" fillId="5" borderId="1" applyFill="1"/><xf numFmtId="0" fontId="5" fillId="6" borderId="1" applyFont="1" applyFill="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles><dxfs count="0"/><tableStyles count="0" defaultTableStyle="TableStyleMedium2" defaultPivotStyle="PivotStyleMedium9"/></styleSheet>`}
-function xlsxHeaderStyleFor(sheetName){return sheetName==='Overzicht'?3:3}
-function xlsxSheetXml(rows,opts={}){
-  const title=opts.title||'Kilometerregistratie',subtitle=opts.subtitle||'',tabColor=opts.tabColor||'D7AD57';
-  const maxCols=Math.max(1,rows.reduce((m,r)=>Math.max(m,r.length),0)),headerRow=4,dataStart=5,dataRows=Math.max(0,rows.length-1),lastRow=dataStart+dataRows-1;
-  const escv=v=>xmlEsc(v);
-  const rowXml=[];
-  rowXml.push('<row r="1" ht="28" customHeight="1"><c r="A1" s="1" t="inlineStr"><is><t xml:space="preserve">'+escv(title)+'</t></is></c></row>');
-  rowXml.push('<row r="2" ht="18" customHeight="1"><c r="A2" s="2" t="inlineStr"><is><t xml:space="preserve">'+escv(subtitle)+'</t></is></c></row>');
-  rowXml.push('<row r="3" ht="8" customHeight="1"></row>');
-  rowXml.push('<row r="4" ht="22" customHeight="1">'+rows[0].map((v,ci)=>'<c r="'+colName(ci+1)+'4" s="3" t="inlineStr"><is><t xml:space="preserve">'+escv(v)+'</t></is></c>').join('')+'</row>');
-  for(let ri=1;ri<rows.length;ri++){
-    const excelRow=ri+4,style=(ri%2===0?5:4);
-    rowXml.push('<row r="'+excelRow+'">'+rows[ri].map((v,ci)=>{
-      const val=(v===null||v===undefined)?'':String(v);
-      const st=(opts.highlightCols&&opts.highlightCols.includes(ci))?6:style;
-      return '<c r="'+colName(ci+1)+excelRow+'" s="'+st+'" t="inlineStr"><is><t xml:space="preserve">'+escv(val)+'</t></is></c>';
-    }).join('')+'</row>');
-  }
-  let cols='';
-  const widths=opts.widths||[];
-  for(let i=0;i<maxCols;i++){
-    let width=Number(widths[i])||0;if(!width){width=12;for(const r of rows)width=Math.max(width,String(r[i]??'').length+2)}
-    width=Math.min(42,Math.max(9,width));cols+='<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+width+'" customWidth="1"/>';
-  }
-  let merge='';if(maxCols>1)merge='<mergeCells count="2"><mergeCell ref="A1:'+colName(maxCols)+'1"/><mergeCell ref="A2:'+colName(maxCols)+'2"/></mergeCells>';
-  let cf='';if(opts.conditionalCol){const c=colName(opts.conditionalCol);cf='<conditionalFormatting sqref="'+c+dataStart+':'+c+lastRow+'"><cfRule type="cellIs" dxfId="0" operator="greaterThan"><formula>0</formula></cfRule></conditionalFormatting>'}
-  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><tabColor rgb="FF${tabColor}"/></sheetPr><dimension ref="A1:${colName(maxCols)}${Math.max(4,lastRow)}"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="4" topLeftCell="A5" activePane="bottomLeft" state="frozen"/><selection pane="bottomLeft" activeCell="A5" sqref="A5"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="19"/><cols>${cols}</cols><sheetData>${rowXml.join('')}</sheetData>${merge}<autoFilter ref="A4:${colName(maxCols)}${Math.max(4,lastRow)}"/><pageMargins left="0.3" right="0.3" top="0.5" bottom="0.5" header="0.2" footer="0.2"/></worksheet>`;
-}
-function exportOverviewRows(){
-  const days=hoursAllDays(),weeks=hoursGroupWeeks(days),rides=logs.length;
-  return [
-    ['Kengetal','Waarde'],
-    ['Deur-tot-deur',hoursFmt(hoursSum(days,'door'))],
-    ['Netto werktijd',hoursFmt(hoursSum(days,'effective'))],
-    ['Tijd op klus',hoursFmt(hoursSum(days,'job'))],
-    ['Werkritten',hoursFmt(hoursSum(days,'travel'))],
-    ['Pauze',hoursFmt(hoursSum(days,'pause'))],
-    ['Eigen tijd',hoursFmt(hoursSum(days,'own'))],
-    ['Overuren',hoursFmt(hoursSum(days,'overtime'))],
-    ['Aantal dagen',days.length],
-    ['Aantal ritregistraties',rides],
-    ['Aantal weken',weeks.length]
-  ];
-}
 function exportDayRows(){return [['Datum','ISO week','Eerste tijd','Laatste tijd','Deur-tot-deur','Eigen tijd','Tijd op klus','Werkritten','Pauze','Werktijd netto','Normale uren','Overuren'],...hoursAllDays().sort((a,b)=>b.date.localeCompare(a.date)).map(d=>[d.date,d.week,d.first,d.last,hoursFmt(d.door),hoursFmt(d.own),hoursFmt(d.job),hoursFmt(d.travel),hoursFmt(d.pause),hoursFmt(d.effective),hoursFmt(d.normal),hoursFmt(d.overtime)])]}
 function exportWeekRows(){const weeks=hoursGroupWeeks(hoursAllDays()).sort((a,b)=>b.sort.localeCompare(a.sort));return [['ISO week','Dagen','Deur-tot-deur','Tijd op klus','Pauze','Werktijd netto','Normale uren','Overuren'],...weeks.map(w=>{const dn=hoursAllDays().filter(d=>d.week===w.key).length;return[w.key,dn,hoursFmt(w.door),hoursFmt(w.job),hoursFmt(w.pause),hoursFmt(w.effective),hoursFmt(Math.min(w.effective,HOURS_WEEKLY_NORM)),hoursFmt(Math.max(0,w.effective-HOURS_WEEKLY_NORM))]})]}
 function exportPauseRows(){const a=[...logs].filter(x=>Number(x.pauseMinutes||0)>0).sort((a,b)=>String(b.datum+'T'+b.tijd).localeCompare(String(a.datum+'T'+a.tijd)));return [['Datum','Tijd','Type','Projectnummer','Klant','Pauze (min)','Pauze','Opmerking'],...a.map(x=>[x.datum,x.tijd,x.type,x.project||'',x.klant||'',Math.round(Number(x.pauseMinutes)||0),hoursFmt((Number(x.pauseMinutes)||0)/60),x.opmerking||''])]}
@@ -523,7 +496,7 @@ function xlsxExport(){
   const sheets=[
     ['Overzicht',exportOverviewRows(),{tabColor:'D7AD57',widths:[26,18]}],
     ['Dagregistratie',exportDayRows(),{tabColor:'74D39B',widths:[13,11,12,12,14,12,14,12,10,14,14,12]}],
-    ['Weken',exportWeekRows(),{tabColor:'7FC4FF',widths:[13,9,14,14,10,14,14,12]}],
+    ['Weken',exportWeekRows(),{tabColor:'7FC4FF',widths:[13,25,8,14,14,12,10,15,15,12,28,30]}],
     ['Ritten',exportRideRows(),{tabColor:'D7AD57',widths:[13,9,13,12,16,12,18,22,18,24,16,12,30,12,10,30]}],
     ['Pauzes',exportPauseRows(),{tabColor:'74D39B',widths:[13,9,13,18,22,13,10,30]}],
     ['Projecten',exportProjectRows(),{tabColor:'7FC4FF',widths:[18,22,28,18,14,14,14,14]}]
@@ -563,37 +536,49 @@ const HOURS_KEY='kilometerregistratie_uren_v2';
 const HOURS_DAILY_NORM=8;
 const HOURS_WEEKLY_NORM=40;
 const HOURS_COLUMN_DEFS=[
-  {key:'time',label:'Tijd',meta:'Tijdstip uit History'},
-  {key:'type',label:'Type',meta:'Vertrek of Aankomst'},
+  {key:'time',label:'Tijden',meta:'Vertrek en/of aankomst in één regel'},
+  {key:'type',label:'Type',meta:'Aankomst + vertrek / alleen vertrek / alleen aankomst'},
   {key:'customer',label:'Klant',meta:'Klant uit History'},
   {key:'project',label:'Project',meta:'Projectnummer uit History'},
-  {key:'transition',label:'Overgang',meta:'Eigen tijd / werkrit / klus'},
-  {key:'interval',label:'Interval',meta:'Duur tot volgende registratie'},
-  {key:'km',label:'Kilometerstand',meta:'Kilometerstand uit History'},
+  {key:'transition',label:'Overgang',meta:'Wat zat er vóór deze regel?'},
+  {key:'interval',label:'Tijd op klus',meta:'Aankomst naar vertrek'},
+  {key:'km',label:'Kilometerstand',meta:'Stand(en) uit History'},
   {key:'plate',label:'Kenteken',meta:'Kenteken uit History'},
   {key:'driver',label:'Bestuurder',meta:'Bestuurder uit History'},
   {key:'travelType',label:'Reistype',meta:'Zakelijk of Privé'},
-  {key:'privateKm',label:'Privé km',meta:'Privé kilometers binnen de rit'},
+  {key:'privateKm',label:'Privé km',meta:'Privé kilometers binnen deze rit'},
   {key:'pause',label:'Pauze',meta:'Alleen dit veld is hier direct aanpasbaar'},
   {key:'address',label:'Locatie',meta:'Straat en plaats'},
-  {key:'note',label:'Opmerking',meta:'Opmerking uit History'}
+  {key:'note',label:'Opmerking',meta:'Opmerking uit History'},
+  {key:'action',label:'Actie',meta:'Open de echte History-registratie om brongegevens te wijzigen'}
 ];
-const HOURS_DEFAULT_COLUMNS=['time','type','customer','project','transition','interval','pause','travelType'];
-let hoursState={weekSearch:'',weekYear:'',graphRange:'month',daysPerPage:7,daysVisible:7,columns:[...HOURS_DEFAULT_COLUMNS]};
+const HOURS_DEFAULT_COLUMNS=['time','type','customer','project','transition','interval','pause','action'];
+const HOURS_WEEK_COLUMN_DEFS=[
+  {key:'week',label:'Week',meta:'ISO-week inclusief jaar'},
+  {key:'dateRange',label:'Periode',meta:'Eerste en laatste dag in de week'},
+  {key:'days',label:'Dagen',meta:'Aantal dagen met registraties'},
+  {key:'door',label:'Deur-tot-deur',meta:'Eerste vertrek tot laatste aankomst'},
+  {key:'job',label:'Tijd op klus',meta:'Tijd tussen aankomst en vertrek op klussen'},
+  {key:'travel',label:'Werkritten',meta:'Ritten tussen klussen'},
+  {key:'pause',label:'Pauze',meta:'Som van alle pauzes'},
+  {key:'effective',label:'Werktijd netto',meta:'Werkritten + klustijd - pauze'},
+  {key:'normal',label:'Normaal',meta:'Tot weeknorm van 40 uur'},
+  {key:'overtime',label:'Overuren',meta:'Boven 40 uur per week'},
+  {key:'customers',label:'Klanten',meta:'Klanten uit de week'},
+  {key:'projects',label:'Projecten',meta:'Projecten uit de week'}
+];
+const HOURS_WEEK_DEFAULT_COLUMNS=['week','dateRange','days','door','job','pause','effective','overtime'];
+let hoursState={graphRange:'month',weeksPerPage:8,weeksVisible:8,weekFilter:'',weekSort:'desc',columns:[...HOURS_DEFAULT_COLUMNS],weekColumns:[...HOURS_WEEK_DEFAULT_COLUMNS]};
 function hoursSettings(){try{return JSON.parse(localStorage.getItem(HOURS_KEY)||'{}')||{}}catch(e){return{}}}
-function normalizeHoursColumns(cols){
-  const valid=new Set(HOURS_COLUMN_DEFS.map(c=>c.key));
-  let a=Array.isArray(cols)?cols.filter(k=>valid.has(k)):[...HOURS_DEFAULT_COLUMNS];
-  a=[...new Set(a)];
-  return a.length?a:[...HOURS_DEFAULT_COLUMNS];
-}
+function normalizeHoursColumns(cols){const valid=new Set(HOURS_COLUMN_DEFS.map(c=>c.key));let a=Array.isArray(cols)?cols.filter(k=>valid.has(k)):[...HOURS_DEFAULT_COLUMNS];a=[...new Set(a)];return a.length?a:[...HOURS_DEFAULT_COLUMNS]}
+function normalizeHoursWeekColumns(cols){const valid=new Set(HOURS_WEEK_COLUMN_DEFS.map(c=>c.key));let a=Array.isArray(cols)?cols.filter(k=>valid.has(k)):[...HOURS_WEEK_DEFAULT_COLUMNS];a=[...new Set(a)];return a.length?a:[...HOURS_WEEK_DEFAULT_COLUMNS]}
 function loadHoursState(){
-  const x=hoursSettings(),pageSize=Math.min(365,Math.max(1,Number(x.daysPerPage)||7)),visible=Math.min(365,Math.max(1,Number(x.daysVisible)||pageSize));
-  hoursState={weekSearch:String(x.weekSearch||''),weekYear:String(x.weekYear||''),graphRange:String(x.graphRange||'month'),daysPerPage:pageSize,daysVisible:visible,columns:normalizeHoursColumns(x.columns)};
-  if($('hoursWeekSearch'))$('hoursWeekSearch').value=hoursState.weekSearch;
-  if($('hoursWeekYear'))$('hoursWeekYear').value=hoursState.weekYear;
-  if($('hoursDaysPerPage'))$('hoursDaysPerPage').value=hoursState.daysPerPage;
-  if($('hoursColumnManager'))renderHoursColumnManager();
+  const x=hoursSettings(),wp=Math.min(104,Math.max(1,Number(x.weeksPerPage||x.daysPerPage)||8)),wv=Math.min(104,Math.max(1,Number(x.weeksVisible||x.daysVisible)||wp));
+  hoursState={graphRange:String(x.graphRange||'month'),weeksPerPage:wp,weeksVisible:wv,weekFilter:String(x.weekFilter||''),weekSort:x.weekSort==='asc'?'asc':'desc',columns:normalizeHoursColumns(x.columns),weekColumns:normalizeHoursWeekColumns(x.weekColumns)};
+  if($('hoursWeeksPerPage'))$('hoursWeeksPerPage').value=hoursState.weeksPerPage;
+  if($('hoursWeekFilter'))$('hoursWeekFilter').value=hoursState.weekFilter;
+  if($('hoursWeekSort'))$('hoursWeekSort').value=hoursState.weekSort;
+  if($('hoursWeekColumnManager'))renderHoursWeekColumnManager();
 }
 function saveHoursState(){localStorage.setItem(HOURS_KEY,JSON.stringify(hoursState));if(typeof makeAutoSnapshot==='function')makeAutoSnapshot()}
 function hoursDateOnly(d){return new Date(d+'T12:00:00')}
@@ -603,101 +588,141 @@ function hoursDiffHours(start,end){if(!/^\d{2}:\d{2}$/.test(String(start||''))||
 function hoursFmt(h){const n=Math.max(0,Number(h)||0),mins=Math.round(n*60),hh=Math.floor(mins/60),mm=mins%60;return hh+':'+String(mm).padStart(2,'0')}
 function hoursDateLabel(d){try{return new Intl.DateTimeFormat('nl-NL',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'}).format(hoursDateOnly(d))}catch(e){return d}}
 function hoursSortLogs(a,b){return String(a.datum+'T'+a.tijd).localeCompare(String(b.datum+'T'+b.tijd))||Number(a.createdAt||0)-Number(b.createdAt||0)}
-function hoursBuildDay(date,dayLogs){const ev=[...dayLogs].sort(hoursSortLogs),segments=[];let job=0,travel=0,own=0,pause=0;ev.forEach(x=>pause+=Math.max(0,Number(x.pauseMinutes)||0)/60);for(let i=0;i<ev.length-1;i++){const a=ev[i],b=ev[i+1],diff=hoursDiffHours(a.tijd,b.tijd);if(diff==null)continue;let kind='onbekend';if(a.type==='Aankomst'&&b.type==='Vertrek'){kind='klus';job+=diff}else if(a.type==='Vertrek'&&b.type==='Aankomst'){const isFirst=i===0,isLast=i===ev.length-2;if(isFirst||isLast){kind='eigen';own+=diff}else{kind='werkrit';travel+=diff}}segments.push({from:a,to:b,hours:diff,kind})}const first=ev[0]?.tijd||'',last=ev.at(-1)?.tijd||'';let door=hoursDiffHours(first,last);if(door==null)door=job+travel+own;const gross=job+travel,effective=Math.max(0,gross-pause);return{date,week:hoursWeekKey(date),weekInfo:hoursIsoWeekInfo(date),first,last,door,job,travel,own,gross,pause,effective,normal:Math.min(effective,HOURS_DAILY_NORM),overtime:Math.max(0,effective-HOURS_DAILY_NORM),segments,logs:ev}}
+function hoursBuildDay(date,dayLogs){
+  const ev=[...dayLogs].sort(hoursSortLogs),segments=[];let job=0,travel=0,own=0,pause=0;
+  ev.forEach(x=>pause+=Math.max(0,Number(x.pauseMinutes)||0)/60);
+  for(let i=0;i<ev.length-1;i++){
+    const a=ev[i],b=ev[i+1],diff=hoursDiffHours(a.tijd,b.tijd);if(diff==null)continue;let kind='onbekend';
+    if(a.type==='Aankomst'&&b.type==='Vertrek'){kind='klus';job+=diff}
+    else if(a.type==='Vertrek'&&b.type==='Aankomst'){const isFirst=i===0,isLast=i===ev.length-2;if(isFirst||isLast){kind='eigen';own+=diff}else{kind='werkrit';travel+=diff}}
+    segments.push({from:a,to:b,hours:diff,kind});
+  }
+  const first=ev[0]?.tijd||'',last=ev.at(-1)?.tijd||'';let door=hoursDiffHours(first,last);if(door==null)door=job+travel+own;
+  const gross=job+travel,effective=Math.max(0,gross-pause);
+  return{date,week:hoursWeekKey(date),weekInfo:hoursIsoWeekInfo(date),first,last,door,job,travel,own,gross,pause,effective,normal:Math.min(effective,HOURS_DAILY_NORM),overtime:Math.max(0,effective-HOURS_DAILY_NORM),segments,logs:ev};
+}
 function hoursAllDays(){const by=new Map();logs.filter(x=>String(x.reisType||'Zakelijk').toLowerCase()!=='privé').forEach(x=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(x.datum||''))return;if(!by.has(x.datum))by.set(x.datum,[]);by.get(x.datum).push(x)});return[...by.entries()].sort((a,b)=>a[0].localeCompare(b[0])).map(([d,a])=>hoursBuildDay(d,a))}
-function hoursFilteredDays(){const all=hoursAllDays(),wn=Number(hoursState.weekSearch),wy=Number(hoursState.weekYear);if(!wn)return all;return all.filter(d=>d.weekInfo.week===wn&&(!wy||d.weekInfo.year===wy))}
-function hoursGroupWeeks(days){const m=new Map();days.forEach(d=>{const k=d.week,g=m.get(k)||{key:k,sort:d.date,door:0,job:0,pause:0,overtime:0,effective:0,normal:0};g.door+=d.door;g.job+=d.job;g.pause+=d.pause;g.overtime+=d.overtime;g.effective+=d.effective;g.normal+=d.normal;m.set(k,g)});return[...m.values()].sort((a,b)=>a.sort.localeCompare(b.sort))}
-function hoursGroupMonths(days){const m=new Map();days.forEach(d=>{const k=d.date.slice(0,7),g=m.get(k)||{key:k,sort:k,door:0,job:0,pause:0,overtime:0,effective:0,normal:0};g.door+=d.door;g.job+=d.job;g.pause+=d.pause;g.overtime+=d.overtime;g.effective+=d.effective;g.normal+=d.normal;m.set(k,g)});return[...m.values()].sort((a,b)=>a.sort.localeCompare(b.sort))}
+function hoursGroupWeeks(days){const m=new Map();days.forEach(d=>{const k=d.week,g=m.get(k)||{key:k,sort:d.date,door:0,job:0,travel:0,pause:0,overtime:0,effective:0,normal:0,own:0,days:[],customers:new Set(),projects:new Set()};g.door+=d.door;g.job+=d.job;g.travel+=d.travel;g.pause+=d.pause;g.overtime+=d.overtime;g.effective+=d.effective;g.normal+=d.normal;g.own+=d.own;g.days.push(d);d.logs.forEach(x=>{if(x.klant)g.customers.add(x.klant);if(x.project)g.projects.add(x.project)});m.set(k,g)});return[...m.values()].map(g=>({...g,days:g.days.sort((a,b)=>a.date.localeCompare(b.date)),dateRange:g.days.length?g.days[0].date+' → '+g.days.at(-1).date:'',customers:[...g.customers].sort((a,b)=>a.localeCompare(b,'nl')),projects:[...g.projects].sort((a,b)=>a.localeCompare(b,'nl'))})).sort((a,b)=>a.sort.localeCompare(b.sort))}
+function hoursGroupMonths(days){const m=new Map();days.forEach(d=>{const k=d.date.slice(0,7),g=m.get(k)||{key:k,sort:k,door:0,job:0,travel:0,pause:0,overtime:0,effective:0,normal:0};g.door+=d.door;g.job+=d.job;g.travel+=d.travel;g.pause+=d.pause;g.overtime+=d.overtime;g.effective+=d.effective;g.normal+=d.normal;m.set(k,g)});return[...m.values()].sort((a,b)=>a.sort.localeCompare(b.sort))}
 function hoursSum(days,field){return days.reduce((s,d)=>s+(Number(d[field])||0),0)}
-function hoursTransitionLabel(seg){return seg?(seg.kind==='eigen'?'EIGEN TIJD':seg.kind==='werkrit'?'WERKTIJD · RIT':seg.kind==='klus'?'WERKTIJD · KLUS':'—'):'—'}
-function hoursColumnValue(key,x,seg,next){
+function hoursTransitionLabel(seg){return seg?(seg.kind==='eigen'?'EIGEN TIJD':seg.kind==='werkrit'?'WERKTIJD · RIT':seg.kind==='klus'?'TIJD OP KLUS':'—'):'—'}
+function hoursBuildTripRows(d){
+  const rows=d.logs.map((x,i)=>({event:x,prev:i?d.logs[i-1]:null,next:i<d.logs.length-1?d.logs[i+1]:null,segFromPrev:i?d.segments[i-1]:null,segToNext:i<d.logs.length-1?d.segments[i]:null}));
+  const out=[];
+  rows.forEach(r=>{
+    const x=r.event;
+    if(x.type==='Vertrek' && !r.prev){out.push({id:'dep_'+x.id,departure:x,arrival:null,transition:r.segToNext||null,job:null});return}
+    if(x.type==='Aankomst' && r.next && r.next.type==='Vertrek'){out.push({id:'pair_'+x.id,arrival:x,departure:r.next,transition:r.segFromPrev||null,job:r.segToNext||null});return}
+    if(x.type==='Aankomst' && !r.next){out.push({id:'arr_'+x.id,arrival:x,departure:null,transition:r.segFromPrev||null,job:null});}
+  });
+  if(!out.length && d.logs.length)out.push({id:'single_'+d.logs[0].id,arrival:d.logs[0].type==='Aankomst'?d.logs[0]:null,departure:d.logs[0].type==='Vertrek'?d.logs[0]:null,transition:null,job:null});
+  return out;
+}
+function hoursTripPrimary(row){return row.departure||row.arrival}
+function hoursColumnValue(key,row){
+  const p=row.departure||row.arrival,a=row.arrival,d=row.departure;
   switch(key){
-    case 'time': return '<b>'+esc(x.tijd)+'</b>';
-    case 'type': return '<span class="historyType '+(x.type==='Vertrek'?'dep':'arr')+'">'+esc(x.type)+'</span>';
-    case 'customer': return esc(x.klant||'—');
-    case 'project': return esc(x.project||'Geen project');
-    case 'transition': return '<span class="hoursTransition '+(seg?.kind||'')+'">'+esc(hoursTransitionLabel(seg))+'</span>';
-    case 'interval': return next&&seg?hoursFmt(seg.hours)+' · '+esc(next.tijd):'—';
-    case 'km': return Number(x.km||0).toLocaleString('nl-NL');
-    case 'plate': return esc(x.kenteken||'—');
-    case 'driver': return esc(x.bestuurder||'—');
-    case 'travelType': return esc(x.reisType||'—');
-    case 'privateKm': return Number(x.privateKm||0)>0?Number(x.privateKm).toLocaleString('nl-NL',{maximumFractionDigits:1})+' km':'—';
-    case 'pause': return '<div class="hoursPauseEdit"><input data-hours-pause="'+esc(x.id)+'" type="number" inputmode="numeric" min="0" step="1" value="'+esc(x.pauseMinutes||0)+'"><span>min</span></div>';
-    case 'address': return esc([x.straat,x.plaats].filter(Boolean).join(', ')||'—');
-    case 'note': return esc(x.opmerking||'—');
-    default: return '—';
+    case 'time': return a&&d?'<b>'+esc(a.tijd)+' → '+esc(d.tijd)+'</b>':p?'<b>'+esc(p.tijd)+'</b>':'—';
+    case 'type': return a&&d?'<span class="historyType arr">Aankomst</span> <span class="historyType dep">Vertrek</span>':p?'<span class="historyType '+(p.type==='Vertrek'?'dep':'arr')+'">'+esc(p.type)+'</span>':'—';
+    case 'customer': return esc((d?.klant||a?.klant||'—'));
+    case 'project': return esc((d?.project||a?.project||'Geen project'));
+    case 'transition': return row.transition?'<span class="hoursTransitionText '+esc(row.transition.kind)+'">'+esc(hoursTransitionLabel(row.transition))+' · '+hoursFmt(row.transition.hours)+'</span>':'—';
+    case 'interval': return row.job?hoursFmt(row.job.hours):'—';
+    case 'km': return a&&d?Number(a.km||0).toLocaleString('nl-NL')+' → '+Number(d.km||0).toLocaleString('nl-NL'):Number(p?.km||0).toLocaleString('nl-NL');
+    case 'plate': return esc(d?.kenteken||a?.kenteken||'—');
+    case 'driver': return esc(d?.bestuurder||a?.bestuurder||'—');
+    case 'travelType': return esc(d?.reisType||a?.reisType||'—');
+    case 'privateKm': {const v=Number(d?.privateKm||a?.privateKm||0);return v?v.toLocaleString('nl-NL',{maximumFractionDigits:1})+' km':'—'}
+    case 'pause': {const target=d||a;return '<div class="hoursPauseEdit"><input data-hours-pause="'+esc(target?.id||'')+'" type="number" inputmode="numeric" min="0" step="1" value="'+esc(target?.pauseMinutes||0)+'"><span>min</span></div>';}
+    case 'address': return esc([d?.straat||a?.straat,d?.plaats||a?.plaats].filter(Boolean).join(', ')||'—');
+    case 'note': return esc(d?.opmerking||a?.opmerking||'—');
+    case 'action': return '<div class="hoursActionBtns">'+(a?'<button type="button" class="small hoursEditLog" data-id="'+esc(a.id)+'">Aankomst</button>':'')+(d?'<button type="button" class="small hoursEditLog" data-id="'+esc(d.id)+'">Vertrek</button>':'')+'</div>';
+    default:return '—';
   }
 }
-function renderHoursColumnManager(){
-  const box=$('hoursColumnList');if(!box)return;
-  box.innerHTML=HOURS_COLUMN_DEFS.map((d,i)=>{
-    const on=hoursState.columns.includes(d.key),pos=hoursState.columns.indexOf(d.key),isActive=pos>=0;
-    return '<div class="hoursColumnRow" data-column-key="'+esc(d.key)+'">'+
-      '<input type="checkbox" '+(on?'checked':'')+' data-column-toggle="'+esc(d.key)+'" aria-label="'+esc(d.label)+'">'+
-      '<div><div class="hoursColumnLabel">'+esc(d.label)+'</div><div class="hoursColumnMeta">'+esc(d.meta)+(isActive?' · kolom '+(pos+1):' · niet zichtbaar')+'</div></div>'+
-      '<div class="hoursColumnButtons">'+
-        '<button type="button" class="small" data-column-up="'+esc(d.key)+'" '+(!isActive||pos===0?'disabled':'')+'>&#x2B06;&#xFE0F;</button>'+
-        '<button type="button" class="small" data-column-down="'+esc(d.key)+'" '+(!isActive||pos===hoursState.columns.length-1?'disabled':'')+'>&#x2B07;&#xFE0F;</button>'+
-      '</div></div>';
-  }).join('');
-}
-function hoursSetColumnVisible(key,on){
-  let cols=[...hoursState.columns];
-  if(on&&!cols.includes(key))cols.push(key);
-  if(!on)cols=cols.filter(k=>k!==key);
-  hoursState.columns=normalizeHoursColumns(cols);saveHoursState();hoursRenderDaily();renderHoursColumnManager();
-}
-function hoursMoveColumn(key,dir){
-  const cols=[...hoursState.columns],i=cols.indexOf(key);if(i<0)return;const j=i+dir;if(j<0||j>=cols.length)return;[cols[i],cols[j]]=[cols[j],cols[i]];hoursState.columns=cols;saveHoursState();hoursRenderDaily();renderHoursColumnManager();
-}
-function hoursRenderDaily(){
-  const all=hoursFilteredDays().sort((a,b)=>b.date.localeCompare(a.date)),box=$('hoursDailyTable');
-  if(!all.length){box.innerHTML='<div class="hoursEmpty">Geen History-ritten gevonden voor de gekozen periode/het gekozen weeknummer.</div>';return}
-  const visible=all.slice(0,Math.max(1,hoursState.daysVisible));
-  const defs=hoursState.columns.map(k=>HOURS_COLUMN_DEFS.find(d=>d.key===k)).filter(Boolean);
+function renderHoursColumnManager(){const box=$('hoursColumnList');if(!box)return;box.innerHTML=HOURS_COLUMN_DEFS.map((d)=>{const on=hoursState.columns.includes(d.key),pos=hoursState.columns.indexOf(d.key);return '<div class="hoursColumnRow"><input type="checkbox" '+(on?'checked':'')+' data-column-toggle="'+esc(d.key)+'"><div><div class="hoursColumnLabel">'+esc(d.label)+'</div><div class="hoursColumnMeta">'+esc(d.meta)+(pos>=0?' · kolom '+(pos+1):' · niet zichtbaar')+'</div></div><div class="hoursColumnButtons"><button type="button" class="small" data-column-up="'+esc(d.key)+'" '+(pos<=0?'disabled':'')+'>&#x2B06;&#xFE0F;</button><button type="button" class="small" data-column-down="'+esc(d.key)+'" '+(pos<0||pos>=hoursState.columns.length-1?'disabled':'')+'>&#x2B07;&#xFE0F;</button></div></div>'}).join('')}
+function renderHoursWeekColumnManager(){const box=$('hoursWeekColumnList');if(!box)return;box.innerHTML=HOURS_WEEK_COLUMN_DEFS.map((d)=>{const on=hoursState.weekColumns.includes(d.key),pos=hoursState.weekColumns.indexOf(d.key);return '<div class="hoursColumnRow"><input type="checkbox" '+(on?'checked':'')+' data-week-column-toggle="'+esc(d.key)+'"><div><div class="hoursColumnLabel">'+esc(d.label)+'</div><div class="hoursColumnMeta">'+esc(d.meta)+(pos>=0?' · kolom '+(pos+1):' · niet zichtbaar')+'</div></div><div class="hoursColumnButtons"><button type="button" class="small" data-week-column-up="'+esc(d.key)+'" '+(pos<=0?'disabled':'')+'>&#x2B06;&#xFE0F;</button><button type="button" class="small" data-week-column-down="'+esc(d.key)+'" '+(pos<0||pos>=hoursState.weekColumns.length-1?'disabled':'')+'>&#x2B07;&#xFE0F;</button></div></div>'}).join('')}
+function hoursSetColumnVisible(key,on){let cols=[...hoursState.columns];if(on&&!cols.includes(key))cols.push(key);if(!on)cols=cols.filter(k=>k!==key);hoursState.columns=normalizeHoursColumns(cols);saveHoursState();hoursRenderWeeks();}
+function hoursMoveColumn(key,dir){const cols=[...hoursState.columns],i=cols.indexOf(key),j=i+dir;if(i<0||j<0||j>=cols.length)return;[cols[i],cols[j]]=[cols[j],cols[i]];hoursState.columns=cols;saveHoursState();hoursRenderWeeks();renderHoursColumnManager();}
+function hoursSetWeekColumnVisible(key,on){let cols=[...hoursState.weekColumns];if(on&&!cols.includes(key))cols.push(key);if(!on)cols=cols.filter(k=>k!==key);hoursState.weekColumns=normalizeHoursWeekColumns(cols);saveHoursState();hoursRenderWeeks();}
+function hoursMoveWeekColumn(key,dir){const cols=[...hoursState.weekColumns],i=cols.indexOf(key),j=i+dir;if(i<0||j<0||j>=cols.length)return;[cols[i],cols[j]]=[cols[j],cols[i]];hoursState.weekColumns=cols;saveHoursState();hoursRenderWeeks();renderHoursWeekColumnManager();}
+function wildcardRegex(pattern){let out='^';for(const c of String(pattern||'')){if(c==='*')out+='.*';else if(c==='?')out+='.';else out+=c.replace(/[|\\{}()[\]^$+?.]/g,'\\$&')}return new RegExp(out+'$','i')}
+function wildcardMatches(text,pattern){let p=String(pattern||'').trim();if(!p)return true;if(!/[?*]/.test(p))p='*'+p+'*';return wildcardRegex(p).test(String(text||''))}
+function hoursWeekMatches(w){const f=hoursState.weekFilter.trim();if(!f)return true;const hay=[w.key,w.dateRange,w.customers.join(' '),w.projects.join(' '),w.days.map(d=>d.date).join(' ')].join(' ');const parts=f.split('|').map(x=>x.trim()).filter(Boolean);return parts.length?parts.some(p=>wildcardMatches(hay,p)):true}
+function hoursWeekDisplayValue(key,w){switch(key){case'week':return esc(w.key);case'dateRange':return esc(w.dateRange||'—');case'days':return String(w.days.length);case'door':return hoursFmt(w.door);case'job':return hoursFmt(w.job);case'travel':return hoursFmt(w.travel);case'pause':return hoursFmt(w.pause);case'effective':return hoursFmt(w.effective);case'normal':return hoursFmt(Math.min(w.effective,HOURS_WEEKLY_NORM));case'overtime':return hoursFmt(Math.max(0,w.effective-HOURS_WEEKLY_NORM));case'customers':return esc(w.customers.join(', ')||'—');case'projects':return esc(w.projects.join(', ')||'—');default:return'—'}}
+function hoursFilteredWeeks(){const all=hoursGroupWeeks(hoursAllDays()).filter(hoursWeekMatches);return hoursState.weekSort==='asc'?all:all.reverse()}
+function hoursRenderWeeks(){
+  const box=$('hoursWeeksTable');if(!box)return;const weeks=hoursFilteredWeeks();
+  if(!weeks.length){box.innerHTML='<div class="hoursEmpty">Geen weken gevonden met deze filter.</div>';return}
+  const visible=weeks.slice(0,Math.max(1,hoursState.weeksVisible)),defs=hoursState.weekColumns.map(k=>HOURS_WEEK_COLUMN_DEFS.find(d=>d.key===k)).filter(Boolean),today=now().datum,allDaysForOpen=hoursAllDays(),latestDate=allDaysForOpen.length?allDaysForOpen.at(-1).date:today,openDate=allDaysForOpen.some(d=>d.date===today)?today:latestDate;
   let html='';
-  visible.forEach(d=>{
-    html+='<details class="hoursDayDetails" '+(d.date===now().datum?'open':'')+'><summary><div><b>'+esc(hoursDateLabel(d.date))+'</b><div class="historyDayMeta">'+esc(d.week)+' · '+d.logs.length+' registraties · '+esc(d.first||'—')+' → '+esc(d.last||'—')+'</div></div><div style="text-align:right"><b>'+hoursFmt(d.effective)+'</b><div class="historyDayMeta">netto werk · pauze '+hoursFmt(d.pause)+'</div></div></summary><div class="hoursDayBody">';
-    html+='<div class="hoursTableWrap" style="margin-top:10px"><table class="hoursTable"><thead><tr>'+defs.map(def=>'<th>'+esc(def.label)+'</th>').join('')+'</tr></thead><tbody>';
-    d.logs.forEach((x,idx)=>{const next=d.logs[idx+1],seg=d.segments[idx];html+='<tr>'+defs.map(def=>'<td class="'+(['km','privateKm','pause'].includes(def.key)?'num':'')+'">'+hoursColumnValue(def.key,x,seg,next)+'</td>').join('')+'</tr>'});
-    html+='</tbody></table></div>';
-    html+='<div class="hoursKpiGrid" style="margin-top:10px"><div class="hoursKpi"><small>Deur-tot-deur</small><b>'+hoursFmt(d.door)+'</b></div><div class="hoursKpi"><small>Eigen tijd</small><b>'+hoursFmt(d.own)+'</b></div><div class="hoursKpi"><small>Tijd op klus</small><b>'+hoursFmt(d.job)+'</b></div><div class="hoursKpi"><small>Werkritten</small><b>'+hoursFmt(d.travel)+'</b></div><div class="hoursKpi"><small>Pauze</small><b>'+hoursFmt(d.pause)+'</b></div><div class="hoursKpi"><small>Overuren</small><b>'+hoursFmt(d.overtime)+'</b></div></div><div class="hoursHint">Wil je tijd, km, project, klant of andere ritgegevens wijzigen? Gebruik de bestaande History-registratie via <b>Wijzig rit</b>. Alleen pauze is hier rechtstreeks bewerkbaar.</div></div></details>';
+  visible.forEach(w=>{
+    const openWeek=w.days.some(d=>d.date===openDate);
+    html+='<details class="hoursWeekDetails" '+(openWeek?'open':'')+'><summary><div><b>'+esc(w.key)+'</b><div class="historyDayMeta">'+esc(w.dateRange)+' · '+w.days.length+' dagen</div></div><div style="text-align:right"><b>'+hoursFmt(w.effective)+'</b><div class="historyDayMeta">netto · pauze '+hoursFmt(w.pause)+'</div></div></summary><div class="hoursWeekBody">';
+    html+='<div class="hoursTableWrap"><table class="hoursTable"><thead><tr>'+defs.map(d=>'<th>'+esc(d.label)+'</th>').join('')+'</tr></thead><tbody><tr>'+defs.map(d=>'<td class="'+(['door','job','travel','pause','effective','normal','overtime','days'].includes(d.key)?'num':'')+'">'+hoursWeekDisplayValue(d.key,w)+'</td>').join('')+'</tr></tbody></table></div>';
+    html+='<div class="hoursSummaryRow" style="margin-top:10px"><b>Dagen in '+esc(w.key)+'</b><span class="hoursHint">Nieuwe dag bovenaan · alleen vandaag standaard open</span></div>';
+    w.days.slice().sort((a,b)=>b.date.localeCompare(a.date)).forEach(d=>{
+      const dayOpen=d.date===openDate,trips=hoursBuildTripRows(d);html+='<details class="hoursDayDetails" '+(dayOpen?'open':'')+'><summary><div><b>'+esc(hoursDateLabel(d.date))+'</b><div class="historyDayMeta">'+esc(d.first||'—')+' → '+esc(d.last||'—')+' · '+d.logs.length+' registraties</div></div><div style="text-align:right"><b>'+hoursFmt(d.effective)+'</b><div class="historyDayMeta">netto · pauze '+hoursFmt(d.pause)+'</div></div></summary><div class="hoursDayBody">';
+      const tripDefs=hoursState.columns.map(k=>HOURS_COLUMN_DEFS.find(def=>def.key===k)).filter(Boolean);
+      html+='<div class="hoursTableWrap"><table class="hoursTable"><thead><tr>'+tripDefs.map(def=>'<th>'+esc(def.label)+'</th>').join('')+'</tr></thead><tbody>';
+      trips.forEach(row=>{html+='<tr>'+tripDefs.map(def=>'<td class="hoursTripCell '+(['km','pause'].includes(def.key)?'num':'')+'">'+hoursColumnValue(def.key,row)+'</td>').join('')+'</tr>'});
+      html+='</tbody></table></div>';
+      html+='<div class="hoursKpiGrid" style="margin-top:10px"><div class="hoursKpi"><small>Deur-tot-deur</small><b>'+hoursFmt(d.door)+'</b></div><div class="hoursKpi"><small>Eigen tijd</small><b>'+hoursFmt(d.own)+'</b></div><div class="hoursKpi"><small>Tijd op klus</small><b>'+hoursFmt(d.job)+'</b></div><div class="hoursKpi"><small>Werkritten</small><b>'+hoursFmt(d.travel)+'</b></div><div class="hoursKpi"><small>Pauze</small><b>'+hoursFmt(d.pause)+'</b></div><div class="hoursKpi"><small>Overuren</small><b>'+hoursFmt(d.overtime)+'</b></div></div>';
+      html+='</div></details>';
+    });
+    html+='</div></details>';
   });
-  html+='<div class="muted" style="text-align:center;margin-top:8px">'+visible.length+' van '+all.length+' dagen weergegeven.</div>';box.innerHTML=html;
-  const more=$('hoursShowMoreBtn'),allBtn=$('hoursShowAllBtn');more.style.display=visible.length<all.length?'inline-block':'none';more.textContent='Toon meer ('+hoursState.daysPerPage+')';allBtn.style.display=visible.length<all.length?'inline-block':'none';
+  html+='<div class="muted" style="text-align:center;margin-top:8px">'+visible.length+' van '+weeks.length+' weken weergegeven.</div>';
+  box.innerHTML=html;
+  $('hoursShowMoreWeeksBtn').style.display=visible.length<weeks.length?'inline-block':'none';$('hoursShowMoreWeeksBtn').textContent='Toon meer ('+hoursState.weeksPerPage+')';$('hoursShowAllWeeksBtn').style.display=visible.length<weeks.length?'inline-block':'none';
 }
-function hoursChangeDayPageSize(){const n=Math.min(365,Math.max(1,Number($('hoursDaysPerPage').value)||7));hoursState.daysPerPage=n;hoursState.daysVisible=n;saveHoursState();hoursRenderDaily()}
-function hoursShowMore(){hoursState.daysVisible=Math.min(365,hoursState.daysVisible+hoursState.daysPerPage);saveHoursState();hoursRenderDaily()}
-function hoursShowAll(){hoursState.daysVisible=365;saveHoursState();hoursRenderDaily()}
-function hoursRenderWeekly(){const days=hoursAllDays(),filtered=hoursFilteredDays(),source=Number(hoursState.weekSearch)?filtered:days,weeks=hoursGroupWeeks(source),box=$('hoursWeeklyTable');if(!weeks.length){box.innerHTML='<div class="hoursEmpty">Geen weken beschikbaar.</div>';return}let html='<div class="hoursTableWrap"><table class="hoursTable"><thead><tr><th>Week</th><th>Dagen</th><th>Deur-tot-deur</th><th>Tijd op klus</th><th>Pauze</th><th>Werktijd netto</th><th>Normaal</th><th>Overuren</th></tr></thead><tbody>';weeks.forEach(w=>{const dn=days.filter(d=>d.week===w.key).length,normal=Math.min(w.effective,HOURS_WEEKLY_NORM),ot=Math.max(0,w.effective-HOURS_WEEKLY_NORM);html+='<tr><td><b>'+esc(w.key)+'</b></td><td>'+dn+'</td><td class="num">'+hoursFmt(w.door)+'</td><td class="num">'+hoursFmt(w.job)+'</td><td class="num">'+hoursFmt(w.pause)+'</td><td class="num"><b>'+hoursFmt(w.effective)+'</b></td><td class="num">'+hoursFmt(normal)+'</td><td class="num">'+hoursFmt(ot)+'</td></tr>'});html+='</tbody></table></div>';box.innerHTML=html}
-function hoursRenderKpis(){const days=hoursFilteredDays(),sum=hoursSum(days,'effective'),pause=hoursSum(days,'pause'),norm=hoursSum(days,'normal'),ot=hoursSum(days,'overtime'),job=hoursSum(days,'job'),door=hoursSum(days,'door');$('hoursTotalKpi').textContent=hoursFmt(sum);$('hoursPauseKpi').textContent=hoursFmt(pause);$('hoursNormalKpi').textContent=hoursFmt(norm);$('hoursOvertimeKpi').textContent=hoursFmt(ot);$('hoursJobKpi').textContent=hoursFmt(job);$('hoursDoorKpi').textContent=hoursFmt(door);$('hoursDataState').textContent='Uit History · alleen pauze aanpasbaar'}
-function hoursChartGroups(days){const nowDate=new Date();const today=nowDate.getFullYear()+'-'+String(nowDate.getMonth()+1).padStart(2,'0')+'-'+String(nowDate.getDate()).padStart(2,'0');let minDate=new Date(nowDate),agg='day';const r=hoursState.graphRange;if(r==='week'){minDate.setDate(minDate.getDate()-84);agg='week'}else if(r==='month'){minDate.setMonth(minDate.getMonth()-11,1);agg='month'}else if(r==='3m'){minDate.setMonth(minDate.getMonth()-3);agg='day'}else if(r==='6m'){minDate.setMonth(minDate.getMonth()-6);agg='week'}else if(r==='year'){minDate.setFullYear(minDate.getFullYear()-1,0,1);agg='month'}else if(r==='ytd'){minDate=new Date(nowDate.getFullYear(),0,1);agg='month'}const minStr=minDate.getFullYear()+'-'+String(minDate.getMonth()+1).padStart(2,'0')+'-'+String(minDate.getDate()).padStart(2,'0'),src=days.filter(d=>d.date>=minStr&&d.date<=today);if(agg==='week')return hoursGroupWeeks(src).slice(-16).map(x=>({...x,label:x.key}));if(agg==='month')return hoursGroupMonths(src).map(x=>({...x,label:x.key.slice(0,7)}));return src.map(x=>({...x,key:x.date,sort:x.date,label:x.date.slice(5)}))}
-function hoursRenderGraph(){const box=$('hoursGraph'),groups=hoursChartGroups(hoursAllDays());['week','month','3m','6m','year','ytd'].forEach(k=>{const b=document.querySelector('[data-hours-range="'+k+'"]');if(b)b.classList.toggle('active',hoursState.graphRange===k)});if(!groups.length){box.innerHTML='<div class="hoursEmpty">Nog onvoldoende gegevens voor de grafiek.</div>';return}const W=1000,H=360,padL=62,padR=18,padT=18,padB=48,plotW=W-padL-padR,plotH=H-padT-padB,maxVal=Math.max(1,...groups.flatMap(g=>[g.door||0,g.job||0,g.pause||0,g.overtime||0])),niceStep=maxVal<=4?1:maxVal<=10?2:maxVal<=20?4:maxVal<=40?8:10,yMax=Math.ceil(maxVal/niceStep)*niceStep;const escXml=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'),x=i=>groups.length===1?padL+plotW/2:padL+(i/(groups.length-1))*plotW,y=v=>padT+plotH-(v/yMax)*plotH;let svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Urenregistratie grafiek"><rect x="0" y="0" width="'+W+'" height="'+H+'" fill="none"/>';for(let v=0;v<=yMax;v+=niceStep){const yy=y(v);svg+='<line x1="'+padL+'" y1="'+yy+'" x2="'+(W-padR)+'" y2="'+yy+'" stroke="currentColor" opacity="0.14"/><text x="'+(padL-9)+'" y="'+(yy+4)+'" text-anchor="end" font-size="11" fill="currentColor" opacity="0.65">'+escXml(hoursFmt(v))+'</text>'}svg+='<line x1="'+padL+'" y1="'+(padT+plotH)+'" x2="'+(W-padR)+'" y2="'+(padT+plotH)+'" stroke="currentColor" opacity="0.35"/>';const series=[['door','#d7ad57'],['job','#7fc4ff'],['pause','#74d39b'],['overtime','#ee8e8e']];series.forEach(([key,col])=>{const pts=groups.map((g,i)=>x(i)+','+y(Number(g[key])||0)).join(' ');svg+='<polyline points="'+pts+'" fill="none" stroke="'+col+'" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>';groups.forEach((g,i)=>{svg+='<circle cx="'+x(i)+'" cy="'+y(Number(g[key])||0)+'" r="3.2" fill="'+col+'"/>'})});const labelEvery=Math.max(1,Math.ceil(groups.length/8));groups.forEach((g,i)=>{if(i%labelEvery===0||i===groups.length-1)svg+='<text x="'+x(i)+'" y="'+(H-20)+'" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.75">'+escXml(g.label)+'</text>'});svg+='</svg>';box.innerHTML=svg}
-function hoursRenderWeekStatus(){const box=$('hoursWeekFilterStatus'),wn=Number(hoursState.weekSearch),wy=Number(hoursState.weekYear);if(!wn){box.textContent='Geen weekfilter actief.';return}box.textContent='Week '+wn+(wy?' / ISO-jaar '+wy:'')+' · '+hoursFilteredDays().length+' dag'+(hoursFilteredDays().length===1?'':'en')+' gevonden.'}
-function hoursRenderAll(){loadHoursState();hoursRenderDaily();hoursRenderWeekly();hoursRenderKpis();hoursRenderGraph();hoursRenderWeekStatus()}
+function hoursChangeWeeksPageSize(){const n=Math.min(104,Math.max(1,Number($('hoursWeeksPerPage').value)||8));hoursState.weeksPerPage=n;hoursState.weeksVisible=n;saveHoursState();hoursRenderWeeks()}
+function hoursShowMoreWeeks(){hoursState.weeksVisible=Math.min(104,hoursState.weeksVisible+hoursState.weeksPerPage);saveHoursState();hoursRenderWeeks()}
+function hoursShowAllWeeks(){hoursState.weeksVisible=104;saveHoursState();hoursRenderWeeks()}
+function hoursRenderKpis(){const days=hoursAllDays(),sum=hoursSum(days,'effective'),pause=hoursSum(days,'pause'),norm=hoursSum(days,'normal'),ot=hoursGroupWeeks(days).reduce((s,w)=>s+Math.max(0,w.effective-HOURS_WEEKLY_NORM),0),job=hoursSum(days,'job'),door=hoursSum(days,'door');$('hoursTotalKpi').textContent=hoursFmt(sum);$('hoursPauseKpi').textContent=hoursFmt(pause);$('hoursNormalKpi').textContent=hoursFmt(norm);$('hoursOvertimeKpi').textContent=hoursFmt(ot);$('hoursJobKpi').textContent=hoursFmt(job);$('hoursDoorKpi').textContent=hoursFmt(door);$('hoursDataState').textContent='Uit History · alleen pauze aanpasbaar'}
+function hoursChartGroups(){
+  const days=hoursAllDays(),nowDate=new Date(),today=new Date(nowDate.getFullYear(),nowDate.getMonth(),nowDate.getDate()),r=hoursState.graphRange;let minDate,agg='day';
+  if(r==='week'){minDate=new Date(today);minDate.setDate(minDate.getDate()-83);agg='week'}
+  else if(r==='month'){minDate=new Date(today.getFullYear(),today.getMonth()-11,1);agg='month'}
+  else if(r==='3m'){minDate=new Date(today);minDate.setMonth(minDate.getMonth()-3);agg='day'}
+  else if(r==='6m'){minDate=new Date(today);minDate.setMonth(minDate.getMonth()-6);agg='week'}
+  else if(r==='year'){minDate=new Date(today.getFullYear(),0,1);agg='month'}
+  else{minDate=new Date(today.getFullYear(),0,1);agg='month'}
+  const minStr=minDate.getFullYear()+'-'+String(minDate.getMonth()+1).padStart(2,'0')+'-'+String(minDate.getDate()).padStart(2,'0');
+  const todayStr=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0'),src=days.filter(d=>d.date>=minStr&&d.date<=todayStr);
+  if(agg==='week')return hoursGroupWeeks(src).slice(-26).map(x=>({...x,label:x.key}));
+  if(agg==='month')return hoursGroupMonths(src).map(x=>({...x,label:x.key.slice(0,7),sort:x.sort}));
+  return src.map(x=>({...x,key:x.date,sort:x.date,label:x.date.slice(5)}));
+}
+function hoursRenderGraph(){
+  const box=$('hoursGraph'),groups=hoursChartGroups();['week','month','3m','6m','year','ytd'].forEach(k=>{const b=document.querySelector('[data-hours-range="'+k+'"]');if(b)b.classList.toggle('active',hoursState.graphRange===k)});
+  if(!groups.length){box.innerHTML='<div class="hoursEmpty">Nog geen gegevens voor de grafiek.</div>';return}
+  const W=1050,H=380,padL=64,padR=18,padT=22,padB=62,plotW=W-padL-padR,plotH=H-padT-padB,maxVal=Math.max(1,...groups.flatMap(g=>[g.door||0,g.job||0,g.pause||0,g.overtime||0])),niceStep=maxVal<=4?1:maxVal<=10?2:maxVal<=20?4:maxVal<=40?8:10,yMax=Math.ceil(maxVal/niceStep)*niceStep;
+  const y=v=>padT+plotH-(v/yMax)*plotH,escXml=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  let svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Urenregistratie grafiek"><rect x="0" y="0" width="'+W+'" height="'+H+'" fill="none"/>';
+  for(let v=0;v<=yMax;v+=niceStep){const yy=y(v);svg+='<line x1="'+padL+'" y1="'+yy+'" x2="'+(W-padR)+'" y2="'+yy+'" stroke="currentColor" opacity="0.13"/><text x="'+(padL-9)+'" y="'+(yy+4)+'" text-anchor="end" font-size="11" fill="currentColor" opacity="0.65">'+escXml(hoursFmt(v))+'</text>'}
+  const series=[['door','#d7ad57','Deur'],['job','#7fc4ff','Klus'],['pause','#74d39b','Pauze'],['overtime','#ee8e8e','Overuren']],groupW=Math.max(18,plotW/Math.max(1,groups.length)-8),barW=Math.max(3,Math.min(22,(groupW-9)/4)),step=groups.length?plotW/groups.length:plotW;
+  groups.forEach((g,i)=>{const gx=padL+i*step+Math.max(0,(step-groupW)/2);series.forEach((s,si)=>{const val=Number(g[s[0]])||0,bh=(val/yMax)*plotH,bx=gx+si*(barW+2),by=padT+plotH-bh;svg+='<rect x="'+bx+'" y="'+by+'" width="'+barW+'" height="'+Math.max(0,bh)+'" rx="2" fill="'+s[1]+'"><title>'+escXml((g.label||'')+' · '+s[2]+' '+hoursFmt(val))+'</title></rect>'});const show=i===0||i===groups.length-1||i%Math.max(1,Math.ceil(groups.length/8))===0; if(show)svg+='<text x="'+(gx+groupW/2)+'" y="'+(H-22)+'" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.75">'+escXml(g.label)+'</text>'});
+  svg+='</svg>';box.innerHTML=svg;
+}
+function hoursRenderAll(){loadHoursState();hoursRenderWeeks();hoursRenderKpis();hoursRenderGraph()}
 function hoursSetRange(r){hoursState.graphRange=r;saveHoursState();hoursRenderGraph()}
 function hoursUpdatePause(logId,value){const i=logs.findIndex(x=>x.id===logId);if(i<0)return;const n=nnum(value);if(n===null||n<0)return showToast('Pauze is ongeldig',true);logs[i].pauseMinutes=Math.round(n);saveLogs();hoursRenderAll();showToast('✓ Pauze opgeslagen in History')}
 // Events
 document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.tab)));
-$('hoursWeekSearch').addEventListener('input',()=>{hoursState.weekSearch=$('hoursWeekSearch').value.replace(/\D/g,'').slice(0,2);saveHoursState();hoursRenderAll()});
-$('hoursWeekYear').addEventListener('input',()=>{hoursState.weekYear=$('hoursWeekYear').value.replace(/\D/g,'').slice(0,4);saveHoursState();hoursRenderAll()});
-$('hoursClearWeekBtn').onclick=()=>{$('hoursWeekSearch').value='';$('hoursWeekYear').value='';hoursState.weekSearch='';hoursState.weekYear='';saveHoursState();hoursRenderAll()};
-$('hoursRefreshBtn').onclick=()=>{hoursRenderAll();showToast('\u{2713} Uren opnieuw berekend uit History')};
 document.querySelectorAll('[data-hours-range]').forEach(b=>b.onclick=()=>hoursSetRange(b.dataset.hoursRange));
-$('hoursDailyTable').addEventListener('click',e=>{
+$('hoursDailyTable')?.addEventListener('click',e=>{
   const b=e.target.closest('.hoursEditLog');
   if(b){historyEditId=b.dataset.id;tab('history');renderHistory();setTimeout(()=>{const el=document.getElementById('historyTrip_'+b.dataset.id);if(el)el.scrollIntoView({behavior:'smooth',block:'center'})},0);return}
 });
-$('hoursDailyTable').addEventListener('change',e=>{
-  const p=e.target.closest('[data-hours-pause]');
-  if(p){hoursUpdatePause(p.dataset.hoursPause,p.value)}
-});
-$('hoursDaysPerPage').addEventListener('change',hoursChangeDayPageSize);$('hoursShowMoreBtn').onclick=hoursShowMore;$('hoursShowAllBtn').onclick=hoursShowAll;
-$('hoursColumnsBtn').onclick=()=>{const box=$('hoursColumnManager');box.style.display=box.style.display==='none'?'block':'none';if(box.style.display==='block')renderHoursColumnManager()};
-$('hoursColumnList').addEventListener('change',e=>{const cb=e.target.closest('[data-column-toggle]');if(cb)hoursSetColumnVisible(cb.dataset.columnToggle,cb.checked)});
-$('hoursColumnList').addEventListener('click',e=>{const up=e.target.closest('[data-column-up]'),down=e.target.closest('[data-column-down]');if(up)hoursMoveColumn(up.dataset.columnUp,-1);if(down)hoursMoveColumn(down.dataset.columnDown,1)});
-
+$('hoursWeeksPerPage').addEventListener('change',hoursChangeWeeksPageSize);
+$('hoursWeekFilter').addEventListener('input',()=>{hoursState.weekFilter=$('hoursWeekFilter').value;hoursState.weeksVisible=hoursState.weeksPerPage;saveHoursState();hoursRenderWeeks()});
+$('hoursWeekSort').addEventListener('change',()=>{hoursState.weekSort=$('hoursWeekSort').value==='asc'?'asc':'desc';hoursState.weeksVisible=hoursState.weeksPerPage;saveHoursState();hoursRenderWeeks()});
+$('hoursShowMoreWeeksBtn').onclick=hoursShowMoreWeeks;$('hoursShowAllWeeksBtn').onclick=hoursShowAllWeeks;
+$('hoursWeekColumnsBtn').onclick=()=>{const box=$('hoursWeekColumnManager');box.style.display=box.style.display==='none'?'block':'none';if(box.style.display==='block')renderHoursWeekColumnManager()};
+$('hoursWeekColumnList').addEventListener('change',e=>{const cb=e.target.closest('[data-week-column-toggle]');if(cb)hoursSetWeekColumnVisible(cb.dataset.weekColumnToggle,cb.checked)});
+$('hoursWeekColumnList').addEventListener('click',e=>{const up=e.target.closest('[data-week-column-up]'),down=e.target.closest('[data-week-column-down]');if(up)hoursMoveWeekColumn(up.dataset.weekColumnUp,-1);if(down)hoursMoveWeekColumn(down.dataset.weekColumnDown,1)});
+$('hoursDailyTable')?.addEventListener('change',e=>{const p=e.target.closest('[data-hours-pause]');if(p)hoursUpdatePause(p.dataset.hoursPause,p.value)});
 $('saveArrivalBtn').onclick=saveArrival;$('saveDepartureBtn').onclick=saveDeparture;$('arrivalNowBtn').onclick=()=>{setNow('arrivalDate','arrivalTime');updateDock()};$('departureNowBtn').onclick=()=>setNow('departureDate','departureTime');$('departureDriver').addEventListener('input',updateDock);
 $('switchCarBtn').onclick=openCarSwitch;$('switchCarDepartureBtn').onclick=openCarSwitch;$('closeCarModalBtn').onclick=closeCarSwitch;$('cancelCarSwitchBtn').onclick=closeCarSwitch;$('confirmCarSwitchBtn').onclick=confirmCarSwitch;$('switchPlate').addEventListener('input',updateSwitchKmHint);$('carModal').addEventListener('click',e=>{if(e.target===$('carModal'))closeCarSwitch()});
 document.querySelectorAll('[data-theme-choice]').forEach(b=>b.onclick=()=>setThemeChoice(b.dataset.themeChoice));
@@ -741,7 +766,7 @@ $('replaceImportBtn').onclick=async()=>{
   if(!ok)return;
   logs=pendingImport;
   if(pendingImportHours&&typeof pendingImportHours==='object'){
-    hoursState={weekSearch:String(pendingImportHours.weekSearch||''),weekYear:String(pendingImportHours.weekYear||''),graphRange:String(pendingImportHours.graphRange||'month'),daysPerPage:Math.min(365,Math.max(1,Number(pendingImportHours.daysPerPage)||7)),daysVisible:Math.min(365,Math.max(1,Number(pendingImportHours.daysVisible)||7)),columns:normalizeHoursColumns(pendingImportHours.columns)};
+    hoursState={graphRange:String(pendingImportHours.graphRange||'month'),weeksPerPage:Math.min(104,Math.max(1,Number(pendingImportHours.weeksPerPage||pendingImportHours.daysPerPage)||8)),weeksVisible:Math.min(104,Math.max(1,Number(pendingImportHours.weeksVisible||pendingImportHours.daysVisible)||8)),weekFilter:String(pendingImportHours.weekFilter||''),weekSort:pendingImportHours.weekSort==='asc'?'asc':'desc',columns:normalizeHoursColumns(pendingImportHours.columns),weekColumns:normalizeHoursWeekColumns(pendingImportHours.weekColumns)};
     saveHoursState();
   }
   saveLogs();applyDefaults();pendingImport=null;pendingImportHours=null;$('replaceImportBtn').disabled=true;$('importStatus').textContent='';showToast('\u{2713} Backup teruggezet inclusief urenregistratie')} ;
